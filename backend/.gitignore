@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+
+# Flask cache files
+instance/
+*.pyc
+
+# Log files
+*.log
+
+# Environment variables file
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE and editor specific files
+.vscode/
+.idea/
+*.swp
+
+# MacOS-specific files
+.DS_Store
+
+# Node.js and React (optional if you have frontend in the same repo)
+node_modules/
+
+# image uploads
+
+uploads/
+
+data/
+
+trained_models/
