@@ -5,11 +5,11 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator, img_to_arra
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-def test_data_generators(metadata_path=r'D:\@web_developement\FLASK\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(600, 450), batch_size=32, max_images=10):
+def test_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(600, 450), batch_size=32, max_images=10):
     try:
         # Paths to image folders
-        folder_1 = r'D:\@web_developement\FLASK\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
-        folder_2 = r'D:\@web_developement\FLASK\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
+        folder_1 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
+        folder_2 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
         
         # Load metadata
         print("Loading metadata...")

@@ -78,7 +78,7 @@ print("Model training completed.")
 
 # Save the trained model
 print("Saving the trained model...")
-model.save(r'D:\@web_developement\FLASK\skin_disease_detection\backend\app\static\trained_models\skin_disease_model.h5')
+model.save(r'D:\skin_disease_detection\backend\app\static\trained_models\skin_disease_model.h5')
 print("Model saved successfully.")
 
 # Display the model architecture
