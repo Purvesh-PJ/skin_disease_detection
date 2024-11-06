@@ -20,7 +20,7 @@ def test_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\
         def load_images_and_labels(folder):
             images = []
             labels = []
-            print(f"Loading images from {folder}...")
+            # print(f"Loading images from {folder}...")
             for filename in os.listdir(folder):
                 img_id = os.path.splitext(filename)[0]
                 if img_id in metadata.index:
@@ -68,8 +68,7 @@ def test_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\
         # Data augmentation for training data
         train_generator = datagen.flow(x_train, y_train, batch_size=batch_size)
         validation_generator = datagen.flow(x_val, y_val, batch_size=batch_size)
-        print("TDG Train Generator:", train_generator)
-        print("TDG Validation Generator:", validation_generator)
+        print("\n")
 
         # Return the three expected values
         return train_generator, validation_generator, label_encoder

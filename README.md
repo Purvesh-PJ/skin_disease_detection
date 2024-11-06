@@ -17,7 +17,7 @@ This project focuses on developing a machine learning-based system to detect `Sk
 
 1. **Clone the Repository**
 
-   - download folder https://github.com/yourusername/project-name.git
+   - `git clone` https://github.com/Purvesh-PJ/skin_disease_detection.git
    - `cd skin-disease-detection`
 
 2. **Backend Setup (Flask) :**
