@@ -2,10 +2,12 @@ import os
 import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
+import numpy as np
+from collections import Counter
 
-
-# Define the get_data_generators function (same as your original code)
-def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=None):
+def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', 
+                        target_size=(224, 224), batch_size=32, sample_size=None):
     try:
         folder_1 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
         folder_2 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
@@ -33,9 +35,9 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
             rotation_range=20,
             width_shift_range=0.2,
             height_shift_range=0.2,
-            zoom_range=0.3,              # Increased zoom for more variability
-            shear_range=0.3,             # Increased shear for enhanced augmentation
-            brightness_range=[0.7, 1.3], # Broader brightness range
+            zoom_range=0.3,
+            shear_range=0.3,
+            brightness_range=[0.7, 1.3],
             horizontal_flip=True,
             fill_mode='nearest',
             validation_split=0.2
@@ -68,8 +70,35 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
             class_mode='sparse',
             subset='validation'
         )
-        
+
         print("Data generators created successfully.")
+
+        # Check a sample of images and labels from the training generator
+        train_images, train_labels = next(train_generator)
+        plt.figure(figsize=(10, 5))
+        for i in range(5):
+            plt.subplot(1, 5, i + 1)
+            plt.imshow(train_images[i])
+            plt.title(f"Label: {train_labels[i]}")
+            plt.axis('off')
+        plt.show()
+
+        # Check label distribution in training and validation sets
+        # train_labels_all = [label for _, label in train_generator]
+        # train_label_counts = Counter(train_labels_all)
+        # print("Training Label Distribution:", train_label_counts)
+
+        # val_labels_all = [label for _, label in validation_generator]
+        # val_label_counts = Counter(val_labels_all)
+        # print("Validation Label Distribution:", val_label_counts)
+
+        # # Confirm class labels
+        # print("Encoded Classes:", label_encoder.classes_)
+
+        # # Confirm batch and image shapes
+        # print("Train batch shape:", train_images.shape)
+        # print("Validation batch shape:", next(validation_generator)[0].shape)
+
         return train_generator, validation_generator, label_encoder
 
     except Exception as e:

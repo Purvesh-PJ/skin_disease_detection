@@ -2,10 +2,13 @@
 from tensorflow.keras.applications import ResNet50, EfficientNetB0, DenseNet121
 from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout, BatchNormalization
 from tensorflow.keras.models import Model
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 import joblib
+
 
 def create_resnet50_model(input_shape=(224, 224, 3), num_classes=7):
     base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
@@ -82,21 +85,45 @@ def create_densenet_model(input_shape=(224, 224, 3), num_classes=7):
     model = Model(inputs=base_model.input, outputs=predictions)
     return model
 
-def train_base_models(train_data, train_labels, val_data, val_labels):
-    # Initialize and train each base model
+def compute_class_weights(metadata):
+    # Compute class weights
+    class_weights = compute_class_weight(
+        class_weight="balanced", 
+        classes=np.unique(metadata['dx']), 
+        y=metadata['dx']
+    )
+    # Create a dictionary of class weights
+    class_weights_dict = dict(enumerate(class_weights))
+    print("Class weights:", class_weights_dict)
+    return class_weights_dict
+
+def train_base_models(train_data, train_labels, val_data, val_labels, metadata):
+
+    # Early stopping and learning rate scheduler
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=0.00001)
+    class_weights_dict = compute_class_weights(metadata)
+
+    # Train ResNet50 model
     resnet_model = create_resnet50_model()
     resnet_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    resnet_model.fit(train_data, train_labels, epochs=30, validation_data=(val_data, val_labels))
+    resnet_model.fit(train_data, train_labels, epochs=30, validation_data=(val_data, val_labels),
+                     class_weight=class_weights_dict, callbacks=[early_stopping, lr_scheduler])
 
+    # Train EfficientNetB0 model
     efficientnet_model = create_efficientnet_model()
     efficientnet_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    efficientnet_model.fit(train_data, train_labels, epochs=30, validation_data=(val_data, val_labels))
+    efficientnet_model.fit(train_data, train_labels, epochs=30, validation_data=(val_data, val_labels),
+                           class_weight=class_weights_dict, callbacks=[early_stopping, lr_scheduler])
 
+    # Train DenseNet121 model
     densenet_model = create_densenet_model()
     densenet_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    densenet_model.fit(train_data, train_labels, epochs=30, validation_data=(val_data, val_labels))
+    densenet_model.fit(train_data, train_labels, epochs=30, validation_data=(val_data, val_labels),
+                       class_weight=class_weights_dict, callbacks=[early_stopping, lr_scheduler])
 
     return resnet_model, efficientnet_model, densenet_model
+
 
 def stack_and_train_ensemble(models, val_data, val_labels):
     # Convert one-hot encoded labels back to integer labels
@@ -119,17 +146,17 @@ def stack_and_train_ensemble(models, val_data, val_labels):
 
     return meta_model
 
-def evaluate_ensemble_model(meta_model, test_data, test_labels):
+def evaluate_ensemble_model(models, meta_model, test_data, test_labels):
     # Get predictions from base models
-    resnet_preds = meta_model[0].predict(test_data)
-    efficientnet_preds = meta_model[1].predict(test_data)
-    densenet_preds = meta_model[2].predict(test_data)
+    resnet_preds = models[0].predict(test_data)
+    efficientnet_preds = models[1].predict(test_data)
+    densenet_preds = models[2].predict(test_data)
 
     # Stack the test predictions
-    stacked_test_preds = np.stack([resnet_preds, efficientnet_preds, densenet_preds], axis=1)
+    stacked_test_preds = np.hstack([resnet_preds, efficientnet_preds, densenet_preds])
 
     # Predict using meta-model
-    final_preds = meta_model.predict(stacked_test_preds.reshape(len(test_data), -1))
+    final_preds = meta_model.predict(stacked_test_preds)
 
     # Evaluate ensemble model
     ensemble_accuracy = accuracy_score(test_labels, final_preds)
