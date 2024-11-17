@@ -19,8 +19,23 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         metadata['path'] = metadata['image_id'].apply( lambda x: os.path.join(folder_1, f"{x}.jpg") if os.path.exists(os.path.join(folder_1, f"{x}.jpg")) else os.path.join(folder_2, f"{x}.jpg"))
 
         if use_subset and sample_size:
-            metadata = metadata.sample(n=sample_size, random_state=42)
-            print(f"Using a subset of {sample_size} samples for testing.")
+            unique_classes = metadata['dx'].nunique()
+    
+            # Check if sample_size is divisible by the number of classes
+            if sample_size % unique_classes != 0:
+                print(f"Warning: sample_size {sample_size} is not evenly divisible by the number of classes ({unique_classes}). Adjusting sample_size.")
+                sample_size = (sample_size // unique_classes) * unique_classes  # Adjust to be divisible by class count
+            
+            # Ensure that sample_size per class is reasonable
+            min_samples_per_class = metadata['dx'].value_counts().min()
+            if sample_size // unique_classes > min_samples_per_class:
+                print(f"Warning: sample_size per class is higher than the smallest class size ({min_samples_per_class}). Reducing sample size.")
+                sample_size = min_samples_per_class * unique_classes  # Limit to smallest class size
+
+            # Ensure balanced sampling across all classes
+            metadata = metadata.groupby('dx').apply(lambda x: x.sample(n=sample_size//7, random_state=42)).reset_index(drop=True)
+            print(f"Using a balanced subset of {sample_size} samples for testing.")
+
         print(f"Metadata: {metadata.head()}")  # Check first few rows
         print("\n")
 
