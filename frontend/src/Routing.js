@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import ToolPage from './pages/ToolPage';
+// import ToolPage from './pages/ToolPage';
 
 const Routing = () => {
 
@@ -8,7 +8,7 @@ const Routing = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />}/>
-      <Route path="/skin-disease-predictor" element={<ToolPage/>}/>
+      {/* <Route path="/skin-disease-predictor" element={<ToolPage/>}/> */}
     </Routes>
   );
 }
