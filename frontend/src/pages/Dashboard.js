@@ -1,4 +1,4 @@
-import { LandingWrapper, HeroSection, FeaturesSection, FeatureCard, Footer , UL, LI, Container, Section, ImageUploadSection, PredectedResultSection } from '../pages/Home_Styles'
+import { LandingWrapper, HeroSection, FeaturesSection, FeatureCard, Footer , UL, LI, Container, Section, ImageUploadSection, PredectedResultSection } from './Dashboard_Styles'
 // import { Link } from "react-router-dom";
 import ImageUpload from '../components/ImageUpload';
 

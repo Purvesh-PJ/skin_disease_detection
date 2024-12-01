@@ -37,3 +37,7 @@ uploads/
 data/
 
 trained_models/
+
+# In case Saved trained models
+
+*.pkl
