@@ -23,15 +23,31 @@ export const verifyToken = async () => {
   }
 };
 
-// Login service
 export const login = async (email, password) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, { email, password });
-    localStorage.setItem('token', response.data.token); // Store token
-    console.log(response);
-    return response.data;
-  } 
-  catch (error) {
+    const response = await axios.post(
+      `${API_URL}/login`,
+      { email, password },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log("Full Response:", response);
+    console.log("Response Data:", response.data);
+
+    if (response.status === 200 && response.data?.token) {
+      // Store token in localStorage
+      localStorage.setItem('token', response.data.token);
+      console.log("Token stored in localStorage");
+      return response.data;
+    }
+
+    throw new Error('Token is missing');
+  } catch (error) {
+    console.error("Login failed:", error);
     throw new Error(error.response?.data?.error || 'Login failed');
   }
 };
@@ -39,14 +55,18 @@ export const login = async (email, password) => {
 // Signup service
 export const register = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, userData);
+    const response = await axios.post(`${API_URL}/register`, userData, {
+      headers: {
+        'Content-Type': 'application/json', // Explicitly set the content type
+      },
+    });
     console.log(response);
     return response.data;
-  } 
-  catch (error) {
+  } catch (error) {
     throw new Error(error.response?.data?.error || 'Signup failed');
   }
 };
+
 
 // Logout service
 export const logout = () => {

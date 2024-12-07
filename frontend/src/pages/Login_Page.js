@@ -128,8 +128,9 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(email, password);
-      window.location.href = '/dashboard'; // Redirect after successful login
-    } catch (err) {
+      // window.location.href = '/dashboard'; // Redirect after successful login
+    } 
+    catch (err) {
       setError('Invalid email or password');
     }
   };

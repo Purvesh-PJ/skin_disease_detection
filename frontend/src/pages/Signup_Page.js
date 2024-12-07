@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { register } from '../services/authServices'; // Assume a register service exists
 import { Link } from 'react-router-dom';
-import loginImage from '../resources/images/7108455 1.png'; // Use the same image or update the path
+import loginImage from '../resources/images/7108455 1.png'; // Update the path if necessary
 
 const Container = styled.div`
   min-height: 99.5vh;
@@ -114,6 +114,7 @@ const LinkText = styled.p`
 `;
 
 const Signup = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -121,35 +122,39 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
+
     try {
-      await register(email, password); // Call the register service
+      const userData = { username, email, password }; // Collect all data
+      await register(userData); // Pass the userData object to the service
       window.location.href = '/dashboard'; // Redirect after successful signup
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError(err.message || 'Registration failed. Please try again.');
     }
   };
 
   return (
     <Container>
       <SignupContainer>
-        {/* Left Column: Illustration */}
         <LeftColumn>
           <Illustration>
-            <img
-              src={loginImage} // Add your image in the public folder
-              alt="Signup Illustration"
-            />
+            <img src={loginImage} alt="Signup Illustration" />
           </Illustration>
         </LeftColumn>
-
-        {/* Right Column: Signup Form */}
         <RightColumn>
           <Form onSubmit={handleSubmit}>
             <Heading>Sign Up</Heading>
+            <Input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
             <Input
               type="email"
               placeholder="Email"

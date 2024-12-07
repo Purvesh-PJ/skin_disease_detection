@@ -2,7 +2,7 @@ from flask import request, jsonify
 import jwt
 from functools import wraps
 
-SECRET_KEY = "d9574c5c06e96b0e2ef7bbfeb3e3cfae5920ad5d3f1b1a9a6f2b60c08a1e5dbf"
+app.config['JWT_SECRET_KEY'] = "d9574c5c06e96b0e2ef7bbfeb3e3cfae5920ad5d3f1b1a9a6f2b60c08a1e5dbf"
 
 def token_required(f):
     @wraps(f)
