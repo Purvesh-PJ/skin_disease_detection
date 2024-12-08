@@ -4,14 +4,13 @@ import styled from 'styled-components';
 export const UploadContainer = styled.div`
   display: flex;
   flex-direction: column;
-  // justify-content: space-around;
+  justify-content: space-between;
+  height : 740px;
   margin: 5px;
   padding: 20px;
   border: 2px dashed #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
+  border-radius: 20px;
   box-sizing : border-box;
-  width : 100%;
 `;
 
 export const ImagePlaceholder = styled.div`
@@ -21,11 +20,16 @@ export const ImagePlaceholder = styled.div`
   width: 100%;
   max-with : 250px;
   height: 400px;
-  background-color: #e0e0e0;
-  border-radius: 10px;
+  background-color: #f1f5f9;
+  border-radius: 20px;
   margin-bottom: 15px;
   font-size: 2em;
   color: #aaa;
+`;
+
+export const Image = styled.img`
+  width : 120px;
+  height : 120px;
 `;
 
 export const FileInput = styled.input`
@@ -33,7 +37,7 @@ export const FileInput = styled.input`
   padding: 8px;
   width: 100%;
   box-sizing: border-box;
-  border: 2px dashed #64748b;
+  border: 2px dashed gray;
   border-radius: 5px;
   background-color : white;
 `;
@@ -41,7 +45,7 @@ export const FileInput = styled.input`
 export const UploadButton = styled.button`
   margin-top: 15px;
   padding: 10px 20px;
-  background-color: #6c63ff;
+  background-color: black;
   color: white;
   border: none;
   border-radius: 5px;
@@ -50,7 +54,8 @@ export const UploadButton = styled.button`
   width: 100%;
   
   &:hover {
-    background-color: #5753c9;
+    background-color: white;
+    color : black;
   }
 `;
 
@@ -66,5 +71,13 @@ export const Note = styled.p`
   margin-top: 15px;
   font-size: 0.8em;
   color: #666;
+  text-align: center;
+  background-color: #f3f4f6;
+  padding : 10px;
+  border-radius : 8px;
+`;
+
+export const Paragraph = styled.p`
+  color : #475569;
   text-align: center;
 `;

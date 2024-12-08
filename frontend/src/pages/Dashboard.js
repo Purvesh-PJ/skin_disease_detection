@@ -1,12 +1,11 @@
 import { LandingWrapper, HeroSection, FeaturesSection, FeatureCard, Footer , UL, LI, Container, Section, ImageUploadSection, PredectedResultSection } from './Dashboard_Styles'
-// import { Link } from "react-router-dom";
 import ImageUpload from '../components/ImageUpload';
 
 
 const Home = () => {
 
-    return(
-        <LandingWrapper>
+  return(
+    <LandingWrapper>
       <HeroSection>
         <h1>Skin Disease Detection</h1>
         <p>
@@ -45,26 +44,25 @@ const Home = () => {
         </FeatureCard>
       </FeaturesSection>
 
-       <Container>
-            <h2 style={{ color : '#52525b'}}>
-                Skin disease predictor tool
-            </h2>
-            <Section>
-                
-                <ImageUploadSection>
-                    <ImageUpload />
-                </ImageUploadSection>
-                <PredectedResultSection>
-                </PredectedResultSection>
-            </Section>
-    
-        </Container>
+      <Container>
+        <h2 style={{ color : '#52525b'}}>
+          Skin disease predictor tool
+        </h2>
+        <Section>
+          <ImageUploadSection>
+              <ImageUpload />
+          </ImageUploadSection>
+            <PredectedResultSection>
+            </PredectedResultSection>
+        </Section>
+      </Container>
 
       <Footer>
         &copy; {new Date().getFullYear()} Skin Disease Detection. All rights reserved.
       </Footer>
+      
     </LandingWrapper>
-    )
+  )
 }
 
-export default Home
+export default Home;

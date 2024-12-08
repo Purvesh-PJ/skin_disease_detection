@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { UploadContainer, ImagePlaceholder, FileInput, UploadButton, ImagePreview, Note } from './ImageUpload_Styles';
+import { UploadContainer, ImagePlaceholder, FileInput, UploadButton, ImagePreview, Image, Note, Paragraph  } from './ImageUpload_Styles';
 import usePostImageForPrediction from '../hooks/usePostImageForPrediction';
+import Disease_icon from '../resources/icons/disease_icon.png'
 
 
 const ImageUpload = () => {
@@ -25,28 +26,28 @@ const ImageUpload = () => {
   };
 
   const handleUploadClick = async () => {
-
     if(!imageFile) {
       alert("Please select an image first!");
       return;
     }
-
     const formData = new FormData();
     formData.append("image", imageFile);
-
     const res = await postImageToPredict(formData);
     console.log(res);
-
     alert(`Image uploaded successfully!`);
   };
 
   return (
     <UploadContainer>
 
+      <Paragraph> Upload image </Paragraph>
+
       {selectedImage ? (
         <ImagePreview src={selectedImage} alt="Preview" />
       ) : (
-        <ImagePlaceholder>🖼️</ImagePlaceholder>
+        <ImagePlaceholder>
+          <Image src={Disease_icon} alt='disease-image'/>
+        </ImagePlaceholder>
       )}
 
       <FileInput
@@ -56,14 +57,10 @@ const ImageUpload = () => {
         placeholder="Select an image"
       />
 
-      <UploadButton onClick={handleUploadClick}>
-        Upload
-      </UploadButton>
+      <UploadButton onClick={handleUploadClick}> Upload </UploadButton>
 
       <Note>
-        <strong>
-          Note:
-        </strong> This model is trained only for skin disease images. Other images may not work.
+        <strong> WARNING: </strong> This model is trained only for skin disease images. Other images may not work.
       </Note>
 
     </UploadContainer>

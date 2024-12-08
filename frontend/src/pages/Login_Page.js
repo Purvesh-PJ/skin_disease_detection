@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { login } from '../services/authServices';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import loginImage from '../resources/images/7108455 1.png';
 
 const Container = styled.div`
@@ -123,14 +123,22 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  
+  const navigate = useNavigate(); // Hook for programmatically navigating routes
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      // window.location.href = '/dashboard'; // Redirect after successful login
-    } 
-    catch (err) {
+      const response = await login(email, password);
+      console.log('Login response:', response);
+
+      if (response?.token) {
+        // Redirect to dashboard on successful login
+        navigate('/dashboard');
+      } else {
+        setError('Invalid credentials');
+      }
+    } catch (err) {
       setError('Invalid email or password');
     }
   };
@@ -142,7 +150,7 @@ const Login = () => {
         <LeftColumn>
           <Illustration>
             <img
-              src={loginImage} // Add your image in the public folder
+              src={loginImage}
               alt="Skin Disease Illustration"
             />
           </Illustration>

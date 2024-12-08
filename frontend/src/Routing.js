@@ -4,8 +4,9 @@ import { getToken, verifyToken } from './services/authServices';
 import styled from 'styled-components';
 import Login from './pages/Login_Page';
 import Signup from './pages/Signup_Page';
-import Dashboard from './pages/Dashboard';
+// import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import Dashboard2 from './pages/Dashboard2';
 
 
 const LoadingSpinner = styled.div`
@@ -72,7 +73,7 @@ const AppRoutes = () => {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Dashboard2 />
             </ProtectedRoute>
           }
         />
