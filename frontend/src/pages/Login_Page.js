@@ -6,22 +6,19 @@ import loginImage from '../resources/images/7108455 1.png';
 
 const Container = styled.div`
   min-height: 99.5vh;
-  // border: 2px solid blue;
-  display : flex;
-  justify-content : center;
-  align-items : center;
-  margin : auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
 `;
 
 const LoginContainer = styled.div`
   display: flex;
   height: 70vh;
-  width : 1150px;
-  box-sizing: border-box;
-  border-radius : 40px;
+  width: 1150px;
+  border-radius: 40px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-  // border : 1px solid gray;
-  background-color : white ;
+  background-color: white;
 `;
 
 const Column = styled.div`
@@ -32,8 +29,7 @@ const Column = styled.div`
 `;
 
 const LeftColumn = styled(Column)`
-  background-color : white;
-  border-radius : 40px;
+  border-radius: 40px;
 `;
 
 const Illustration = styled.div`
@@ -48,23 +44,18 @@ const Illustration = styled.div`
 
 const RightColumn = styled(Column)`
   background-color: #ffffff;
-  border-radius : 40px;
-  // border : 1px solid gray;
+  border-radius: 40px;
 `;
 
 const Form = styled.form`
-  display : flex;
-  flex-direction : column;
-  justify-content : space-between;
-  align-items : center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   max-width: 400px;
-  height : 70%;
   padding: 20px;
   background: white;
   border-radius: 8px;
-  box-sizing : border-box;
-  // border : 1px solid gray;
 `;
 
 const Input = styled.input`
@@ -73,25 +64,41 @@ const Input = styled.input`
   width: 100%;
   border-radius: 5px;
   font-size: 14px;
-  box-sizing : border-box;
-  border: 2px solid gray;
+  border: 2px solid ${(props) => (props.error ? 'red' : 'gray')};
 `;
 
 const Button = styled.button`
+  display : flex;
+  justify-content : center;
   padding: 10px;
   width: 60%;
-  background-color: #2563eb;
+  background-color: ${(props) => (props.disabled ? '#f1f5f9' : '#2563eb')};
   color: white;
   border: none;
   border-radius: 5px;
   font-size: 16px;
-  cursor: pointer;
-  box-sizing : border-box;
-  // margin-left : auto;
-  // margin-right : auto;
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
 
   &:hover {
-    background-color: #3b82f6;
+    background-color: ${(props) => (props.disabled ? '#f1f5f9' : '#3b82f6')};
+  }
+`;
+
+const Spinner = styled.div`
+  border: 2px solid #ccc;
+  border-top: 2px solid #2563eb;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -120,43 +127,57 @@ const LinkText = styled.p`
 `;
 
 const Login = () => {
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
-  const navigate = useNavigate(); // Hook for programmatically navigating routes
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    if (!email || !password) {
+      setError('Email and password are required');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await login(email, password);
       console.log('Login response:', response);
 
       if (response?.token) {
-        // Redirect to dashboard on successful login
         navigate('/dashboard');
-      } else {
+      } 
+      else {
         setError('Invalid credentials');
       }
-    } catch (err) {
-      setError('Invalid email or password');
+    } 
+    catch (err) {
+      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } 
+    finally {
+      setLoading(false);
     }
+  };
+
+  const handleInputChange = (setter) => (e) => {
+    setter(e.target.value);
+    if (error) setError('');
   };
 
   return (
     <Container>
       <LoginContainer>
-        {/* Left Column: Illustration */}
         <LeftColumn>
           <Illustration>
-            <img
-              src={loginImage}
-              alt="Skin Disease Illustration"
-            />
+            <img src={loginImage} alt="Skin Disease Illustration" />
           </Illustration>
         </LeftColumn>
-
-        {/* Right Column: Login Form */}
         <RightColumn>
           <Form onSubmit={handleSubmit}>
             <Heading>Login</Heading>
@@ -164,18 +185,22 @@ const Login = () => {
               type="email"
               placeholder="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleInputChange(setEmail)}
+              error={!!error}
               required
             />
             <Input
               type="password"
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleInputChange(setPassword)}
+              error={!!error}
               required
             />
             {error && <ErrorMessage>{error}</ErrorMessage>}
-            <Button type="submit">Login</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? <Spinner /> : 'Login'}
+            </Button>
             <LinkText>
               <Link to="/forgot-password">Forgot password?</Link>
             </LinkText>
