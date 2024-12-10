@@ -14,6 +14,7 @@ export const verifyToken = async () => {
       },
     });
     console.log(response);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
     return response.data;
   } 
   catch(error) {
@@ -24,21 +25,17 @@ export const verifyToken = async () => {
 
 export const login = async (email, password) => {
   try {
-    const response = await axios.post(
-      `${API_URL}/login`, { email, password }, 
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await axios.post(`${API_URL}/login`, { email, password }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     console.log("Full Response:", response);
-    console.log("Response Data:", response.data);
+    console.log("Response Data:", response.data.user);
 
     if (response.status === 200 && response.data?.token) {
       // Store token in localStorage
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
       console.log("Token and user stored in localStorage");
       return response.data;
     }
@@ -69,6 +66,7 @@ export const register = async (userData) => {
 // Logout service
 export const logout = () => {
   localStorage.removeItem('token'); // Clear token
+  localStorage.removeItem('user'); // Clear user
   window.location.href = '/login'; // Redirect to login
 };
 

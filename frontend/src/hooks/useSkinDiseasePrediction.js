@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { predictSkinDiseaseFromImageApi } from "../services/predictSkinDiseaseFromImageApi";
+import { predictApi } from '../services/predictApi'
 
 
-const usePostImageForPrediction  = () => {
+const useSkinDiseasePrediction  = () => {
 
     const [ error, setError ] = useState(null);
     const [ loading, setLoading ] = useState(false);
@@ -10,7 +10,7 @@ const usePostImageForPrediction  = () => {
     const postImageToPredict = async (ImageData) => {
         setLoading(true);
         try {
-            const response = await predictSkinDiseaseFromImageApi(ImageData);
+            const response = await predictApi(ImageData);
             return response;
         } 
         catch(error) {
@@ -29,4 +29,4 @@ const usePostImageForPrediction  = () => {
     }
 };
 
-export default usePostImageForPrediction;
+export default useSkinDiseasePrediction;

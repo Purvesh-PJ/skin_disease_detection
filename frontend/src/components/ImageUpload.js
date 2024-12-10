@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UploadContainer, ImagePlaceholder, FileInput, UploadButton, ImagePreview, Image, Note, Paragraph  } from './ImageUpload_Styles';
 import usePostImageForPrediction from '../hooks/usePostImageForPrediction';
-import Disease_icon from '../resources/icons/disease_icon.png'
+import Disease_icon from '../resources/icons/disease_icon.png';
 
 
 const ImageUpload = () => {

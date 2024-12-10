@@ -1,8 +1,10 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
+    display : flex;
+    flex-direction : column;
     height: calc(100vh - 2px);
-    background-color: #f1f5f9;
+    // background-color: #f1f5f9;
 `;
 
 export const Header = styled.div`
@@ -13,6 +15,15 @@ export const Header = styled.div`
     height: 50px;
     background-color: white;
     padding: 0 20px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+`;
+
+export const Main = styled.div`
+    display: flex;
+    justify-content: center;
+    // align-items: center;
+    margin-top : 3rem;
+    height: calc(100vh - 52px);
 `;
 
 export const HeadingContainer = styled.div`
@@ -20,7 +31,7 @@ export const HeadingContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative; /* Ensures dropdown and other elements align correctly */
+    position: relative; 
 `;
 
 export const ProfileContainer = styled.div`
@@ -28,6 +39,14 @@ export const ProfileContainer = styled.div`
     align-items: center;
     position: relative;
     cursor: pointer;
+    background-color : #f1f5f9;
+    border-radius : 50px;
+    padding-right : 5px;
+    border : 1px solid #e2e8f0;
+
+    &:hover {
+        background-color : white;
+    }
 `;
 
 export const Heading = styled.h1`
@@ -50,12 +69,14 @@ export const ProfileImage = styled.img`
     background-color: #cbd5e1;
     object-fit: cover;
     margin-right: 10px;
-    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    // box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    // border : 1px solid #cbd5e1;
 `;
 
 export const Username = styled.span`
     font-size: 14px;
     font-weight: 500;
+    letter-spacing : 0.05rem;
     color: #475569;
 `;
 
@@ -86,9 +107,3 @@ export const DropdownItem = styled.li`
     }
 `;
 
-export const Main = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 52px);
-`;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { register } from '../services/authServices'; // Assume a register service exists
+import { register } from '../services/authApi'; // Assume a register service exists
 import { Link } from 'react-router-dom';
 import loginImage from '../resources/images/7108455 1.png'; // Update the path if necessary
 

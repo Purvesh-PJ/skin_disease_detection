@@ -7,7 +7,7 @@ app = Flask(__name__)
 def setup_prediction_routes(app: Flask):
 
     @app.route('/predict', methods=['POST'])
-    def make_predict():
+    def prediction():
         # Print request headers for debugging
         print("Request Headers:", request.headers)
 
