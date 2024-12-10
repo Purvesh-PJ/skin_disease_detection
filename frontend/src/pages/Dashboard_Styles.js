@@ -1,142 +1,94 @@
-import styled from 'styled-components';
-
-export const LandingWrapper = styled.div`
-  font-family: 'Roboto', sans-serif;
-  background: linear-gradient(180deg, #f9f9f9, #e8f5e9);
-  color: #333;
-  padding: 0;
-  margin: 0;
-`;
-
-export const HeroSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: #4caf50;
-  color: white;
-  padding: 50px 20px;
-
-  h1 {
-    font-size: 3rem;
-    margin: 10px 0;
-  }
-
-  p {
-    font-size: 1.2rem;
-    margin: 10px 0 20px;
-    line-height: 1.6;
-  }
-
-  a {
-    text-decoration: none;
-    background-color: #ffffff;
-    color: #4caf50;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-
-    &:hover {
-      background-color: #45a049;
-      color: white;
-    }
-  }
-`;
-
-export const FeaturesSection = styled.section`
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-`;
-
-export const FeatureCard = styled.div`
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  text-align: left;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-
-  h2 {
-    font-size: 1.5rem;
-    color: #4caf50;
-    margin-bottom: 10px;
-  }
-
-  p {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #555;
-  }
-
-  ul {
-    padding-left: 20px;
-    color: #555;
-  }
-`;
-
-export const Footer = styled.footer`
-  background: #4caf50;
-  color: white;
-  text-align: center;
-  padding: 10px;
-  font-size: 0.9rem;
-`;
-
-export const UL = styled.ul`
-`;
-
-export const LI = styled.li`
-    margin-bottom : 8px;
-    list-style-type : disc;
-`;
+import styled from "styled-components";
 
 export const Container = styled.div`
-    display : flex;
-    flex-direction : column;
-    justify-content : center;
-    align-items : center; 
-    margin-bottom : 2rem;
+    height: calc(100vh - 2px);
+    background-color: #f1f5f9;
 `;
 
-export const Section = styled.section`
-    display : flex;
-    flex-direction : row;
-    gap : 1px;
-    width : 100%;
-    max-width : 1250px;
-    height : 800px;
-    border-radius : 10px;
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-    background-color : #e5e7eb;
-    // border : 1px solid lightgray;
+export const Header = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    background-color: white;
+    padding: 0 20px;
 `;
 
-export const ImageUploadSection = styled.div`
-    display : flex;
-    justify-content : center;
-    width : 50%;
-    background-color : white;
-    border-top-left-radius : 10px;
-    border-bottom-left-radius : 10px;
-    // border : 1px solid lightgray;
+export const HeadingContainer = styled.div`
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Ensures dropdown and other elements align correctly */
 `;
 
-export const PredectedResultSection = styled.div`
-    width : 50%;
-    background-color : white;
-    border-top-right-radius : 10px;
-    border-bottom-right-radius : 10px;
-    box-sizing : border-box;
-    // border : 1px solid lightgray;
+export const ProfileContainer = styled.div`
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+`;
+
+export const Heading = styled.h1`
+    font-size: 18px;
+    font-weight: 500;
+    color: #475569;
+    text-align: center;
+    margin: 0;
+`;
+
+export const Profile = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+export const ProfileImage = styled.img`
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: #cbd5e1;
+    object-fit: cover;
+    margin-right: 10px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+`;
+
+export const Username = styled.span`
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+`;
+
+export const DropdownMenu = styled.ul`
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 10px;
+    list-style: none;
+    padding: 4px;
+    width: 100px;
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+export const DropdownItem = styled.li`
+    padding: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #475569;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #f4f4f4;
+    }
+`;
+
+export const Main = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 52px);
 `;

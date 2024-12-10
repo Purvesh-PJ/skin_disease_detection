@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 const API_URL = 'http://127.0.0.1:5000/auth'; // Update with your backend URL if different
 
 export const verifyToken = async () => {
@@ -26,27 +25,26 @@ export const verifyToken = async () => {
 export const login = async (email, password) => {
   try {
     const response = await axios.post(
-      `${API_URL}/login`,
-      { email, password },
+      `${API_URL}/login`, { email, password }, 
       {
         headers: {
           'Content-Type': 'application/json',
         },
       }
     );
-
     console.log("Full Response:", response);
     console.log("Response Data:", response.data);
 
     if (response.status === 200 && response.data?.token) {
       // Store token in localStorage
       localStorage.setItem('token', response.data.token);
-      console.log("Token stored in localStorage");
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      console.log("Token and user stored in localStorage");
       return response.data;
     }
-
     throw new Error('Token is missing');
-  } catch (error) {
+  } 
+  catch(error) {
     console.error("Login failed:", error);
     throw new Error(error.response?.data?.error || 'Login failed');
   }
@@ -62,11 +60,11 @@ export const register = async (userData) => {
     });
     console.log(response);
     return response.data;
-  } catch (error) {
+  } 
+  catch(error) {
     throw new Error(error.response?.data?.error || 'Signup failed');
   }
 };
-
 
 // Logout service
 export const logout = () => {

@@ -103,8 +103,13 @@ const Spinner = styled.div`
 `;
 
 const ErrorMessage = styled.p`
-  color: red;
-  font-size: 14px;
+  color: #ef4444;
+  font-size: 12px;
+  padding-left : 6px;
+  padding-right : 6px; 
+  border-radius : 5px;
+  background-color : #fef2f2;
+  border : 1px solid #f87171;
 `;
 
 const Heading = styled.h1`

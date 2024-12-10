@@ -1,68 +1,50 @@
-import { LandingWrapper, HeroSection, FeaturesSection, FeatureCard, Footer , UL, LI, Container, Section, ImageUploadSection, PredectedResultSection } from './Dashboard_Styles'
-import ImageUpload from '../components/ImageUpload';
+import React, { useState } from "react";
+import { Container, Header, Main, Heading, HeadingContainer, ProfileContainer, ProfileImage, Username, DropdownMenu, DropdownItem } from "./Dashboard_Styles";
+import DiseasePredictorTool from "../components/DiseasePredictorTool";
+import Default_Profile from "../resources/images/default_profile.jpg";
 
+const Dashboard = () => {
 
-const Home = () => {
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-  return(
-    <LandingWrapper>
-      <HeroSection>
-        <h1>Skin Disease Detection</h1>
-        <p>
-          A reliable, AI-powered tool to analyze dermoscopic images and provide
-          accurate predictions for skin conditions.
-        </p>
-        {/* <Link to="/skin-disease-predictor">Get Started</Link> */}
-      </HeroSection>
+  const toggleDropdown = () => {
+    setDropdownOpen((prev) => !prev);
+  };
 
-      <FeaturesSection>
-        <FeatureCard>
-          <h2>About the Project</h2>
-          <p>
-            This application leverages advanced machine learning to identify
-            skin conditions, assisting both dermatologists and individuals in
-            early detection and diagnosis.
-          </p>
-        </FeatureCard>
+  const handleLogout = () => {
+    console.log("Logging out...");
+  };
 
-        <FeatureCard>
-          <h2>How It Works</h2>
-          <UL>
-            <LI>Upload a clear image of the skin lesion.</LI>
-            <LI>AI analyzes the image for patterns and features.</LI>
-            <LI>Receive predictions and confidence scores instantly.</LI>
-          </UL>
-        </FeatureCard>
+  return (
+    <Container>
+      <Header>
+        <HeadingContainer>
+          <Heading>Skin disease predictor</Heading>
+        </HeadingContainer>
 
-        <FeatureCard>
-          <h2>Features</h2>
-          <UL>
-            <LI>Detects 7 types of skin lesions.</LI>
-            <LI>Uses ensemble learning for high accuracy.</LI>
-            <LI>Simple and fast interface for ease of use.</LI>
-          </UL>
-        </FeatureCard>
-      </FeaturesSection>
+        <ProfileContainer onClick={toggleDropdown}>
 
-      <Container>
-        <h2 style={{ color : '#52525b'}}>
-          Skin disease predictor tool
-        </h2>
-        <Section>
-          <ImageUploadSection>
-              <ImageUpload />
-          </ImageUploadSection>
-            <PredectedResultSection>
-            </PredectedResultSection>
-        </Section>
-      </Container>
+            <ProfileImage
+              src={Default_Profile} // Replace with user profile image URL
+              alt="User"
+            />
+            <Username>John Doe</Username>
+  
+           {isDropdownOpen && (
+                <DropdownMenu>
+                    <DropdownItem onClick={handleLogout}>
+                        Logout
+                    </DropdownItem>
+                </DropdownMenu>
+            )}
 
-      <Footer>
-        &copy; {new Date().getFullYear()} Skin Disease Detection. All rights reserved.
-      </Footer>
-      
-    </LandingWrapper>
-  )
-}
+        </ProfileContainer>
+      </Header>
+      <Main>
+        <DiseasePredictorTool />
+      </Main>
+    </Container>
+  );
+};
 
-export default Home;
+export default Dashboard;
