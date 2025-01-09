@@ -3,7 +3,7 @@ import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.preprocessing import LabelEncoder
 
-def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=None, use_subset=False):
+def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=100, use_subset=True):
     try:
         folder_1 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
         folder_2 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
@@ -16,6 +16,7 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         
         print("\n")
         print("##### TOP FIVE SAMPLE DATA #####")
+        print("\n")
         metadata['path'] = metadata['image_id'].apply( lambda x: os.path.join(folder_1, f"{x}.jpg") if os.path.exists(os.path.join(folder_1, f"{x}.jpg")) else os.path.join(folder_2, f"{x}.jpg"))
 
         if use_subset and sample_size:
@@ -41,6 +42,7 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
 
         # Encode labels to integers and convert them to strings
         print("##### LABELS #####")
+        print("\n")
         print("Encoding labels...")
         label_encoder = LabelEncoder()
         metadata['label'] = label_encoder.fit_transform(metadata['dx']).astype(str)  # Convert to string
@@ -84,8 +86,10 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         )
 
         x_batch, y_batch = next(train_generator)
+
         print("\n")
         print("##### BATCH SHAPES #####")
+        print("\n")
         print(f"x_batch shape: {x_batch.shape}, y_batch shape: {y_batch.shape}")
         print(f"x_batch dtype: {x_batch.dtype}")
         print(f"y_batch dtype: {y_batch.dtype}")
@@ -112,12 +116,13 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
             y_col='label',
             target_size=target_size,
             batch_size=batch_size,
-            class_mode=None,
+            class_mode='categorical',
         )
 
         # Check if generators are properly created
         print("\n")
         print("##### FINAL GENERATORS #####")
+        print("\n")
         print(f"Train Generator: {train_generator}")
         print(f"Validation Generator: {validation_generator}")
         print(f"Test Generator: {test_generator}")
@@ -131,5 +136,3 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
     except Exception as e:
         print(f"An error occurred: {e}")
         return None, None, None, None
-
-
