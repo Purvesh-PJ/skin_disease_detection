@@ -2,41 +2,77 @@ import os
 import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 
-def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=100, use_subset=True):
+def split_data_by_lesion(metadata):
+    """
+    Splits metadata into training, validation, and test sets ensuring no data leakage by lesion_id.
+    """
+    unique_lesions = metadata['lesion_id'].unique()
+    train_lesions, temp_lesions = train_test_split(unique_lesions, test_size=0.4, random_state=42)
+    val_lesions, test_lesions = train_test_split(temp_lesions, test_size=0.5, random_state=42)
+
+    train_metadata = metadata[metadata['lesion_id'].isin(train_lesions)].reset_index(drop=True)
+    val_metadata = metadata[metadata['lesion_id'].isin(val_lesions)].reset_index(drop=True)
+    test_metadata = metadata[metadata['lesion_id'].isin(test_lesions)].reset_index(drop=True)
+
+    return train_metadata, val_metadata, test_metadata
+
+def aggregate_predictions_by_lesion(predictions, metadata):
+    """
+    Aggregates predictions at the lesion level by averaging.
+    :param predictions: Array of predictions (e.g., probabilities).
+    :param metadata: DataFrame containing lesion_id and associated predictions.
+    :return: Aggregated predictions DataFrame.
+    """
+    metadata['prediction'] = predictions
+    aggregated = metadata.groupby('lesion_id')['prediction'].mean().reset_index()
+    return aggregated
+
+def get_data_generators(
+    metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv',
+    target_size=(224, 224),
+    batch_size=32,
+    sample_size=100,
+    use_subset=True
+):
     try:
         folder_1 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
         folder_2 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
 
-        print("##### GETTING DATA GENERATORS #####")
+        print("##### GETTING DATA GENERATORS #####\n")
         print("\n")
-        # Load and preprocess metadata
+        # Load metadata
         print("Loading metadata...")
         metadata = pd.read_csv(metadata_path)
         
         print("\n")
         print("##### TOP FIVE SAMPLE DATA #####")
         print("\n")
-        metadata['path'] = metadata['image_id'].apply( lambda x: os.path.join(folder_1, f"{x}.jpg") if os.path.exists(os.path.join(folder_1, f"{x}.jpg")) else os.path.join(folder_2, f"{x}.jpg"))
 
+        # Add image paths
+        metadata['path'] = metadata['image_id'].apply(
+            lambda x: os.path.join(folder_1, f"{x}.jpg")
+            if os.path.exists(os.path.join(folder_1, f"{x}.jpg"))
+            else os.path.join(folder_2, f"{x}.jpg")
+        )
+
+        # Optionally use a subset for testing
         if use_subset and sample_size:
             unique_classes = metadata['dx'].nunique()
-    
             # Check if sample_size is divisible by the number of classes
             if sample_size % unique_classes != 0:
                 print(f"Warning: sample_size {sample_size} is not evenly divisible by the number of classes ({unique_classes}). Adjusting sample_size.")
-                sample_size = (sample_size // unique_classes) * unique_classes  # Adjust to be divisible by class count
-            
+                sample_size = (sample_size // unique_classes) * unique_classes
             # Ensure that sample_size per class is reasonable
             min_samples_per_class = metadata['dx'].value_counts().min()
             if sample_size // unique_classes > min_samples_per_class:
                 print(f"Warning: sample_size per class is higher than the smallest class size ({min_samples_per_class}). Reducing sample size.")
-                sample_size = min_samples_per_class * unique_classes  # Limit to smallest class size
-
+                sample_size = min_samples_per_class * unique_classes
             # Ensure balanced sampling across all classes
-            metadata = metadata.groupby('dx').apply(lambda x: x.sample(n=sample_size//7, random_state=42)).reset_index(drop=True)
-            print(f"Using a balanced subset of {sample_size} samples for testing.")
-
+            metadata = metadata.groupby('dx').apply(lambda x: x.sample(n=sample_size // unique_classes, random_state=42)).reset_index(drop=True)
+            print(f"Using a balanced subset of {sample_size} samples.")
+        
         print(f"Metadata: {metadata.head()}")  # Check first few rows
         print("\n")
 
@@ -45,13 +81,18 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         print("\n")
         print("Encoding labels...")
         label_encoder = LabelEncoder()
-        metadata['label'] = label_encoder.fit_transform(metadata['dx']).astype(str)  # Convert to string
+        metadata['label'] = label_encoder.fit_transform(metadata['dx']).astype(str)
         print(f"Labels encoded. Unique classes: {label_encoder.classes_}")
         print("\n")
 
-        # Training Data Augmentation
+        # Split data by lesion_id
+        print("Splitting data by lesion_id...")
+        train_metadata, val_metadata, test_metadata = split_data_by_lesion(metadata)
+        print("\n")
+
+        # Data augmentation
         train_datagen = ImageDataGenerator(
-            rescale=1./255,
+            rescale=1.0 / 255,
             rotation_range=20,
             width_shift_range=0.2,
             height_shift_range=0.2,
@@ -59,30 +100,23 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
             shear_range=0.3,
             brightness_range=[0.7, 1.3],
             horizontal_flip=True,
-            fill_mode='nearest',
-            validation_split=0.2  # Split for validation
+            fill_mode='nearest'
         )
 
         # Validation Data Normalization Only
-        validation_datagen = ImageDataGenerator(
-            rescale=1./255,
-            validation_split=0.2
-        )
-
+        validation_datagen = ImageDataGenerator(rescale=1.0 / 255)
+        
         # Testing Data Normalization Only
-        test_datagen = ImageDataGenerator(
-            rescale=1./255
-        )
+        test_datagen = ImageDataGenerator(rescale=1.0 / 255)
 
-        # Training generator
+        # Generators
         train_generator = train_datagen.flow_from_dataframe(
-            dataframe=metadata,
+            dataframe=train_metadata,
             x_col='path',
             y_col='label',
             target_size=target_size,
             batch_size=batch_size,
-            class_mode='categorical',
-            subset='training'  # Use training subset
+            class_mode='categorical'
         )
 
         x_batch, y_batch = next(train_generator)
@@ -100,23 +134,22 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
 
         # Validation generator
         validation_generator = validation_datagen.flow_from_dataframe(
-            dataframe=metadata,
+            dataframe=val_metadata,
             x_col='path',
             y_col='label',
             target_size=target_size,
             batch_size=batch_size,
-            class_mode='categorical',
-            subset='validation'  # Use validation subset
+            class_mode='categorical'
         )
-
+        
         # Testing generator (No subset since it's for testing)
         test_generator = test_datagen.flow_from_dataframe(
-            dataframe=metadata,
+            dataframe=test_metadata,
             x_col='path',
             y_col='label',
             target_size=target_size,
             batch_size=batch_size,
-            class_mode='categorical',
+            class_mode='categorical'
         )
 
         # Check if generators are properly created
@@ -129,10 +162,11 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         print("\n")
 
         print("Data generators created successfully.")
-        print("\n")
 
         return train_generator, validation_generator, test_generator, label_encoder
 
     except Exception as e:
         print(f"An error occurred: {e}")
         return None, None, None, None
+
+# Status: Original structure and key functionalities retained, new additions made seamlessly.

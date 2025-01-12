@@ -47,12 +47,12 @@ def train_model(model, train_generator, validation_generator, epochs=1, batch_si
   
   # Train the model
   history = model.fit(
-      train_generator,
-      epochs=epochs,
-      validation_data=validation_generator,
-      callbacks=[early_stopping],
-      verbose=1
-  )
+        train_generator,
+        epochs=epochs,
+        validation_data=validation_generator,
+        callbacks=[early_stopping],
+        verbose=1
+    )
   
   return model, history
 
