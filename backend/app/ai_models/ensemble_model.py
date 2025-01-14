@@ -39,7 +39,7 @@ def create_base_model(model_name='ResNet50', input_shape=(224, 224, 3), num_clas
 
 
 # Function to train the individual models
-def train_model(model, train_generator, validation_generator, epochs=1, batch_size=32):
+def train_model(model, train_generator, validation_generator, class_weights, epochs=1, batch_size=32):
   model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
   
   # Use early stopping to avoid overfitting
@@ -51,13 +51,13 @@ def train_model(model, train_generator, validation_generator, epochs=1, batch_si
         epochs=epochs,
         validation_data=validation_generator,
         callbacks=[early_stopping],
-        verbose=1
+        verbose=1,
     )
   
   return model, history
 
 # Function to create the ensemble model
-def create_ensemble_model(train_generator, validation_generator, test_generator, models=['ResNet50', 'EfficientNetB0', 'DenseNet121'], save_model_path='../../trained_models'):
+def create_ensemble_model(train_generator, validation_generator, test_generator, class_weights, models=['ResNet50', 'EfficientNetB0', 'DenseNet121'], save_model_path='../../trained_models'):
     os.makedirs(save_model_path, exist_ok=True)
 
     # Step 1: Train each model and collect predictions
@@ -68,8 +68,11 @@ def create_ensemble_model(train_generator, validation_generator, test_generator,
         print("\n")
         print(f"##### Training {model_name} #####")
         print("\n")
+        print(f" Class weights passing to model")
+        print(class_weights)
+        print("\n")
         model = create_base_model(model_name=model_name)
-        trained_model, history = train_model(model, train_generator, validation_generator)
+        trained_model, history = train_model(model, train_generator, validation_generator, class_weights)
         base_models.append(trained_model)
         
         # Save the trained model
@@ -135,9 +138,9 @@ def evaluate_model(final_preds, test_generator):
 
 
 # Full pipeline for training and evaluating the ensemble model
-def run_ensemble_model(train_generator, validation_generator, test_generator):
+def run_ensemble_model(train_generator, validation_generator, test_generator, class_weights):
     # Step 1: Create and train the ensemble model
-    meta_model, final_preds, test_generator = create_ensemble_model(train_generator, validation_generator, test_generator)
+    meta_model, final_preds, test_generator = create_ensemble_model(train_generator, validation_generator, test_generator, class_weights)
 
     # Step 2: Evaluate the model
     evaluate_model(final_preds, test_generator)

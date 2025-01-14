@@ -3,6 +3,8 @@ import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.utils.class_weight import compute_class_weight
+import numpy as np
 
 def split_data_by_lesion(metadata):
     """
@@ -29,6 +31,21 @@ def aggregate_predictions_by_lesion(predictions, metadata):
     aggregated = metadata.groupby('lesion_id')['prediction'].mean().reset_index()
     return aggregated
 
+def calculate_class_weights(metadata, label_column='label'):
+    """
+    Calculates class weights to handle class imbalance.
+    :param metadata: DataFrame containing metadata with labels.
+    :param label_column: The column name containing class labels.
+    :return: Dictionary of class weights.
+    """
+    unique_labels = metadata[label_column].unique()
+    class_weights = compute_class_weight(
+        class_weight='balanced',
+        classes=unique_labels,
+        y=metadata[label_column]
+    )
+    return {i: weight for i, weight in zip(unique_labels, class_weights)}
+
 def get_data_generators(
     metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv',
     target_size=(224, 224),
@@ -42,10 +59,11 @@ def get_data_generators(
 
         print("##### GETTING DATA GENERATORS #####\n")
         print("\n")
+
         # Load metadata
         print("Loading metadata...")
         metadata = pd.read_csv(metadata_path)
-        
+
         print("\n")
         print("##### TOP FIVE SAMPLE DATA #####")
         print("\n")
@@ -72,7 +90,7 @@ def get_data_generators(
             # Ensure balanced sampling across all classes
             metadata = metadata.groupby('dx').apply(lambda x: x.sample(n=sample_size // unique_classes, random_state=42)).reset_index(drop=True)
             print(f"Using a balanced subset of {sample_size} samples.")
-        
+
         print(f"Metadata: {metadata.head()}")  # Check first few rows
         print("\n")
 
@@ -90,6 +108,11 @@ def get_data_generators(
         train_metadata, val_metadata, test_metadata = split_data_by_lesion(metadata)
         print("\n")
 
+        # Calculate class weights for training data
+        print("Calculating class weights...")
+        class_weights = calculate_class_weights(train_metadata, label_column='label')
+        print(f"Class Weights: {class_weights}")
+
         # Data augmentation
         train_datagen = ImageDataGenerator(
             rescale=1.0 / 255,
@@ -105,7 +128,7 @@ def get_data_generators(
 
         # Validation Data Normalization Only
         validation_datagen = ImageDataGenerator(rescale=1.0 / 255)
-        
+
         # Testing Data Normalization Only
         test_datagen = ImageDataGenerator(rescale=1.0 / 255)
 
@@ -128,10 +151,6 @@ def get_data_generators(
         print(f"x_batch dtype: {x_batch.dtype}")
         print(f"y_batch dtype: {y_batch.dtype}")
 
-        # Example check
-        x_batch, y_batch = next(train_generator)  # Get the first batch
-        print(f"First batch input shape: {x_batch.shape}, labels shape: {y_batch.shape}")
-
         # Validation generator
         validation_generator = validation_datagen.flow_from_dataframe(
             dataframe=val_metadata,
@@ -141,7 +160,7 @@ def get_data_generators(
             batch_size=batch_size,
             class_mode='categorical'
         )
-        
+
         # Testing generator (No subset since it's for testing)
         test_generator = test_datagen.flow_from_dataframe(
             dataframe=test_metadata,
@@ -163,10 +182,8 @@ def get_data_generators(
 
         print("Data generators created successfully.")
 
-        return train_generator, validation_generator, test_generator, label_encoder
+        return train_generator, validation_generator, test_generator, label_encoder, class_weights
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        return None, None, None, None
-
-# Status: Original structure and key functionalities retained, new additions made seamlessly.
+        return None, None, None, None, None
