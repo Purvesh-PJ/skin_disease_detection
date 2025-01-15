@@ -52,6 +52,7 @@ def train_model(model, train_generator, validation_generator, class_weights, epo
         validation_data=validation_generator,
         callbacks=[early_stopping],
         verbose=1,
+        class_weight=class_weights
     )
   
   return model, history
