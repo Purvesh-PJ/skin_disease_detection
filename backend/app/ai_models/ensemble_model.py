@@ -39,7 +39,7 @@ def create_base_model(model_name='ResNet50', input_shape=(224, 224, 3), num_clas
 
 
 # Function to train the individual models
-def train_model(model, train_generator, validation_generator, class_weights, epochs=1, batch_size=32):
+def train_model(model, train_generator, validation_generator, class_weight, epochs=1, batch_size=32):
   model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
   
   # Use early stopping to avoid overfitting
@@ -52,7 +52,6 @@ def train_model(model, train_generator, validation_generator, class_weights, epo
         validation_data=validation_generator,
         callbacks=[early_stopping],
         verbose=1,
-        class_weight=class_weights
     )
   
   return model, history
@@ -69,9 +68,9 @@ def create_ensemble_model(train_generator, validation_generator, test_generator,
         print("\n")
         print(f"##### Training {model_name} #####")
         print("\n")
-        print(f" Class weights passing to model")
-        print(class_weights)
-        print("\n")
+        # print(f" Class weights passing to model")
+        # print(class_weights)
+        # print("\n")
         model = create_base_model(model_name=model_name)
         trained_model, history = train_model(model, train_generator, validation_generator, class_weights)
         base_models.append(trained_model)
