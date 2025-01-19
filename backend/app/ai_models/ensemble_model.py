@@ -39,7 +39,7 @@ def create_base_model(model_name='ResNet50', input_shape=(224, 224, 3), num_clas
 
 
 # Function to train the individual models
-def train_model(model, train_generator, validation_generator, class_weight, epochs=1, batch_size=32):
+def train_model(model, train_generator, validation_generator, class_weight, epochs=10, batch_size=32):
   model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
   
   # Use early stopping to avoid overfitting
@@ -66,8 +66,7 @@ def create_ensemble_model(train_generator, validation_generator, test_generator,
     
     for model_name in models:
         print("\n")
-        print(f"##### Training {model_name} #####")
-        print("\n")
+        print(f"########## TRAINING : {model_name} ##########")
         # print(f" Class weights passing to model")
         # print(class_weights)
         # print("\n")
@@ -86,16 +85,14 @@ def create_ensemble_model(train_generator, validation_generator, test_generator,
     
     # Step 2: Stack predictions (combine model outputs)
     print("\n")
-    print("##### STACKING PREDICTIONS FROM BASE MODELS #####")
-    print("\n")
+    print("########## STACKING PREDICTIONS FROM BASE MODELS ##########")
     base_model_preds = np.concatenate(base_model_preds, axis=1)  # Stack predictions horizontally
     print("Shape of base_model_preds:", base_model_preds.shape)
     print("Length of validation_generator.classes:", len(validation_generator.classes))
     
     # Step 3: Train the meta-model (Logistic Regression)
     print("\n")
-    print("##### TRAINING meta-model [ Logistic Regression ] #####")
-    print("\n")
+    print("########## TRAINING : Meta Model Logistic Regression ##########")
     meta_model = LogisticRegression(max_iter=1000)
     meta_model.fit(base_model_preds, validation_generator.classes)  # Ensure alignment
     
@@ -107,8 +104,7 @@ def create_ensemble_model(train_generator, validation_generator, test_generator,
     
     # Step 5: Evaluate the ensemble model
     print("\n")
-    print("##### EVALUATING the ensemble model on the test-set #####")
-    print("\n")
+    print("########## EVALUATING ##########")
     test_preds = []
     for model in base_models:
         test_preds.append(model.predict(test_generator))
@@ -126,13 +122,11 @@ def evaluate_model(final_preds, test_generator):
     true_labels = label_encoder.fit_transform(test_generator.classes)
     
     print("\n")
-    print("##### CLASSIFICATION REPORT #####")
-    print("\n")
+    print("########## CLASSIFICATION REPORT ##########")
     print(classification_report(true_labels, final_preds))
     print("\n")
     
-    print("##### CONFUSION MATRIX #####")
-    print("\n")
+    print("########## CONFUSION MATRIX ##########")
     print(confusion_matrix(true_labels, final_preds))
     print("\n")
 

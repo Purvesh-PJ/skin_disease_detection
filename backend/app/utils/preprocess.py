@@ -18,6 +18,11 @@ def split_data_by_lesion(metadata):
     val_metadata = metadata[metadata['lesion_id'].isin(val_lesions)].reset_index(drop=True)
     test_metadata = metadata[metadata['lesion_id'].isin(test_lesions)].reset_index(drop=True)
 
+    # Debugging: Check for data leakage
+    print("########## CHECKING DATA LEAKAGE ##########")
+    print("Overlap between train and validation lesion_ids:", set(train_metadata['lesion_id']).intersection(set(val_metadata['lesion_id'])))
+    print("Overlap between validation and test lesion_ids:", set(val_metadata['lesion_id']).intersection(set(test_metadata['lesion_id'])))
+
     return train_metadata, val_metadata, test_metadata
 
 def aggregate_predictions_by_lesion(predictions, metadata):
@@ -87,27 +92,18 @@ def calculate_class_weights(metadata, label_column='label'):
 
 
 
-def get_data_generators(
-    metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv',
-    target_size=(224, 224),
-    batch_size=32,
-    sample_size=100,
-    use_subset=True
-):
+def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=None, use_subset=False):
     try:
         folder_1 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
         folder_2 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
 
-        print("##### GETTING DATA GENERATORS #####\n")
-        print("\n")
-
+        print("########## GETTING DATA GENERATORS ##########\n")
         # Load metadata
         print("Loading metadata...")
         metadata = pd.read_csv(metadata_path)
 
         print("\n")
-        print("##### TOP FIVE SAMPLE DATA #####")
-        print("\n")
+        print("########## TOP FIVE SAMPLE DATA ##########")
 
         # Add image paths
         metadata['path'] = metadata['image_id'].apply(
@@ -121,12 +117,12 @@ def get_data_generators(
             unique_classes = metadata['dx'].nunique()
             # Check if sample_size is divisible by the number of classes
             if sample_size % unique_classes != 0:
-                print(f"Warning: sample_size {sample_size} is not evenly divisible by the number of classes ({unique_classes}). Adjusting sample_size.")
+                print(f"WARNING : sample_size {sample_size} is not evenly divisible by the number of classes ({unique_classes}). Adjusting sample_size.")
                 sample_size = (sample_size // unique_classes) * unique_classes
             # Ensure that sample_size per class is reasonable
             min_samples_per_class = metadata['dx'].value_counts().min()
             if sample_size // unique_classes > min_samples_per_class:
-                print(f"Warning: sample_size per class is higher than the smallest class size ({min_samples_per_class}). Reducing sample size.")
+                print(f"WARNING : sample_size per class is higher than the smallest class size ({min_samples_per_class}). Reducing sample size.")
                 sample_size = min_samples_per_class * unique_classes
             # Ensure balanced sampling across all classes
             metadata = metadata.groupby('dx').apply(lambda x: x.sample(n=sample_size // unique_classes, random_state=42)).reset_index(drop=True)
@@ -136,8 +132,7 @@ def get_data_generators(
         print("\n")
 
         # Encode labels to integers and convert them to strings
-        print("##### LABELS #####")
-        print("\n")
+        print("########## LABELS ##########")
         print("Encoding labels...")
         label_encoder = LabelEncoder()
         metadata['label'] = label_encoder.fit_transform(metadata['dx']).astype(str)
@@ -145,15 +140,24 @@ def get_data_generators(
         print("\n")
 
         # Split data by lesion_id
+        print("########## SPLITTING DATA BY LENSION ##########")
         print("Splitting data by lesion_id...")
         train_metadata, val_metadata, test_metadata = split_data_by_lesion(metadata)
         print("\n")
+        
+        # Debugging: Check class distribution
+        print("########## CLASS DISTRIBUTION ##########")
+        print("Train class distribution:", train_metadata['label'].value_counts())
+        print("Validation class distribution:", val_metadata['label'].value_counts())
+        print("\n")
 
         # Calculate class weights for training data
+        print("########## CLASS WEIGHTS ##########")
         print("Calculating class weights...")
         class_weights, label_encoder = calculate_class_weights(train_metadata, label_column='label')
         print(f"Class Weights: {class_weights}")
         print(f"label encoder: {label_encoder}")
+        print("\n")
 
         # Data augmentation
         train_datagen = ImageDataGenerator(
@@ -186,12 +190,13 @@ def get_data_generators(
 
         x_batch, y_batch = next(train_generator)
 
-        print("\n")
-        print("##### BATCH SHAPES #####")
-        print("\n")
+        print("########## BATCH SHAPES ##########")
         print(f"x_batch shape: {x_batch.shape}, y_batch shape: {y_batch.shape}")
-        print(f"x_batch dtype: {x_batch.dtype}")
-        print(f"y_batch dtype: {y_batch.dtype}")
+        print("\n")
+
+        print("########## BATCH TYPES ##########")
+        print(f"x_batch dtype: {x_batch.dtype}, y_batch dtype: {y_batch.dtype}\n")
+        print("\n")
 
         # Validation generator
         validation_generator = validation_datagen.flow_from_dataframe(
@@ -214,9 +219,7 @@ def get_data_generators(
         )
 
         # Check if generators are properly created
-        print("\n")
-        print("##### FINAL GENERATORS #####")
-        print("\n")
+        print("########## FINAL GENERATORS ##########")
         print(f"Train Generator: {train_generator}")
         print(f"Validation Generator: {validation_generator}")
         print(f"Test Generator: {test_generator}")
