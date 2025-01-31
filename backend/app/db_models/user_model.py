@@ -30,3 +30,5 @@ def is_email_taken(email):
     Checks if the email is already taken by an existing user.
     """
     return users_collection.find_one({"email": email}) is not None
+
+
