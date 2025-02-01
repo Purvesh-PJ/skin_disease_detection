@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required
 from flask_bcrypt import Bcrypt
-from app.db_models.user_model import find_user_by_email
+from app.db_models.user_model import find_user_by_email, create_user
 from functools import wraps
 import jwt
 
@@ -29,12 +29,12 @@ def login():
 
 # Registration endpoint
 def is_email_taken(email):
-    # Dummy email-check logic (you'll need to implement this)
-    return False
+    user = find_user_by_email(email)
+    return user is not None
 
-def create_user(username, email, password):
-    # Dummy user creation logic (you'll need to implement this)
-    print(f"Created user {username}, {email}")
+# def create_user(username, email, password):
+#     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+#     create_user(username, email, hashed_password)
 
 @auth_blueprint.route('/register', methods=['POST'])
 def register():
