@@ -36,32 +36,6 @@ def aggregate_predictions_by_lesion(predictions, metadata):
     aggregated = metadata.groupby('lesion_id')['prediction'].mean().reset_index()
     return aggregated
 
-# def calculate_class_weights(metadata, label_column='label', label_encoder=None):
-#     """
-#     Calculates class weights to handle class imbalance.
-#     :param metadata: DataFrame containing metadata with labels.
-#     :param label_column: The column name containing class labels.
-#     :param label_encoder: The LabelEncoder object used for encoding labels.
-#     :return: Dictionary of class weights.
-#     """
-#     # Ensure labels are strings (using the original labels, not encoded ones)
-#     unique_labels = metadata[label_column].unique()
-
-#     # Compute class weights based on the numeric labels
-#     class_weights_numeric = compute_class_weight(
-#         class_weight='balanced',
-#         classes=np.unique(metadata[label_column]),
-#         y=metadata[label_column]
-#     )
-
-#     # Ensure label_encoder is passed properly
-#     if label_encoder is None:
-#         raise ValueError("label_encoder cannot be None")
-
-#     # Map numeric class weights to string labels and convert to native Python float
-#     class_weights_dict = {label_encoder.classes_[i]: float(class_weights_numeric[i]) for i in range(len(class_weights_numeric))}
-
-#     return class_weights_dict
 
 def calculate_class_weights(metadata, label_column='label'):
     """
@@ -89,7 +63,6 @@ def calculate_class_weights(metadata, label_column='label'):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None, None
-
 
 
 def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=None, use_subset=False):
