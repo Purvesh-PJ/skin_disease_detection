@@ -67,8 +67,8 @@ def calculate_class_weights(metadata, label_column='label'):
 
 def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=None, use_subset=False):
     try:
-        folder_1 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
-        folder_2 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
+        folder_1 = r'D:\projects\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
+        folder_2 = r'D:\projects\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
 
         print("########## GETTING DATA GENERATORS ##########\n")
         # Load metadata

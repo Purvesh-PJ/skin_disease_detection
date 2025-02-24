@@ -39,7 +39,7 @@ def create_base_model(model_name='ResNet50', input_shape=(224, 224, 3), num_clas
 
 
 # Function to train the individual models
-def train_model(model, train_generator, validation_generator, class_weight, epochs=10, batch_size=32):
+def train_model(model, train_generator, validation_generator, class_weight, epochs=3, batch_size=32):
   model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
   
   # Use early stopping to avoid overfitting
@@ -60,7 +60,7 @@ def train_model(model, train_generator, validation_generator, class_weight, epoc
 def create_ensemble_model(train_generator, validation_generator, test_generator, class_weights, models=['ResNet50', 'EfficientNetB0', 'DenseNet121'], save_model_path='../../trained_models'):
     os.makedirs(save_model_path, exist_ok=True)
 
-    # Step 1: Train each model and collect predictions
+    # Step 1: Train each model and collect predictionss
     base_models = []
     base_model_preds = []  # List to store predictions from each model
     
