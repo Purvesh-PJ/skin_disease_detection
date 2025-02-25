@@ -1,124 +1,91 @@
-from tensorflow.keras.models import Sequential
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, Input, BatchNormalization, Activation
 from tensorflow.keras import regularizers
-from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
-from utils.preprocess import get_data_generators
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from sklearn.metrics import classification_report, confusion_matrix
 
-def create_custom_cnn(input_shape=(600, 450, 3), num_classes=7):
-    print("Initializing model...")
-    model = Sequential()
 
-    # Use Input layer for specifying the input shape
-    model.add(Input(shape=input_shape))
-    print(f"Input layer added with shape: {input_shape}")
+def create_custom_cnn(input_shape=(224, 224, 3), num_classes=7):
+    """
+    Creates and compiles a custom CNN model.
+    """
+    inputs = Input(shape=input_shape)
 
-    # First Convolutional Block
-    model.add(Conv2D(32, (3, 3), activation=None))  # No activation yet
-    model.add(BatchNormalization())  # BatchNormalization after Conv2D
-    model.add(Activation('relu'))  # ReLU activation after BatchNormalization
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    print("First convolutional block added.")
-    
-    # Second Convolutional Block
-    model.add(Conv2D(64, (3, 3), activation=None))  # No activation yet
-    model.add(BatchNormalization())  # BatchNormalization after Conv2D
-    model.add(Activation('relu'))  # ReLU activation after BatchNormalization
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    print("Second convolutional block added.")
-    
-    # Third Convolutional Block
-    model.add(Conv2D(128, (3, 3), activation=None))  # No activation yet
-    model.add(BatchNormalization())  # BatchNormalization after Conv2D
-    model.add(Activation('relu'))  # ReLU activation after BatchNormalization
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    print("Third convolutional block added.")
-    
-    # Fourth Convolutional Block
-    model.add(Conv2D(256, (3, 3), activation=None))  # No activation yet
-    model.add(BatchNormalization())  # BatchNormalization after Conv2D
-    model.add(Activation('relu'))  # ReLU activation after BatchNormalization
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    print("Fourth convolutional block added.")
-    
-    # Flatten and Fully Connected Layers
-    model.add(Flatten())
-    print("Flatten layer added.")
-    
-    # Add L2 regularization to the Dense layers
-    model.add(Dense(256, activation='relu', kernel_regularizer=regularizers.l2(0.01)))  # Apply L2 regularization
-    model.add(Dropout(0.5))
-    print("Dense layer with 256 units and L2 regularization added.")
-    
-    model.add(Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.01)))  # Apply L2 regularization
-    model.add(Dropout(0.5))
-    print("Dense layer with 128 units and L2 regularization added.")
-    
+    # First Conv Block
+    x = Conv2D(32, (3, 3), padding="same")(inputs)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling2D(pool_size=(2, 2))(x)
+
+    # Second Conv Block
+    x = Conv2D(64, (3, 3), padding="same")(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling2D(pool_size=(2, 2))(x)
+
+    # Third Conv Block
+    x = Conv2D(128, (3, 3), padding="same")(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling2D(pool_size=(2, 2))(x)
+
+    # Fourth Conv Block
+    x = Conv2D(256, (3, 3), padding="same")(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling2D(pool_size=(2, 2))(x)
+
+    # Flatten & Fully Connected Layers
+    x = Flatten()(x)
+    x = Dense(256, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Dropout(0.5)(x)
+    x = Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Dropout(0.5)(x)
+
     # Output Layer
-    model.add(Dense(num_classes, activation='softmax'))
-    print(f"Output layer added for {num_classes} classes.")
-    print("Model Initialization complete successfully")
-    
+    outputs = Dense(num_classes, activation='softmax')(x)
+
+    model = Model(inputs=inputs, outputs=outputs)
+    model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
     return model
 
-# Create the model
-print("-------------------------------")
-print("CREATING CNN MODEL...")
-print("-------------------------------")
-model = create_custom_cnn()
-print("Model created successfully.")
-print("\n")
+def train_custom_cnn(train_generator, validation_generator, save_path="D:/skin_disease_detection/trained_models/custom_cnn/custom_cnn_model.h5", epochs=30):
+    """
+    Trains the custom CNN model with Early Stopping and LR Scheduler.
+    """
+    model = create_custom_cnn(num_classes=len(train_generator.class_indices))
 
-# Compile the model
-print("-------------------------------")
-print("COMPILING CNN MODEL...")
-print("-------------------------------")
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-print("Model compiled successfully.")
-print("\n")
+    # Callbacks
+    early_stopping = EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True, verbose=1)
+    lr_scheduler = ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=3, min_lr=1e-6, verbose=1)
 
-# Get the data generators for training and validation
-print("-------------------------------")
-print("GETTING DATA GENERATORS...")
-print("-------------------------------")
+    history = model.fit(
+        train_generator,
+        epochs=epochs,
+        validation_data=validation_generator,
+        callbacks=[early_stopping, lr_scheduler],
+        verbose=1
+    )
 
-train_generator, validation_generator, label_encoder = get_data_generators(sample_size=1000)
+    model.save(save_path)
+    print(f"Model saved at: {save_path}")
+    return model, history
 
-# Check if the generators are None and handle the error
-if train_generator is None or validation_generator is None:
-    print("Failed to obtain data generators. Exiting...")
-    exit()  # Stop the program to avoid further errors
-print("Data generators obtained successfully.")
+def evaluate_model(model, test_generator):
+    """
+    Evaluates the model and prints classification report & confusion matrix.
+    """
+    test_preds = model.predict(test_generator)
+    y_pred = np.argmax(test_preds, axis=1)
+    y_true = test_generator.classes
 
-# Define learning rate scheduler
-lr_scheduler = ReduceLROnPlateau(
-    monitor='val_loss', factor=0.5, patience=3, min_lr=1e-6, verbose=1
-)
+    print("\n########## CLASSIFICATION REPORT ##########")
+    print(classification_report(y_true, y_pred, target_names=list(test_generator.class_indices.keys())))
 
-early_stopping = EarlyStopping(
-    monitor='val_loss', patience=5, restore_best_weights=True, verbose=1
-)
+    print("\n########## CONFUSION MATRIX ##########")
+    print(confusion_matrix(y_true, y_pred))
 
-# Train the model
-print("Starting model training...")
-model.fit(train_generator, epochs=30, validation_data=validation_generator, callbacks=[lr_scheduler, early_stopping ])
-print("Model training completed.")
 
-# Save the trained model
-print("Saving the trained model...")
-model.save(r'D:\skin_disease_detection\backend\app\static\trained_models\skin_disease_model.h5')
-print("Model saved successfully.")
-
-# Display the model architecture
-print("Displaying model summary...")
-model.summary()
-
-print("-----------------------------------------------")
-print("Evaluation model on validation data")
-print("-----------------------------------------------")
-print("Evaluating model on test data...")
-
-# Assuming the 'validation_generator' contains the data you want to test on
-test_generator = validation_generator  # Use validation data as test data
-
-evaluation = model.evaluate(test_generator)
-print(f"Test Accuracy: {evaluation[1]*100:.2f}%")

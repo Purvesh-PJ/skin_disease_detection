@@ -31,13 +31,12 @@ instance/
 node_modules/
 
 # image uploads
-
 uploads/
-
 data/
-
 trained_models/
 
 # In case Saved trained models
-
 *.pkl
+
+# In case Saved trained models
+*.h5
