@@ -19,6 +19,7 @@ def split_data_by_lesion(metadata):
     test_metadata = metadata[metadata['lesion_id'].isin(test_lesions)].reset_index(drop=True)
 
     # Debugging: Check for data leakage
+    print("\n")
     print("########## CHECKING DATA LEAKAGE ##########")
     print("Overlap between train and validation lesion_ids:", set(train_metadata['lesion_id']).intersection(set(val_metadata['lesion_id'])))
     print("Overlap between validation and test lesion_ids:", set(val_metadata['lesion_id']).intersection(set(test_metadata['lesion_id'])))
@@ -67,8 +68,8 @@ def calculate_class_weights(metadata, label_column='label'):
 
 def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=None, use_subset=False):
     try:
-        folder_1 = r'D:\projects\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
-        folder_2 = r'D:\projects\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
+        folder_1 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
+        folder_2 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
 
         print("########## GETTING DATA GENERATORS ##########\n")
         # Load metadata
@@ -129,6 +130,9 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         print("Calculating class weights...")
         class_weights, label_encoder = calculate_class_weights(train_metadata, label_column='label')
         print(f"Class Weights: {class_weights}")
+        print("\n")
+
+        print("########## ENCODING LABELS ##########")
         print(f"label encoder: {label_encoder}")
         print("\n")
 
@@ -192,10 +196,15 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         )
 
         # Check if generators are properly created
+        print("\n")
         print("########## FINAL GENERATORS ##########")
         print(f"Train Generator: {train_generator}")
         print(f"Validation Generator: {validation_generator}")
         print(f"Test Generator: {test_generator}")
+        print(train_generator.class_indices)  # Check class names
+        print(train_generator.class_mode)  # Should be categorical
+        print(train_generator.batch_size)  # Verify batch size
+        print(train_generator.samples)  # Total samples in train set
         print("\n")
 
         print("Data generators created successfully.")

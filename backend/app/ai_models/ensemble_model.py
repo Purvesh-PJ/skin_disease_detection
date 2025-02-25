@@ -11,36 +11,31 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.models import load_model
 
-
-# Function to create a base model with transfer learning
 def create_base_model(model_name='ResNet50', input_shape=(224, 224, 3), num_classes=7):
-  if model_name == 'ResNet50':
-      base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
-  elif model_name == 'EfficientNetB0':
-      base_model = EfficientNetB0(weights='imagenet', include_top=False, input_shape=input_shape)
-  elif model_name == 'DenseNet121':
-      base_model = DenseNet121(weights='imagenet', include_top=False, input_shape=input_shape)
-  else:
-      raise ValueError("Model name must be 'ResNet50', 'EfficientNetB0', or 'DenseNet121'.")
-
-  # Freeze the base model layers
-  base_model.trainable = False
-  
-  # Add custom top layers
-  x = GlobalAveragePooling2D()(base_model.output)
-  x = Dense(1024, activation='relu')(x)
-  x = Dropout(0.5)(x)
-  output = Dense(num_classes, activation='softmax')(x)
-  
-  # Create the final model
-  model = Model(inputs=base_model.input, outputs=output)
-  
-  return model
-
+    if model_name == 'ResNet50':
+        base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
+    elif model_name == 'EfficientNetB0':
+        base_model = EfficientNetB0(weights='imagenet', include_top=False, input_shape=input_shape)
+    elif model_name == 'DenseNet121':
+        base_model = DenseNet121(weights='imagenet', include_top=False, input_shape=input_shape)
+    
+    # Unfreeze last 10 layers
+    base_model.trainable = True
+    for layer in base_model.layers[:-10]:
+        layer.trainable = False
+    
+    x = GlobalAveragePooling2D()(base_model.output)
+    x = Dense(1024, activation='relu')(x)
+    x = Dropout(0.5)(x)
+    output = Dense(num_classes, activation='softmax')(x)
+    
+    model = Model(inputs=base_model.input, outputs=output)
+    return model
 
 # Function to train the individual models
-def train_model(model, train_generator, validation_generator, class_weight, epochs=3, batch_size=32):
-  model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
+def train_model(model, train_generator, validation_generator, class_weight, epochs=30, batch_size=32):
+    
+  model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
   
   # Use early stopping to avoid overfitting
   early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
@@ -57,7 +52,15 @@ def train_model(model, train_generator, validation_generator, class_weight, epoc
   return model, history
 
 # Function to create the ensemble model
-def create_ensemble_model(train_generator, validation_generator, test_generator, class_weights, models=['ResNet50', 'EfficientNetB0', 'DenseNet121'], save_model_path='../../trained_models'):
+def create_ensemble_model(
+        train_generator, 
+        validation_generator, 
+        test_generator, 
+        class_weights, 
+        models=['ResNet50', 'EfficientNetB0', 'DenseNet121'], 
+        save_model_path='../../trained_models'
+    ):
+    
     os.makedirs(save_model_path, exist_ok=True)
 
     # Step 1: Train each model and collect predictionss
@@ -135,6 +138,5 @@ def evaluate_model(final_preds, test_generator):
 def run_ensemble_model(train_generator, validation_generator, test_generator, class_weights):
     # Step 1: Create and train the ensemble model
     meta_model, final_preds, test_generator = create_ensemble_model(train_generator, validation_generator, test_generator, class_weights)
-
     # Step 2: Evaluate the model
     evaluate_model(final_preds, test_generator)
