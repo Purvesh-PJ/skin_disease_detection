@@ -52,7 +52,7 @@ def create_custom_cnn(input_shape=(224, 224, 3), num_classes=7):
     model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
     return model
 
-def train_custom_cnn(train_generator, validation_generator, save_path="D:/skin_disease_detection/trained_models/custom_cnn/custom_cnn_model.h5", epochs=30):
+def train_custom_cnn(train_generator, validation_generator, save_path="../../trained_models/", epochs=30):
     """
     Trains the custom CNN model with Early Stopping and LR Scheduler.
     """

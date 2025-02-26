@@ -5,6 +5,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
+from tensorflow.keras.applications.efficientnet import preprocess_input
 
 def split_data_by_lesion(metadata):
     """
@@ -39,25 +40,19 @@ def aggregate_predictions_by_lesion(predictions, metadata):
 
 
 def calculate_class_weights(metadata, label_column='label'):
-    """
-    Calculate class weights based on the dataset's labels.
-    """
     try:
-        # Fit LabelEncoder on string labels
         label_encoder = LabelEncoder()
-        metadata['encoded_label'] = label_encoder.fit_transform(metadata[label_column])
+        encoded_labels = label_encoder.fit_transform(metadata[label_column])
 
-        # Compute class weights
-        encoded_labels = metadata['encoded_label']
         class_weights_raw = compute_class_weight(
             class_weight='balanced',
             classes=np.unique(encoded_labels),
             y=encoded_labels
         )
 
-        # Map numeric indices to class weights
-        class_weights = {i: weight for i, weight in enumerate(class_weights_raw)}
+        class_weights = {int(label): float(weight) for label, weight in zip(np.unique(encoded_labels), class_weights_raw)}
 
+        print("########## CLASS WEIGHTS ##########")
         print("Class Weights:", class_weights)
         return class_weights, label_encoder
 
@@ -138,7 +133,7 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
 
         # Data augmentation
         train_datagen = ImageDataGenerator(
-            rescale=1.0 / 255,
+            preprocessing_function=preprocess_input,
             rotation_range=20,
             width_shift_range=0.2,
             height_shift_range=0.2,
@@ -150,10 +145,10 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         )
 
         # Validation Data Normalization Only
-        validation_datagen = ImageDataGenerator(rescale=1.0 / 255)
+        validation_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
 
         # Testing Data Normalization Only
-        test_datagen = ImageDataGenerator(rescale=1.0 / 255)
+        test_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
 
         # Generators
         train_generator = train_datagen.flow_from_dataframe(
@@ -201,10 +196,6 @@ def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\H
         print(f"Train Generator: {train_generator}")
         print(f"Validation Generator: {validation_generator}")
         print(f"Test Generator: {test_generator}")
-        print(train_generator.class_indices)  # Check class names
-        print(train_generator.class_mode)  # Should be categorical
-        print(train_generator.batch_size)  # Verify batch size
-        print(train_generator.samples)  # Total samples in train set
         print("\n")
 
         print("Data generators created successfully.")

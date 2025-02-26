@@ -58,7 +58,7 @@ def create_ensemble_model(
         test_generator, 
         class_weights, 
         models=['ResNet50', 'EfficientNetB0', 'DenseNet121'], 
-        save_model_path='D:\skin_disease_detection\trained_models\single_efficientnetb3'
+        save_model_path='../../trained_models/'
     ):
     
     os.makedirs(save_model_path, exist_ok=True)

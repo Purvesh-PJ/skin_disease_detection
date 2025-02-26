@@ -33,6 +33,7 @@ node_modules/
 # image uploads
 uploads/
 data/
+data2/
 trained_models/
 
 # In case Saved trained models
