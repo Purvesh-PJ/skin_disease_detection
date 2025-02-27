@@ -5,7 +5,7 @@ from tensorflow.keras.applications import EfficientNetB3
 from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from sklearn.metrics import classification_report, confusion_matrix
 
 def create_efficientnetb3(input_shape=(224, 224, 3), num_classes=7):
@@ -26,7 +26,7 @@ def create_efficientnetb3(input_shape=(224, 224, 3), num_classes=7):
     
     model = Model(inputs=base_model.input, outputs=output)
     
-    model.compile(optimizer=Adam(learning_rate=1e-5), loss="categorical_crossentropy", metrics=["accuracy"])
+    model.compile(optimizer=Adam(learning_rate=1e-4), loss="categorical_crossentropy", metrics=["accuracy"])
     return model
 
 def train_efficientnetb3(train_generator, val_generator, class_weights, save_path="../../trained_models/efficientnetb3.h5", epochs=30):
@@ -35,13 +35,15 @@ def train_efficientnetb3(train_generator, val_generator, class_weights, save_pat
     """
     model = create_efficientnetb3(num_classes=len(train_generator.class_indices))
     
+    # CALLBACKS
     early_stopping = EarlyStopping(monitor="val_loss", patience=3, restore_best_weights=True)
+    reduce_lr = ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=3, min_lr=1e-6, verbose=1)
     
     history = model.fit(
         train_generator,
         epochs=epochs,
         validation_data=val_generator,
-        callbacks=[early_stopping],
+        callbacks=[early_stopping, reduce_lr],
         verbose=1
     )
     
