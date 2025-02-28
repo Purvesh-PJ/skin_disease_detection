@@ -34,6 +34,7 @@ node_modules/
 uploads/
 data/
 data2/
+own_data/
 trained_models/
 
 # In case Saved trained models
