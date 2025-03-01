@@ -28,7 +28,7 @@ def create_efficientnetb3(input_shape=(224, 224, 3), num_classes=7):
     model.compile(optimizer=Adam(learning_rate=1e-4), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     return model
 
-def train_efficientnetb3(train_generator, val_generator, class_weights, save_path="../../trained_models/efficientnetb3.h5", epochs=1):
+def train_efficientnetb3(train_generator, val_generator, class_weights, save_path="../../trained_models/efficientnetb3.h5", epochs=30):
     """
     Trains EfficientNetB3 with Early Stopping.
     """
