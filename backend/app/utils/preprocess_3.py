@@ -34,14 +34,18 @@ def create_train_transform(target_size=(224, 224)):
     height, width = target_size
     return A.Compose([
         A.HorizontalFlip(p=0.5),
-        A.Rotate(limit=15, p=0.5),
-        A.RandomBrightnessContrast(p=0.2),
+        # DEFAULT A.Rotate(limit=15, p=0.5),
+        # A.Rotate(limit=15, p=0.5, border_mode=cv2.BORDER_REFLECT_101, interpolation=cv2.INTER_LINEAR),
+        A.Rotate(limit=15, p=0.5, border_mode=cv2.BORDER_REFLECT_101, interpolation=cv2.INTER_LINEAR),
+        # DEFAULT A.RandomBrightnessContrast(p=0.2),
+        # A.RandomBrightnessContrast(p=0.1, brightness_limit=0.1, contrast_limit=0.1), 
+        A.RandomBrightnessContrast(p=0.2, brightness_limit=0.1, contrast_limit=0.1),
         A.OneOf([
             A.GaussianBlur(blur_limit=3, p=0.2),
             A.MotionBlur(blur_limit=3, p=0.2)
         ], p=0.3),
         # Prev scale is 0.8, 1.0
-        A.RandomResizedCrop(size=(height, width), scale=(0.9, 1.0), ratio=(0.75, 1.33), p=0.5), 
+        A.RandomResizedCrop(size=(height, width), scale=(0.8, 1.0), ratio=(0.75, 1.33), p=0.5), 
         # Always resize to ensure all outputs have the same dimensions
         A.Resize(height=height, width=width)
     ])
@@ -111,14 +115,27 @@ class CustomDataGenerator(Sequence):
         """Displays 4-5 sample images from the batch with class labels."""
         num_samples = min(5, len(images))
         plt.figure(figsize=(8, 3))  # Smaller figure for displayed images
+        
         for i in range(num_samples):
             plt.subplot(1, num_samples, i + 1)
-            # Rescale from [-1, 1] to [0, 1] for visualization
-            plt.imshow((images[i] + 1) / 2)  
+            
+            img = images[i]  
+            
+            # **Step 1: Handle Different Normalization Methods**
+            if img.min() < 0:  # Assuming `[-1, 1]` normalization
+                img = (img + 1) / 2  # Rescale to [0, 1]
+            elif img.max() > 1:  # Assuming `[0, 255]` range
+                img = img / 255.0  # Normalize to [0, 1]
+
+            # **Step 2: Ensure Correct Color Format**
+            if img.shape[-1] == 3:  # Check if RGB
+                img = np.clip(img, 0, 1)  # Ensure valid range
+
+            plt.imshow(img)
             plt.title(f"Class {labels[i]}")
             plt.axis("off")
         plt.show()
-    
+
     def on_epoch_end(self):
         if self.shuffle:
             np.random.shuffle(self.indexes)
@@ -127,7 +144,7 @@ def get_data_generators(
     base_dir=r'D:\\skin_disease_detection\\backend\\own_data\\base_dir', 
     target_size=(224, 224), 
     batch_size=64,
-    display_samples=True
+    display_samples=False
 ):
     """
     Creates training, validation, and test data generators using Albumentations.

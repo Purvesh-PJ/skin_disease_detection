@@ -36,6 +36,7 @@ data/
 data2/
 own_data/
 trained_models/
+aug/
 
 # In case Saved trained models
 *.pkl
