@@ -34,19 +34,13 @@ def create_train_transform(target_size=(224, 224)):
     height, width = target_size
     return A.Compose([
         A.HorizontalFlip(p=0.5),
-        # DEFAULT A.Rotate(limit=15, p=0.5),
-        # A.Rotate(limit=15, p=0.5, border_mode=cv2.BORDER_REFLECT_101, interpolation=cv2.INTER_LINEAR),
         A.Rotate(limit=15, p=0.5, border_mode=cv2.BORDER_REFLECT_101, interpolation=cv2.INTER_LINEAR),
-        # DEFAULT A.RandomBrightnessContrast(p=0.2),
-        # A.RandomBrightnessContrast(p=0.1, brightness_limit=0.1, contrast_limit=0.1), 
         A.RandomBrightnessContrast(p=0.2, brightness_limit=0.1, contrast_limit=0.1),
-        A.OneOf([
-            A.GaussianBlur(blur_limit=3, p=0.2),
-            A.MotionBlur(blur_limit=3, p=0.2)
-        ], p=0.3),
-        # Prev scale is 0.8, 1.0
+        A.Sharpen(alpha=(0.2, 0.5), lightness=(0.5, 1.0), p=0.3),  # 🔥 Sharpens images
+        A.Emboss(alpha=(0.1, 0.4), strength=(0.2, 0.5), p=0.3),    # 🔥 Enhances texture
+        # A.UnsharpMask(blur_limit=(3, 5), sigma_limit=0.5, p=0.3),  # 🔥 Extra sharpening
+        # A.CLAHE(clip_limit=2.0, tile_grid_size=(8, 8), p=0.2),     # 🔥 Improves local contrast
         A.RandomResizedCrop(size=(height, width), scale=(0.8, 1.0), ratio=(0.75, 1.33), p=0.5), 
-        # Always resize to ensure all outputs have the same dimensions
         A.Resize(height=height, width=width)
     ])
 

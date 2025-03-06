@@ -6,26 +6,41 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout, Batc
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from sklearn.metrics import classification_report, confusion_matrix
+from tensorflow.keras.layers import LeakyReLU
 import numpy as np
 import os
 
 # Function to create the DenseNet121 model
 def create_densenet121_model(input_shape=(224, 224, 3), num_classes=7):
+    """
+    Creates and compiles a DenseNet121 model for skin disease classification.
+    - Base model is set to trainable, but the first 50 layers are frozen.
+    """
+    
+    # Load DenseNet121 with pretrained ImageNet weights (excluding top layers)
     base_model = DenseNet121(weights='imagenet', include_top=False, input_shape=input_shape)
-    base_model.trainable = False  # Freeze base model layers
+    base_model.trainable = True  
+    for layer in base_model.layers[:-70]:  # Unfreeze more layers
+        layer.trainable = False  
 
     x = GlobalAveragePooling2D()(base_model.output)
-    x = Dense(512, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(1e-4))(x)
-    x = BatchNormalization()(x)  # Add BatchNorm
-    x = Dropout(0.3)(x)
+    x = BatchNormalization()(x)  # Normalize before activation
+    x = Dense(512, kernel_regularizer=tf.keras.regularizers.l2(1e-4))(x)
+    x = LeakyReLU(alpha=0.1)(x)  # Use LeakyReLU
+    x = Dropout(0.5)(x)  # Increase dropout
 
-    x = Dense(256, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(1e-4))(x)
-    x = BatchNormalization()(x)  # Add BatchNorm
-    x = Dropout(0.3)(x)
+    x = BatchNormalization()(x)
+    x = Dense(256, kernel_regularizer=tf.keras.regularizers.l2(1e-4))(x)
+    x = LeakyReLU(alpha=0.1)(x)  # Use LeakyReLU
+    x = Dropout(0.5)(x)
 
     output = Dense(num_classes, activation='softmax')(x)
 
     model = Model(inputs=base_model.input, outputs=output)
+    model.compile(optimizer=Adam(learning_rate=1e-4),  # Reduce learning rate
+                loss="sparse_categorical_crossentropy",
+                metrics=["accuracy"])
+
     return model
 
 # Function to train the DenseNet121 model
@@ -40,8 +55,10 @@ def train_densenet121_model(train_generator, val_generator, class_weights, save_
     )
 
     callbacks = [
-        ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1),
-        EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True, verbose=1)
+        # ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1),
+        # EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True, verbose=1)
+        EarlyStopping(monitor="val_loss", patience=3, restore_best_weights=True, verbose=1),
+        ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=3, min_lr=1e-6, verbose=1)
     ]
 
     history = model.fit(
@@ -57,18 +74,16 @@ def train_densenet121_model(train_generator, val_generator, class_weights, save_
     return model, history
 
 # Function to evaluate the DenseNet121 model
-def evaluate_densenet121_model(model_path, test_generator):
-    model = load_model(model_path)
+def evaluate_densenet121_model(model, test_generator):
+    """
+    Evaluates the model and prints classification report & confusion matrix.
+    """
+    test_preds = model.predict(test_generator)
+    y_pred = np.argmax(test_preds, axis=1)
     y_true = test_generator.classes
-    y_pred = np.argmax(model.predict(test_generator), axis=1)
-
     print("\n########## CLASSIFICATION REPORT ##########")
     print(classification_report(y_true, y_pred, target_names=list(test_generator.class_indices.keys())))
-
     print("\n########## CONFUSION MATRIX ##########")
     print(confusion_matrix(y_true, y_pred))
 
-# Example usage:
-# train_generator, val_generator, test_generator, class_weights = get_data_generators()
-# model, history = train_densenet121_model(train_generator, val_generator, class_weights)
-# evaluate_densenet121_model('../../trained_models/densenet121.h5', test_generator)
+
