@@ -1,11 +1,17 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications import ResNet101
-from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
+from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, Activation
 from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.metrics import classification_report, confusion_matrix
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.optimizers.schedules import ExponentialDecay
+
+# Learning Rate Schedule
+initial_lr = 1e-4
+lr_schedule = ExponentialDecay(initial_lr, decay_steps=10000, decay_rate=0.9, staircase=True)
 
 def create_resnet101(input_shape=(224, 224, 3), num_classes=7):
     """
@@ -19,18 +25,26 @@ def create_resnet101(input_shape=(224, 224, 3), num_classes=7):
         layer.trainable = False
 
     x = GlobalAveragePooling2D()(base_model.output)
-    x = Dense(1024, activation="relu")(x)
+    x = Dense(1024, kernel_regularizer=l2(0.0001))(x)
+    x = Activation("mish")(x)
+    x = BatchNormalization()(x)
     x = Dropout(0.5)(x)
+    
+    x = Dense(512, kernel_regularizer=l2(0.0001))(x)
+    x = Activation("mish")(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.4)(x)
+    
     output = Dense(num_classes, activation="softmax")(x)
 
     model = Model(inputs=base_model.input, outputs=output)
-    model.compile(optimizer=Adam(learning_rate=1e-4), 
+    model.compile(optimizer=SGD(learning_rate=lr_schedule, momentum=0.9, weight_decay=1e-4), 
                   loss="sparse_categorical_crossentropy", 
                   metrics=["accuracy"])
     return model
 
 def train_resnet101(train_generator, val_generator, class_weights, 
-                     save_path="../../trained_models/resnet101.h5", epochs=30):
+                     save_path="../../trained_models/resnet101.h5", epochs=25):
     """
     Trains ResNet101 with Early Stopping.
     """
@@ -38,8 +52,7 @@ def train_resnet101(train_generator, val_generator, class_weights,
     model = create_resnet101(num_classes=num_classes)
 
     callbacks = [
-        EarlyStopping(monitor="val_loss", patience=3, restore_best_weights=True),
-        ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=3, min_lr=1e-6, verbose=1)
+        EarlyStopping(monitor="val_loss", patience=3, restore_best_weights=True)
     ]
 
     history = model.fit(
