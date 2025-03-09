@@ -39,7 +39,14 @@ export const FileInput = styled.input`
   box-sizing: border-box;
   border: 2px dashed gray;
   border-radius: 5px;
-  background-color : white;
+  background-color: white;
+  
+  &:disabled {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
 `;
 
 export const UploadButton = styled.button`
@@ -52,10 +59,17 @@ export const UploadButton = styled.button`
   cursor: pointer;
   font-size: 1em;
   width: 100%;
+  transition: all 0.3s ease;
   
-  &:hover {
-    background-color: white;
-    color : black;
+  &:hover:not(:disabled) {
+    background-color: #f1f5f9;
+    color: black;
+  }
+  
+  &:disabled {
+    background-color: #d1d5db;
+    color: #6b7280;
+    cursor: not-allowed;
   }
 `;
 
