@@ -3,6 +3,7 @@ import { UploadContainer, ImagePlaceholder, FileInput, UploadButton, ImagePrevie
 import useSkinDiseasePrediction from '../hooks/useSkinDiseasePrediction';
 import Disease_icon from '../resources/icons/disease_icon.png';
 import styled from "styled-components";
+import { FiUpload } from 'react-icons/fi';
 
 const Container = styled.div`
     display: flex;
@@ -10,15 +11,31 @@ const Container = styled.div`
     width: 100%;
     max-width: 1200px;
     background-color: white;
-    height: 750px;
+    min-height: 600px;
+    max-height: calc(100vh - 100px);
     border-radius: 20px;
     box-sizing: border-box;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    overflow: auto;
+    
+    @media (max-width: 1024px) {
+        flex-direction: column;
+        max-height: none;
+        height: auto;
+    }
+    
+    @media (max-width: 768px) {
+        border-radius: 10px;
+    }
 `;
 
 const ImageUploadSection = styled.div`
     width: 50%;
     box-sizing: border-box;
+    
+    @media (max-width: 1024px) {
+        width: 100%;
+    }
 `;
 
 const ResultDisplaySection = styled.div`
@@ -29,6 +46,18 @@ const ResultDisplaySection = styled.div`
     border: 2px dashed #ccc;
     border-radius: 20px;
     text-align: center;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    
+    @media (max-width: 1024px) {
+        width: 100%;
+        margin: 10px 5px;
+    }
+    
+    @media (max-width: 768px) {
+        border-radius: 10px;
+    }
 `;
 
 const Heading = styled.p`
@@ -108,7 +137,7 @@ const ResultCard = styled.div`
 `;
 
 const ResultLabel = styled.span`
-    font-weight: 600;
+    // font-weight: 400;
     color: #334155;
 `;
 
@@ -120,10 +149,16 @@ const ResultSection = styled.div`
     margin-bottom: 12px;
 `;
 
-const ResultTitle = styled.h3`
-    color: #1e40af;
+const ResultTitle = styled.span`
+    color:rgb(114, 114, 114);
     margin-bottom: 16px;
-    font-size: 18px;
+    font-size: 16px;
+    // margin-left: auto;
+    // margin-right: auto;
+    background-color:rgba(219, 219, 219, 0.55);
+    padding: 4px;
+    border-radius: 8px;
+    border : 1px solid lightgray;
 `;
 
 const NestedResultContainer = styled.div`
@@ -132,7 +167,7 @@ const NestedResultContainer = styled.div`
 `;
 
 const DiseaseDescription = styled.p`
-    color: #4b5563;
+    color:rgb(87, 87, 87);
     font-size: 16px;
     line-height: 1.5;
     margin: 12px 0;
@@ -140,9 +175,77 @@ const DiseaseDescription = styled.p`
 `;
 
 const DiseaseName = styled.h4`
-    color: #1e3a8a;
-    font-size: 18px;
+    color:rgb(29, 29, 29);
+    font-size: 20px;
     margin: 16px 0 8px 0;
+`;
+
+const MessageBox = styled.div`
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 40px 30px;
+    margin: 40px auto;
+    // margin-top : auto;
+    // margin-bottom : auto;
+    text-align: center;
+    width: 80%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    p {
+        color: #64748b;
+        font-size: 14px;
+        margin: 10px 0 0 0;
+        font-weight: 500;
+    }
+`;
+
+const IconWrapper = styled.div`
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    background-color: #f0f9ff;
+    border: 2px solid #93c5fd;
+    border-radius: 50%;
+    color: #3b82f6;
+    font-size: 18px;
+`;
+
+const UploadArrow = styled.div`
+    position: relative;
+    width: 24px;
+    height: 24px;
+    
+    /* Vertical line */
+    &::before {
+        content: "";
+        position: absolute;
+        width: 3px;
+        height: 18px;
+        background-color: gray;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0;
+    }
+    
+    /* Arrow head */
+    &::after {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-top: 3px solid gray;
+        border-left: 3px solid gray;
+        transform: translateX(-50%) rotate(45deg);
+        left: 50%;
+        top: 0;
+    }
 `;
 
 const DiseasePredictorTool = () => {
@@ -328,7 +431,7 @@ const DiseasePredictorTool = () => {
                             {statusMessage && (
                                 <SuccessMessage>{statusMessage}</SuccessMessage>
                             )}
-                            <ResultTitle>Prediction Results</ResultTitle>
+                            <ResultTitle>Predicted disease</ResultTitle>
                             
                             {/* Display full disease name */}
                             <DiseaseName>{getFullDiseaseName(predictionResult)}</DiseaseName>
@@ -350,7 +453,12 @@ const DiseasePredictorTool = () => {
                         </ResultCard>
                     </ResultContainer>
                 ) : (
-                    <ResultText>Upload an image to see prediction results.</ResultText>
+                    <MessageBox>
+                        <IconWrapper>
+                            <FiUpload />
+                        </IconWrapper>
+                        <p>Upload an image to see prediction results.</p>
+                    </MessageBox>
                 )}
             </ResultDisplaySection>
         </Container>

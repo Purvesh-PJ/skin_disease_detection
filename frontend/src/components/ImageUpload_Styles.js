@@ -5,12 +5,24 @@ export const UploadContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height : 740px;
+  height: auto;
+  min-height: 600px;
+  max-height: calc(100vh - 120px);
   margin: 5px;
   padding: 20px;
   border: 2px dashed #ccc;
   border-radius: 20px;
-  box-sizing : border-box;
+  box-sizing: border-box;
+  overflow-y: auto;
+  
+  @media (max-width: 1024px) {
+    min-height: 500px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 15px;
+    border-radius: 10px;
+  }
 `;
 
 export const ImagePlaceholder = styled.div`
@@ -18,18 +30,36 @@ export const ImagePlaceholder = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-with : 250px;
-  height: 400px;
+  height: 300px;
   background-color: #f1f5f9;
   border-radius: 20px;
   margin-bottom: 15px;
   font-size: 2em;
   color: #aaa;
+  
+  @media (max-width: 768px) {
+    height: 250px;
+    border-radius: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    height: 200px;
+  }
 `;
 
 export const Image = styled.img`
-  width : 120px;
-  height : 120px;
+  width: 120px;
+  height: 120px;
+  
+  @media (max-width: 768px) {
+    width: 100px;
+    height: 100px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 80px;
+    height: 80px;
+  }
 `;
 
 export const FileInput = styled.input`
@@ -74,11 +104,19 @@ export const UploadButton = styled.button`
 `;
 
 export const ImagePreview = styled.img`
-  width : 100%;
-  height : 400px;
+  width: 100%;
+  height: 300px;
   border-radius: 10px;
-  object-fit: cover;
-  margin-bottom: 15px;
+  // object-fit: cover;
+  // margin-bottom: 15px;
+  
+  @media (max-width: 768px) {
+    height: 250px;
+  }
+  
+  @media (max-width: 480px) {
+    height: 200px;
+  }
 `;
 
 export const Note = styled.p`
@@ -87,11 +125,11 @@ export const Note = styled.p`
   color: #666;
   text-align: center;
   background-color: #f3f4f6;
-  padding : 10px;
-  border-radius : 8px;
+  padding: 10px;
+  border-radius: 8px;
 `;
 
 export const Paragraph = styled.p`
-  color : #475569;
+  color: #475569;
   text-align: center;
 `;

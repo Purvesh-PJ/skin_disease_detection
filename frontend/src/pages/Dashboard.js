@@ -22,15 +22,16 @@ const Dashboard = () => {
     <Container>
 
       <Header>
-
+        <div style={{ width: '150px' }}></div>
+        
         <HeadingContainer>
-          <Heading>Skin disease predictor</Heading>
+          <Heading>Skin Disease Predictor</Heading>
         </HeadingContainer>
 
         <ProfileContainer onClick={toggleDropdown}>
-
           <ProfileImage src={Default_Profile} />
-          <Username>{ User ? User.username : "unknown user" }</Username>
+          <Username>{ User ? User.username : "User" }</Username>
+          <div style={{ width: '5px' }}></div>
   
           {isDropdownOpen && (
             <DropdownMenu>
@@ -39,7 +40,6 @@ const Dashboard = () => {
               </DropdownItem>
             </DropdownMenu>
           )}
-
         </ProfileContainer>
 
       </Header>
