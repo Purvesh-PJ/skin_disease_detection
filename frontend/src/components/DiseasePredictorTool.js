@@ -3,7 +3,7 @@ import { UploadContainer, ImagePlaceholder, FileInput, UploadButton, ImagePrevie
 import useSkinDiseasePrediction from '../hooks/useSkinDiseasePrediction';
 import Disease_icon from '../resources/icons/disease_icon.png';
 import styled from "styled-components";
-import { FiUpload } from 'react-icons/fi';
+import { FiUpload, FiAlertCircle } from 'react-icons/fi';
 
 const Container = styled.div`
     display: flex;
@@ -158,7 +158,7 @@ const ResultTitle = styled.span`
     background-color:rgba(219, 219, 219, 0.55);
     padding: 4px;
     border-radius: 8px;
-    border : 1px solid lightgray;
+    border : 2px solid lightgray;
 `;
 
 const NestedResultContainer = styled.div`
@@ -181,8 +181,8 @@ const DiseaseName = styled.h4`
 `;
 
 const MessageBox = styled.div`
-    background-color: #f8fafc;
-    border-radius: 8px;
+    background-color: #f1f5f9;
+    border-radius: 20px;
     padding: 40px 30px;
     margin: 40px auto;
     // margin-top : auto;
@@ -214,7 +214,13 @@ const IconWrapper = styled.div`
     border: 2px solid #93c5fd;
     border-radius: 50%;
     color: #3b82f6;
-    font-size: 18px;
+    font-size: 28px;
+`;
+
+const ErrorIconWrapper = styled(IconWrapper)`
+    color: #dc2626;
+    background-color: #fee2e2;
+    border: 2px solid #fca5a5;
 `;
 
 const UploadArrow = styled.div`
@@ -408,7 +414,6 @@ const DiseasePredictorTool = () => {
                     >
                         {loading ? "Processing..." : "Upload"}
                     </UploadButton>
-                    {error && <ErrorMessage><strong>error : </strong>{error.response?.data?.message || "An error occurred while processing the image."}</ErrorMessage>}
                     <Note>
                         <strong>WARNING:</strong> This model is trained only for skin disease images. Other images may not work.
                     </Note>
@@ -425,6 +430,18 @@ const DiseasePredictorTool = () => {
                         <LoadingText>Analyzing image...</LoadingText>
                         <ResultText>Please wait while we process your image</ResultText>
                     </ResultContainer>
+                ) : error ? (
+                    <MessageBox style={{ 
+                        backgroundColor: '#fef2f2', 
+                        border: '1px dashed #fca5a5' 
+                    }}>
+                        <ErrorIconWrapper>
+                            <FiAlertCircle />
+                        </ErrorIconWrapper>
+                        <p style={{ color: '#dc2626' }}>
+                            {error.response?.data?.message || "An error occurred while processing the image. Please check your connection and try again."}
+                        </p>
+                    </MessageBox>
                 ) : predictionResult ? (
                     <ResultContainer>
                         <ResultCard>
@@ -455,9 +472,9 @@ const DiseasePredictorTool = () => {
                 ) : (
                     <MessageBox>
                         <IconWrapper>
-                            <FiUpload />
+                            <FiUpload size={25} />
                         </IconWrapper>
-                        <p>Upload an image to see prediction results.</p>
+                        <p style={{ color: '#1da6dd  ' }}>Upload an image to see prediction results.</p>
                     </MessageBox>
                 )}
             </ResultDisplaySection>

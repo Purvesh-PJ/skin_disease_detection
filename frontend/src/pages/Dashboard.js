@@ -25,7 +25,7 @@ const Dashboard = () => {
         <div style={{ width: '150px' }}></div>
         
         <HeadingContainer>
-          <Heading>Skin Disease Predictor</Heading>
+          <Heading>Skin disease predictor</Heading>
         </HeadingContainer>
 
         <ProfileContainer onClick={toggleDropdown}>
