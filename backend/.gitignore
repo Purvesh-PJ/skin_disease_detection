@@ -38,6 +38,7 @@ own_data/
 own_data_2/
 trained_models/
 aug/
+base_dir/
 
 # In case Saved trained models
 *.pkl
