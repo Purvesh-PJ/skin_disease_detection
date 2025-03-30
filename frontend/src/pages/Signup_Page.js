@@ -114,6 +114,7 @@ const LinkText = styled.p`
 `;
 
 const Signup = () => {
+  
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -132,7 +133,8 @@ const Signup = () => {
       const userData = { username, email, password }; // Collect all data
       await register(userData); // Pass the userData object to the service
       window.location.href = '/dashboard'; // Redirect after successful signup
-    } catch (err) {
+    } 
+    catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     }
   };
@@ -148,34 +150,10 @@ const Signup = () => {
         <RightColumn>
           <Form onSubmit={handleSubmit}>
             <Heading>Sign Up</Heading>
-            <Input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-            <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
+            <Input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} require />
+            <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} require />
+            <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} require />
+            <Input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} require />
             {error && <ErrorMessage>{error}</ErrorMessage>}
             <Button type="submit">Sign Up</Button>
             <hr />

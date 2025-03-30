@@ -255,6 +255,7 @@ const UploadArrow = styled.div`
 `;
 
 const DiseasePredictorTool = () => {
+
     const [selectedImage, setSelectedImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [predictionResult, setPredictionResult] = useState(null);
@@ -483,5 +484,12 @@ const DiseasePredictorTool = () => {
 };
 
 export default DiseasePredictorTool;
+
+
+
+
+
+
+
 
 

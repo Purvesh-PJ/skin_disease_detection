@@ -1,50 +1,96 @@
-# Skin disease detection using ensenble learning
+# Skin Disease Detection using Ensemble Learning
 
-This project focuses on developing a machine learning-based system to detect `Skin Diseases` using `Ensemble learning technique`.The system will analyze images of skin conditions to classify various diseases, helping improve diagnosis. Ensemble learning combines multiple algorithms to improve predictive accuracy, offering a robust approach to handling complex and diverse medical image data.
+## Overview
+This project implements an advanced machine learning system for detecting skin diseases using ensemble learning techniques. The system analyzes skin condition images to accurately classify various dermatological conditions, aiding in medical diagnosis. By leveraging ensemble learning, which combines multiple deep learning models, we achieve higher predictive accuracy and robustness in handling diverse medical image data.
+
+## Features
+- Multi-model ensemble learning approach
+- Support for various skin disease classifications
+- User-friendly web interface
+- Secure authentication system
+- Real-time image processing and prediction
+- High accuracy through combined model predictions
+
+## Tech Stack
+- **Frontend**: React.js
+- **Backend**: Flask (Python)
+- **Machine Learning**: TensorFlow/Keras
+- **Database**: MongoDB
+- **Authentication**: JWT
+
+## Prerequisites
+
+Before installation, ensure you have the following installed:
+1. [Node.js](https://nodejs.org/) (v14 or higher)
+2. [Git](https://git-scm.com/downloads)
+3. [Anaconda](https://www.anaconda.com/download/success) (Python 3.12.0)
+4. MongoDB (if using local database)
 
 ## Installation
 
-### STEP 1 : **Install prerequisites**
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Purvesh-PJ/skin_disease_detection.git
+cd skin_disease_detection
+```
 
-1. [Install Node.js](https://nodejs.org/)
-2. [Install Git](https://git-scm.com/downloads)
-3. [Install Anaconda](https://www.anaconda.com/download/success)
+### 2. Backend Setup
 
-### STEP 2 : **Setup project frontend and backend**
+#### Set up Python Environment
+```bash
+cd backend
+conda create --name skin_disease python=3.12.0
+conda activate skin_disease
+pip install -r requirements.txt
+```
 
-1. **Clone the Repository**
+#### Dataset Installation
+1. Create a `data` folder in the `backend/app/` directory
+2. Download the [Skin Cancer MNIST: HAM10000 dataset](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)
+3. Extract the downloaded file to the `data` folder
+4. Rename the extracted folder to `Ham10000`
+5. Remove the downloaded zip file
 
-   - `git clone` https://github.com/Purvesh-PJ/skin_disease_detection.git
-   - `cd skin-disease-detection`
+#### Start the Backend Server
+```bash
+python main.py
+```
+The backend server will run on http://localhost:5000
 
-2. **Backend Setup (Annaconda Environment) :**
+### 3. Frontend Setup
 
-   - Change directory to project backend
-      - `cd skin-disease-detection/backend`
-   - Create annaconda environment
-      - `conda create --name envname python=3.12.0` 
-   - Activate conda environment after created
-      - `conda activate envname`
-   - Install packages listed in `requirements.txt` in conda environment
-      - `pip install -r requirements.txt` 
-   - Install dataset from kaggle
-      - Create `data` folder inside `backend/app/` 
-      - Download [skin-cancer-mnist-ham10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000) 
-      - Extract in `data` folder and `rename to Ham10000`
-      - `Delete` skin-cancer-mnist-ham10000.zip
-   - Run the Flask server
-      - `python main.py`
+```bash
+cd frontend
+npm install
+npm start
+```
+The frontend application will be available at http://localhost:3000
 
-The backend server should now be running on http://localhost:5000
+## Usage
+1. Register a new account or login with existing credentials
+2. Navigate to the disease prediction tool
+3. Upload a skin image for analysis
+4. View the prediction results and confidence scores
 
-3. **Frontend Setup (React) :**
+## Project Structure
+- `frontend/`: React application files
+- `backend/`: Flask server and ML models
+  - `app/ai_models/`: Contains all ML model implementations
+  - `app/routes/`: API endpoints
+  - `app/services/`: Business logic and services
+  - `app/utils/`: Utility functions and helpers
 
-   - Navigate to the frontend directory
-      - `cd frontend`
-   - Install dependencies
-      - `npm install`
-   - Start the React development server:
-      - `npm start`
+## Contributing
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-The React app should now be running on http://localhost:3000
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+- Dataset: HAM10000 dataset from Kaggle
+- Base models: DenseNet121, EfficientNet, ResNet50, ResNet101
 

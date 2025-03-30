@@ -186,22 +186,8 @@ const Login = () => {
         <RightColumn>
           <Form onSubmit={handleSubmit}>
             <Heading>Login</Heading>
-            <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={handleInputChange(setEmail)}
-              error={!!error}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={handleInputChange(setPassword)}
-              error={!!error}
-              required
-            />
+            <Input type="email" placeholder="Email" value={email} onChange={handleInputChange(setEmail)} error={!!error} required />
+            <Input type="password" placeholder="Password" value={password} onChange={handleInputChange(setPassword)} error={!!error} require />
             {error && <ErrorMessage>{error}</ErrorMessage>}
             <Button type="submit" disabled={loading}>
               {loading ? <Spinner /> : 'Login'}
