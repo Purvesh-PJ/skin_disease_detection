@@ -1,207 +1,174 @@
 import os
-import pandas as pd
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.utils.class_weight import compute_class_weight
+import math
 import numpy as np
-from tensorflow.keras.applications.efficientnet import preprocess_input
+import matplotlib.pyplot as plt
+import albumentations as A
+import cv2
+from collections import Counter
+from tensorflow.keras.utils import Sequence
+from tensorflow.keras.applications.resnet import preprocess_input
+from sklearn.utils.class_weight import compute_class_weight
 
-def split_data_by_lesion(metadata):
-    """
-    Splits metadata into training, validation, and test sets ensuring no data leakage by lesion_id.
-    """
-    unique_lesions = metadata['lesion_id'].unique()
-    train_lesions, temp_lesions = train_test_split(unique_lesions, test_size=0.4, random_state=42)
-    val_lesions, test_lesions = train_test_split(temp_lesions, test_size=0.5, random_state=42)
+def check_class_distribution(generator, dataset_name):
+    labels = generator.classes
+    class_counts = dict(Counter(labels))
+    print(f"\n📊 Class distribution in {dataset_name}:")
+    for cls, count in sorted(class_counts.items()):
+        print(f"  Class {cls}: {count} images")
+    plt.figure(figsize=(6, 4))
+    plt.bar(class_counts.keys(), class_counts.values(), color='skyblue')
+    plt.xticks(list(class_counts.keys()))
+    plt.xlabel("Class Labels")
+    plt.ylabel("Number of Images")
+    plt.title(f"Class Distribution in {dataset_name}")
+    plt.show()
 
-    train_metadata = metadata[metadata['lesion_id'].isin(train_lesions)].reset_index(drop=True)
-    val_metadata = metadata[metadata['lesion_id'].isin(val_lesions)].reset_index(drop=True)
-    test_metadata = metadata[metadata['lesion_id'].isin(test_lesions)].reset_index(drop=True)
+def create_train_transform(target_size=(224, 224)):
+    height, width = target_size
+    return A.Compose([
+        A.HorizontalFlip(p=0.5),
+        A.Rotate(limit=15, p=0.5, border_mode=cv2.BORDER_REFLECT_101, interpolation=cv2.INTER_LINEAR),
+        # A.RandomBrightnessContrast(p=0.1, brightness_limit=0.05, contrast_limit=0.05),
+        A.RandomResizedCrop(size=(height,width), scale=(0.8, 1.0), ratio=(0.75, 1.33), p=0.5),
+        # A.Sharpen(alpha=(0.2, 0.5), lightness=(0.5, 1.0), p=0.3),
+        # A.Emboss(alpha=(0.1, 0.4), strength=(0.2, 0.5), p=0.3),
+        # A.UnsharpMask(blur_limit=(3, 5), sigma_limit=0.5, p=0.3),
+        # A.CLAHE(clip_limit=2.0, tile_grid_size=(8, 8), p=0.2),
+        A.Resize(height=height, width=width)
+    ])
 
-    # Debugging: Check for data leakage
-    print("\n")
-    print("########## CHECKING DATA LEAKAGE ##########")
-    print("Overlap between train and validation lesion_ids:", set(train_metadata['lesion_id']).intersection(set(val_metadata['lesion_id'])))
-    print("Overlap between validation and test lesion_ids:", set(val_metadata['lesion_id']).intersection(set(test_metadata['lesion_id'])))
+def create_val_transform(target_size=(224, 224)):
+    height, width = target_size
+    return A.Resize(height=height, width=width)
 
-    return train_metadata, val_metadata, test_metadata
+class CustomDataGenerator(Sequence):
+    def __init__(self, file_paths, labels, batch_size, transform=None, shuffle=True, display_samples=False):
+        self.file_paths = file_paths
+        self.labels = labels
+        self.batch_size = batch_size
+        self.transform = transform
+        self.shuffle = shuffle
+        self.display_samples = display_samples
+        self.indexes = np.arange(len(self.file_paths))
+        self.classes = labels
+        if self.shuffle:
+            np.random.shuffle(self.indexes)
+    
+    def __len__(self):
+        return math.ceil(len(self.file_paths) / self.batch_size)
+    
+    def __getitem__(self, index):
+        indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
+        batch_files = [self.file_paths[i] for i in indexes]
+        batch_labels = [self.labels[i] for i in indexes]
+        images = np.array([self.__load_image(f) for f in batch_files])
+        if self.display_samples:
+            self.display_sample_images(images, batch_labels)
+        return images, np.array(batch_labels)
+    
+    def __load_image(self, image_path):
+        image = cv2.imread(image_path)
+        if image is None:
+            raise ValueError(f"Image not found or cannot be read: {image_path}")
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        if self.transform:
+            augmented = self.transform(image=image)
+            image = augmented['image']
+        return preprocess_input(image)
 
-def aggregate_predictions_by_lesion(predictions, metadata):
-    """
-    Aggregates predictions at the lesion level by averaging.
-    :param predictions: Array of predictions (e.g., probabilities).
-    :param metadata: DataFrame containing lesion_id and associated predictions.
-    :return: Aggregated predictions DataFrame.
-    """
-    metadata['prediction'] = predictions
-    aggregated = metadata.groupby('lesion_id')['prediction'].mean().reset_index()
-    return aggregated
+    def display_sample_images(self, images, labels, images_per_row=3):
+        """Displays sample images in multiple rows while keeping original functionality."""
+        num_samples = min(5, len(images))
 
+        # Calculate grid size for rows & columns
+        num_cols = min(images_per_row, num_samples)  # Maximum `images_per_row` per row
+        num_rows = math.ceil(num_samples / num_cols)  # Determine required rows
 
-def calculate_class_weights(metadata, label_column='label'):
-    try:
-        label_encoder = LabelEncoder()
-        encoded_labels = label_encoder.fit_transform(metadata[label_column])
+        fig, axes = plt.subplots(num_rows, num_cols, figsize=(num_cols * 2, num_rows * 2))
 
-        class_weights_raw = compute_class_weight(
-            class_weight='balanced',
-            classes=np.unique(encoded_labels),
-            y=encoded_labels
-        )
+        # ResNet ImageNet mean values (BGR order, as ResNet expects OpenCV format)
+        imagenet_mean = np.array([103.939, 116.779, 123.68])  # Shape: (3,)
 
-        class_weights = {int(label): float(weight) for label, weight in zip(np.unique(encoded_labels), class_weights_raw)}
+        for i in range(num_samples):
+            row, col = divmod(i, num_cols)  # Get row & col index
+            ax = axes[row, col] if num_rows > 1 else axes[col]  # Handle 1-row case
 
-        print("########## CLASS WEIGHTS ##########")
-        print("Class Weights:", class_weights)
-        return class_weights, label_encoder
+            img = images[i].copy()  # Avoid modifying original data
+            
+            # **Step 1: Undo ResNet Preprocessing**
+            img = img + imagenet_mean  # Add back ImageNet mean
+            img = np.clip(img, 0, 255).astype(np.uint8)  # Ensure valid range
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None, None
+            # **Step 2: Convert BGR → RGB (since ResNet expects OpenCV format)**
+            img = img[..., ::-1]  # Swap channels from BGR to RGB
 
+            ax.imshow(img)
+            ax.set_title(f"Class {labels[i]}")
+            ax.axis("off")
 
-def get_data_generators(metadata_path=r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_metadata.csv', target_size=(224, 224), batch_size=32, sample_size=None, use_subset=False):
-    try:
-        folder_1 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_1'
-        folder_2 = r'D:\skin_disease_detection\backend\data\Ham10000\HAM10000_images_part_2'
+        # Remove empty subplots if any
+        for i in range(num_samples, num_rows * num_cols):
+            row, col = divmod(i, num_cols)
+            fig.delaxes(axes[row, col])  # Remove unused subplot
 
-        print("########## GETTING DATA GENERATORS ##########\n")
-        # Load metadata
-        print("Loading metadata...")
-        metadata = pd.read_csv(metadata_path)
+        plt.tight_layout()
+        plt.show()
+    
+    def on_epoch_end(self):
+        if self.shuffle:
+            np.random.shuffle(self.indexes)
 
-        print("\n")
-        print("########## TOP FIVE SAMPLE DATA ##########")
+def get_data_generators(base_dir=r"D:\skin_disease_detection\backend\data\skin_disease_dataset\base_dir", 
+    target_size=(224, 224), 
+    batch_size=64, 
+    display_samples=False
+):
+    train_dir = os.path.join(base_dir, 'train_dir')
+    val_dir = os.path.join(base_dir, 'val_dir')
+    test_dir = os.path.join(base_dir, 'test_dir')
 
-        # Add image paths
-        metadata['path'] = metadata['image_id'].apply(
-            lambda x: os.path.join(folder_1, f"{x}.jpg")
-            if os.path.exists(os.path.join(folder_1, f"{x}.jpg"))
-            else os.path.join(folder_2, f"{x}.jpg")
-        )
-
-        # Optionally use a subset for testing
-        if use_subset and sample_size:
-            unique_classes = metadata['dx'].nunique()
-            # Check if sample_size is divisible by the number of classes
-            if sample_size % unique_classes != 0:
-                print(f"WARNING : sample_size {sample_size} is not evenly divisible by the number of classes ({unique_classes}). Adjusting sample_size.")
-                sample_size = (sample_size // unique_classes) * unique_classes
-            # Ensure that sample_size per class is reasonable
-            min_samples_per_class = metadata['dx'].value_counts().min()
-            if sample_size // unique_classes > min_samples_per_class:
-                print(f"WARNING : sample_size per class is higher than the smallest class size ({min_samples_per_class}). Reducing sample size.")
-                sample_size = min_samples_per_class * unique_classes
-            # Ensure balanced sampling across all classes
-            metadata = metadata.groupby('dx').apply(lambda x: x.sample(n=sample_size // unique_classes, random_state=42)).reset_index(drop=True)
-            print(f"Using a balanced subset of {sample_size} samples.")
-
-        print(f"Metadata: {metadata.head()}")  # Check first few rows
-        print("\n")
-
-        # Encode labels to integers and convert them to strings
-        print("########## LABELS ##########")
-        print("Encoding labels...")
-        label_encoder = LabelEncoder()
-        metadata['label'] = label_encoder.fit_transform(metadata['dx']).astype(str)
-        print(f"Labels encoded. Unique classes: {label_encoder.classes_}")
-        print("\n")
-
-        # Split data by lesion_id
-        print("########## SPLITTING DATA BY LENSION ##########")
-        print("Splitting data by lesion_id...")
-        train_metadata, val_metadata, test_metadata = split_data_by_lesion(metadata)
-        print("\n")
-        
-        # Debugging: Check class distribution
-        print("########## CLASS DISTRIBUTION ##########")
-        print("Train class distribution:", train_metadata['label'].value_counts())
-        print("Validation class distribution:", val_metadata['label'].value_counts())
-        print("\n")
-
-        # Calculate class weights for training data
-        print("########## CLASS WEIGHTS ##########")
-        print("Calculating class weights...")
-        class_weights, label_encoder = calculate_class_weights(train_metadata, label_column='label')
-        print(f"Class Weights: {class_weights}")
-        print("\n")
-
-        print("########## ENCODING LABELS ##########")
-        print(f"label encoder: {label_encoder}")
-        print("\n")
-
-        # Data augmentation
-        train_datagen = ImageDataGenerator(
-            preprocessing_function=preprocess_input,
-            rotation_range=20,
-            width_shift_range=0.2,
-            height_shift_range=0.2,
-            zoom_range=0.3,
-            shear_range=0.3,
-            brightness_range=[0.7, 1.3],
-            horizontal_flip=True,
-            fill_mode='nearest'
-        )
-
-        # Validation Data Normalization Only
-        validation_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
-
-        # Testing Data Normalization Only
-        test_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
-
-        # Generators
-        train_generator = train_datagen.flow_from_dataframe(
-            dataframe=train_metadata,
-            x_col='path',
-            y_col='label',
-            target_size=target_size,
-            batch_size=batch_size,
-            class_mode='categorical'
-        )
-
-        x_batch, y_batch = next(train_generator)
-
-        print("########## BATCH SHAPES ##########")
-        print(f"x_batch shape: {x_batch.shape}, y_batch shape: {y_batch.shape}")
-        print("\n")
-
-        print("########## BATCH TYPES ##########")
-        print(f"x_batch dtype: {x_batch.dtype}, y_batch dtype: {y_batch.dtype}\n")
-        print("\n")
-
-        # Validation generator
-        validation_generator = validation_datagen.flow_from_dataframe(
-            dataframe=val_metadata,
-            x_col='path',
-            y_col='label',
-            target_size=target_size,
-            batch_size=batch_size,
-            class_mode='categorical'
-        )
-
-        # Testing generator (No subset since it's for testing)
-        test_generator = test_datagen.flow_from_dataframe(
-            dataframe=test_metadata,
-            x_col='path',
-            y_col='label',
-            target_size=target_size,
-            batch_size=batch_size,
-            class_mode='categorical'
-        )
-
-        # Check if generators are properly created
-        print("\n")
-        print("########## FINAL GENERATORS ##########")
-        print(f"Train Generator: {train_generator}")
-        print(f"Validation Generator: {validation_generator}")
-        print(f"Test Generator: {test_generator}")
-        print("\n")
-
-        print("Data generators created successfully.")
-
-        return train_generator, validation_generator, test_generator, label_encoder, class_weights
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None, None, None, None, None
+    print("\n🔄 Loading training, validation, and test data...")
+    classes = sorted(os.listdir(train_dir))
+    class_indices = {cls: i for i, cls in enumerate(classes)}
+    
+    def load_images_labels(directory):
+        file_paths, labels = [], []
+        for class_name in classes:
+            class_path = os.path.join(directory, class_name)
+            if os.path.isdir(class_path):
+                for file in sorted(os.listdir(class_path)):
+                    file_paths.append(os.path.join(class_path, file))
+                    labels.append(class_indices[class_name])
+        return np.array(file_paths), np.array(labels)
+    
+    train_files, train_labels = load_images_labels(train_dir)
+    val_files, val_labels = load_images_labels(val_dir)
+    test_files, test_labels = load_images_labels(test_dir)
+    
+    train_transform = create_train_transform(target_size)
+    val_transform = create_val_transform(target_size)
+    
+    train_generator = CustomDataGenerator(train_files, train_labels, batch_size, transform=train_transform, shuffle=True, display_samples=display_samples)
+    validation_generator = CustomDataGenerator(val_files, val_labels, batch_size, transform=val_transform, shuffle=False, display_samples=display_samples)
+    test_generator = CustomDataGenerator(test_files, test_labels, batch_size, transform=val_transform, shuffle=False, display_samples=display_samples)
+    
+    train_generator.class_indices = class_indices
+    validation_generator.class_indices = class_indices
+    test_generator.class_indices = class_indices
+    
+    print("\n⚖️ Computing class weights for training data...")
+    class_weights = compute_class_weight(
+        class_weight='balanced',
+        classes=np.unique(train_labels),
+        y=train_labels
+    )
+    class_weights = {i: class_weights[i] for i in range(len(class_weights))}
+    print("Class weights computed:", class_weights)
+    
+    check_class_distribution(train_generator, "Training Set")
+    check_class_distribution(validation_generator, "Validation Set")
+    check_class_distribution(test_generator, "Test Set")
+    
+    print("\n✅ Data generators created successfully!")
+    
+    return train_generator, validation_generator, test_generator, class_weights
