@@ -86,6 +86,25 @@ To prepare:
 - Each model is trained independently.
 - Final prediction: average of softmax scores from all 3 models.
 
+### 📥 Download Trained Models
+
+Download the pre-trained models from Google Drive:
+
+🔗 [Download Models](https://drive.google.com/file/d/1RdJgiNy94sM2OfU3N6RqFbDBD-BawNYY/view)
+
+After downloading, extract and place the `trained_models` folder in the project root directory:
+
+```
+skin_disease_detection/
+├── backend/
+├── frontend/
+├── trained_models/      ← Place here
+│   ├── densenet121.h5
+│   ├── efficientnetb3.h5
+│   └── resnet101.h5
+└── README.md
+```
+
 
 ---
 
@@ -110,8 +129,8 @@ To prepare:
 
 ### 🧰 Prerequisites
 
-- Node.js v14+
-- Anaconda or Miniconda
+- Python 3.12+
+- Node.js v18+
 - MongoDB (local or cloud)
 - Git
 
@@ -120,9 +139,19 @@ To prepare:
 ### ⚙️ Backend Setup
 
 ```bash
+# Navigate to backend
 cd backend
-conda create -n skin_disease_env python=3.12
-conda activate skin_disease_env
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
@@ -134,7 +163,9 @@ JWT_SECRET_KEY=YourJWTSecretKey
 MONGO_URI=mongodb://localhost:27017/skin_disease_db
 ```
 
-### Download and extract the HAM10000 dataset into:
+### (Optional) Train Your Own Models
+
+If you want to train the models yourself instead of using the pre-trained ones, download and extract the HAM10000 dataset into:
 
 ```bash 
 backend/data/skin_disease_dataset/base_dir/
