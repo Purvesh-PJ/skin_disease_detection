@@ -2,6 +2,7 @@ trained_models/
 
 # Python
 backend/venv/
+backend/uploads/
 __pycache__/
 *.py[cod]
 *.egg-info/

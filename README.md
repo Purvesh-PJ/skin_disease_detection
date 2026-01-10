@@ -8,6 +8,12 @@
 
 ---
 
+## 📸 Screenshot
+
+![Skin Disease Predictor](frontend/public/screenshots/skin_disease_platform_screenshot.png)
+
+---
+
 ## 📋 Overview
 
 A web-based system to detect skin diseases from images using deep learning. The project uses **ensemble learning with CNN architectures** to improve diagnostic accuracy.
