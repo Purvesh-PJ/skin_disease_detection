@@ -9,10 +9,12 @@ from tensorflow.keras.applications.efficientnet import preprocess_input
 app = Flask(__name__)
 
 # Load models once at startup
+# Go up from routes -> app -> backend -> project root
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 MODEL_PATHS = {
-    "resnet": r"D:\skin_disease_detection\trained_models\resnet101.h5",
-    "densenet": r"D:\skin_disease_detection\trained_models\densenet121.h5",
-    "efficientnet": r"D:\skin_disease_detection\trained_models\efficientnetb3.h5"
+    "resnet": os.path.join(BASE_DIR, "trained_models", "resnet101.h5"),
+    "densenet": os.path.join(BASE_DIR, "trained_models", "densenet121.h5"),
+    "efficientnet": os.path.join(BASE_DIR, "trained_models", "efficientnetb3.h5")
 }
 models = {name: tf.keras.models.load_model(path) for name, path in MODEL_PATHS.items()}
 
