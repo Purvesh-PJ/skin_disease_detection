@@ -3,22 +3,32 @@ import styled from 'styled-components';
 import { login } from '../services/authApi';
 import { Link, useNavigate } from 'react-router-dom';
 import loginImage from '../resources/images/7108455 1.png';
+import { Button, Input, Alert, Spinner } from '../components/ui';
+import { H2, Text, SmallText } from '../styles/typography';
 
 const Container = styled.div`
-  min-height: 99.5vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: auto;
+  padding: ${({ theme }) => theme.spacing[4]};
+  background-color: ${({ theme }) => theme.colors.background.secondary};
 `;
 
 const LoginContainer = styled.div`
   display: flex;
-  height: 70vh;
-  width: 1150px;
-  border-radius: 40px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-  background-color: white;
+  width: 100%;
+  max-width: 1150px;
+  min-height: 70vh;
+  border-radius: ${({ theme }) => theme.borderRadius['3xl']};
+  box-shadow: ${({ theme }) => theme.shadows.subtle};
+  background-color: ${({ theme }) => theme.colors.background.primary};
+  overflow: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    flex-direction: column;
+    min-height: auto;
+  }
 `;
 
 const Column = styled.div`
@@ -26,10 +36,15 @@ const Column = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: ${({ theme }) => theme.spacing[6]};
 `;
 
 const LeftColumn = styled(Column)`
-  border-radius: 40px;
+  background-color: ${({ theme }) => theme.colors.background.primary};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    display: none;
+  }
 `;
 
 const Illustration = styled.div`
@@ -43,8 +58,7 @@ const Illustration = styled.div`
 `;
 
 const RightColumn = styled(Column)`
-  background-color: #ffffff;
-  border-radius: 40px;
+  background-color: ${({ theme }) => theme.colors.background.primary};
 `;
 
 const Form = styled.form`
@@ -53,91 +67,40 @@ const Form = styled.form`
   align-items: center;
   width: 100%;
   max-width: 400px;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
+  gap: ${({ theme }) => theme.spacing[4]};
 `;
 
-const Input = styled.input`
-  margin-bottom: 15px;
-  padding: 10px;
+const StyledInput = styled(Input)`
   width: 100%;
-  border-radius: 5px;
-  font-size: 14px;
-  border: 2px solid ${(props) => (props.error ? 'red' : 'gray')};
 `;
 
-const Button = styled.button`
-  display : flex;
-  justify-content : center;
-  padding: 10px;
-  width: 60%;
-  background-color: ${(props) => (props.disabled ? '#f1f5f9' : '#2563eb')};
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-
-  &:hover {
-    background-color: ${(props) => (props.disabled ? '#f1f5f9' : '#3b82f6')};
-  }
-`;
-
-const Spinner = styled.div`
-  border: 2px solid #ccc;
-  border-top: 2px solid #2563eb;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 1s linear infinite;
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
-
-const ErrorMessage = styled.p`
-  color: #ef4444;
-  font-size: 12px;
-  padding-left : 6px;
-  padding-right : 6px; 
-  border-radius : 5px;
-  background-color : #fef2f2;
-  border : 1px solid #f87171;
-`;
-
-const Heading = styled.h1`
-  color: #1e293b;
-  font-size: 1.8rem;
+const LinkText = styled(SmallText)`
   text-align: center;
-  margin-bottom: 20px;
-`;
-
-const LinkText = styled.p`
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-  color: gray;
+  color: ${({ theme }) => theme.colors.text.secondary};
 
   a {
-    color: #2563eb;
+    color: ${({ theme }) => theme.colors.primary[600]};
     text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
+`;
+
+const Divider = styled.hr`
+  width: 100%;
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.border.light};
+  margin: ${({ theme }) => theme.spacing[2]} 0;
 `;
 
 const Login = () => {
-  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -153,19 +116,14 @@ const Login = () => {
 
     try {
       const response = await login(email, password);
-      console.log('Login response:', response);
-
       if (response?.token) {
         navigate('/dashboard');
-      } 
-      else {
+      } else {
         setError('Invalid credentials');
       }
-    } 
-    catch (err) {
+    } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
-    } 
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -185,8 +143,8 @@ const Login = () => {
         </LeftColumn>
         <RightColumn>
           <Form onSubmit={handleSubmit}>
-            <Heading>Login</Heading>
-            <Input
+            <H2>Login</H2>
+            <StyledInput
               type="email"
               placeholder="Email"
               value={email}
@@ -194,7 +152,7 @@ const Login = () => {
               error={!!error}
               required
             />
-            <Input
+            <StyledInput
               type="password"
               placeholder="Password"
               value={password}
@@ -202,14 +160,14 @@ const Login = () => {
               error={!!error}
               required
             />
-            {error && <ErrorMessage>{error}</ErrorMessage>}
-            <Button type="submit" disabled={loading}>
-              {loading ? <Spinner /> : 'Login'}
+            {error && <Alert variant="error">{error}</Alert>}
+            <Button type="submit" disabled={loading} style={{ width: '60%' }}>
+              {loading ? <Spinner size="sm" color="white" /> : 'Login'}
             </Button>
             <LinkText>
               <Link to="/forgot-password">Forgot password?</Link>
             </LinkText>
-            <hr />
+            <Divider />
             <LinkText>
               Don't have an account? <Link to="/signup">Sign up</Link>
             </LinkText>

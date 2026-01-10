@@ -1,487 +1,478 @@
-import React, { useState } from 'react';
-import { UploadContainer, ImagePlaceholder, FileInput, UploadButton, ImagePreview, Image, Note, Paragraph } from './ImageUpload_Styles';
+import { useState } from 'react';
 import useSkinDiseasePrediction from '../hooks/useSkinDiseasePrediction';
-import Disease_icon from '../resources/icons/disease_icon.png';
 import styled from "styled-components";
-import { FiUpload, FiAlertCircle } from 'react-icons/fi';
+import { FiUpload, FiAlertCircle, FiCheckCircle, FiImage } from 'react-icons/fi';
+import { Spinner, Button } from './ui';
+import { Text, SmallText, H4 } from '../styles/typography';
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    max-width: 1200px;
-    background-color: white;
-    min-height: 600px;
-    max-height: calc(100vh - 100px);
-    border-radius: 20px;
-    box-sizing: border-box;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    overflow: auto;
-    
-    @media (max-width: 1024px) {
-        flex-direction: column;
-        max-height: none;
-        height: auto;
-    }
-    
-    @media (max-width: 768px) {
-        border-radius: 10px;
-    }
-`;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.colors.background.primary};
 
-const ImageUploadSection = styled.div`
-    width: 50%;
-    box-sizing: border-box;
-    
-    @media (max-width: 1024px) {
-        width: 100%;
-    }
-`;
-
-const ResultDisplaySection = styled.div`
-    width: 50%;
-    box-sizing: border-box;
-    padding: 20px;
-    margin: 5px;
-    border: 2px dashed #ccc;
-    border-radius: 20px;
-    text-align: center;
-    overflow-y: auto;
-    display: flex;
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
     flex-direction: column;
-    
-    @media (max-width: 1024px) {
-        width: 100%;
-        margin: 10px 5px;
-    }
-    
-    @media (max-width: 768px) {
-        border-radius: 10px;
-    }
+  }
 `;
 
-const Heading = styled.p`
-    color: #475569;
-    text-align: center;
+const Panel = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
 `;
 
-const Loader = styled.div`
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin: 30px auto;
-    animation: spin 1.5s linear infinite;
+const LeftPanel = styled(Panel)`
+  width: 45%;
+  border-right: 1px solid ${({ theme }) => theme.colors.border.light};
+  background-color: ${({ theme }) => theme.colors.background.primary};
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    width: 100%;
+    height: 50%;
+    border-right: none;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+  }
 `;
 
-const LoadingText = styled.p`
-    color: #3b82f6;
-    font-size: 18px;
+const RightPanel = styled(Panel)`
+  width: 55%;
+  background-color: ${({ theme }) => theme.colors.background.secondary};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    width: 100%;
+    height: 50%;
+  }
+`;
+
+const PanelHeader = styled.div`
+  padding: ${({ theme }) => theme.spacing[5]} ${({ theme }) => theme.spacing[6]};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+  background-color: ${({ theme }) => theme.colors.background.primary};
+`;
+
+const PanelHeaderContent = styled.div`
+  padding-left: ${({ theme }) => theme.spacing[3]};
+  border-left: 3px solid ${({ theme }) => theme.colors.primary[500]};
+`;
+
+const PanelTitle = styled(H4)`
+  margin-bottom: ${({ theme }) => theme.spacing[1]};
+`;
+
+const PanelSubtitle = styled(SmallText)`
+  color: ${({ theme }) => theme.colors.text.tertiary};
+`;
+
+const PanelContent = styled.div`
+  flex: 1;
+  padding: ${({ theme }) => theme.spacing[6]};
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+`;
+
+const DropZone = styled.div`
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed ${({ theme, $hasImage }) => 
+    $hasImage ? theme.colors.status.success.border : theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  background-color: ${({ theme, $hasImage }) => 
+    $hasImage ? theme.colors.status.success.bg : theme.colors.background.tertiary};
+  padding: ${({ theme }) => theme.spacing[4]};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.transitions.fast};
+  overflow: hidden;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary[400]};
+    background-color: ${({ theme }) => theme.colors.interactive.selected};
+  }
+`;
+
+const ImagePreview = styled.img`
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+`;
+
+const PlaceholderIcon = styled.div`
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.background.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  margin-bottom: ${({ theme }) => theme.spacing[3]};
+  color: ${({ theme }) => theme.colors.text.tertiary};
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const UploadHint = styled(SmallText)`
+  color: ${({ theme }) => theme.colors.text.tertiary};
+  text-align: center;
+  
+  span {
+    color: ${({ theme }) => theme.colors.primary[500]};
     font-weight: 500;
-    margin: 15px 0;
-    animation: pulse 1.5s infinite;
-    
-    @keyframes pulse {
-        0% { opacity: 0.6; }
-        50% { opacity: 1; }
-        100% { opacity: 0.6; }
-    }
+  }
 `;
 
-const ErrorMessage = styled.div`
-    color: #ef4444;
-    font-size: 12px;
-    padding : 8px;
-    margin : 8px;
-    border-radius : 5px;
-    background-color : #fef2f2;
-    border : 1px solid #f87171;
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing[3]};
+  margin-top: ${({ theme }) => theme.spacing[5]};
 `;
 
-const ResultText = styled.p`
-    color: #4b5563;
-    font-size: 16px;
-    margin: 8px 0;
+const WarningBox = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing[2]};
+  padding: ${({ theme }) => theme.spacing[3]};
+  background-color: ${({ theme }) => theme.colors.status.warning.bg};
+  border: 1px solid ${({ theme }) => theme.colors.status.warning.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  margin-top: auto;
+  
+  svg {
+    color: ${({ theme }) => theme.colors.status.warning.icon};
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
 `;
 
-const SuccessMessage = styled.div`
-    color: #16a34a;
-    font-size: 14px;
-    padding: 8px;
-    margin: 0 0 16px 0;
-    border-radius: 5px;
-    background-color: #f0fdf4;
-    border: 1px solid #86efac;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+const WarningText = styled(SmallText)`
+  color: ${({ theme }) => theme.colors.status.warning.text};
 `;
 
-const ResultContainer = styled.div`
-    margin-top: 20px;
+const EmptyState = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing[8]};
 `;
+
+const EmptyIcon = styled.div`
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.status.info.bg};
+  border: 1px solid ${({ theme }) => theme.colors.status.info.border};
+  border-radius: 50%;
+  margin-bottom: ${({ theme }) => theme.spacing[4]};
+  color: ${({ theme }) => theme.colors.status.info.icon};
+`;
+
+const LoadingState = styled(EmptyState)``;
 
 const ResultCard = styled.div`
-    background-color: #f8fafc;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
-    text-align: left;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: ${({ theme }) => theme.colors.background.primary};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  padding: ${({ theme }) => theme.spacing[5]};
+  box-shadow: ${({ theme }) => theme.shadows.sm};
 `;
 
-const ResultLabel = styled.span`
-    // font-weight: 400;
-    color: #334155;
+const ResultHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[3]};
+  padding-bottom: ${({ theme }) => theme.spacing[4]};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+  margin-bottom: ${({ theme }) => theme.spacing[4]};
 `;
 
-const ResultValue = styled.span`
-    color: #4b5563;
+const SuccessIcon = styled.div`
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.status.success.bg};
+  border: 1px solid ${({ theme }) => theme.colors.status.success.border};
+  border-radius: 50%;
+  color: ${({ theme }) => theme.colors.status.success.icon};
 `;
 
-const ResultSection = styled.div`
-    margin-bottom: 12px;
+const DiseaseName = styled.h3`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin: 0;
 `;
 
-const ResultTitle = styled.span`
-    color:rgb(114, 114, 114);
-    margin-bottom: 16px;
-    font-size: 16px;
-    // margin-left: auto;
-    // margin-right: auto;
-    background-color:rgba(219, 219, 219, 0.55);
-    padding: 4px;
-    border-radius: 8px;
-    border : 2px solid lightgray;
+const ConfidenceBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: ${({ theme }) => `${theme.spacing[1]} ${theme.spacing[2]}`};
+  background-color: ${({ theme }) => theme.colors.interactive.selected};
+  color: ${({ theme }) => theme.colors.primary[500]};
+  border: 1px solid ${({ theme }) => theme.colors.primary[400]};
+  border-radius: ${({ theme }) => theme.borderRadius.full};
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: auto;
 `;
 
-const NestedResultContainer = styled.div`
-    margin-left: 20px;
-    margin-top: 8px;
+const Description = styled(Text)`
+  color: ${({ theme }) => theme.colors.text.secondary};
+  line-height: 1.6;
+  margin-bottom: ${({ theme }) => theme.spacing[4]};
 `;
 
-const DiseaseDescription = styled.p`
-    color:rgb(87, 87, 87);
-    font-size: 16px;
-    line-height: 1.5;
-    margin: 12px 0;
-    font-style: italic;
+const DetailGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: ${({ theme }) => theme.spacing[3]};
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    grid-template-columns: 1fr;
+  }
 `;
 
-const DiseaseName = styled.h4`
-    color:rgb(29, 29, 29);
-    font-size: 20px;
-    margin: 16px 0 8px 0;
+const DetailItem = styled.div`
+  padding: ${({ theme }) => theme.spacing[3]};
+  background-color: ${({ theme }) => theme.colors.background.tertiary};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
 `;
 
-const MessageBox = styled.div`
-    background-color: #f1f5f9;
-    border-radius: 20px;
-    padding: 40px 30px;
-    margin: 40px auto;
-    // margin-top : auto;
-    // margin-bottom : auto;
-    text-align: center;
-    width: 80%;
-    height: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    
-    p {
-        color: #64748b;
-        font-size: 14px;
-        margin: 10px 0 0 0;
-        font-weight: 500;
-    }
+const DetailLabel = styled(SmallText)`
+  color: ${({ theme }) => theme.colors.text.tertiary};
+  margin-bottom: ${({ theme }) => theme.spacing[1]};
 `;
 
-const IconWrapper = styled.div`
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
-    background-color: #f0f9ff;
-    border: 2px solid #93c5fd;
-    border-radius: 50%;
-    color: #3b82f6;
-    font-size: 28px;
+const DetailValue = styled(Text)`
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
-const ErrorIconWrapper = styled(IconWrapper)`
-    color: #dc2626;
-    background-color: #fee2e2;
-    border: 2px solid #fca5a5;
-`;
+const ErrorState = styled(EmptyState)``;
 
-const UploadArrow = styled.div`
-    position: relative;
-    width: 24px;
-    height: 24px;
-    
-    /* Vertical line */
-    &::before {
-        content: "";
-        position: absolute;
-        width: 3px;
-        height: 18px;
-        background-color: gray;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 0;
-    }
-    
-    /* Arrow head */
-    &::after {
-        content: "";
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        border-top: 3px solid gray;
-        border-left: 3px solid gray;
-        transform: translateX(-50%) rotate(45deg);
-        left: 50%;
-        top: 0;
-    }
+const ErrorIcon = styled.div`
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.status.error.bg};
+  border: 1px solid ${({ theme }) => theme.colors.status.error.border};
+  border-radius: 50%;
+  margin-bottom: ${({ theme }) => theme.spacing[4]};
+  color: ${({ theme }) => theme.colors.status.error.icon};
 `;
 
 const DiseasePredictorTool = () => {
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [imageFile, setImageFile] = useState(null);
-    const [predictionResult, setPredictionResult] = useState(null);
-    const [statusMessage, setStatusMessage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [predictionResult, setPredictionResult] = useState(null);
+  const { postImageToPredict, error, loading } = useSkinDiseasePrediction();
 
-    const { postImageToPredict, error, loading } = useSkinDiseasePrediction();
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedImage(URL.createObjectURL(file));
+      setImageFile(file);
+      setPredictionResult(null);
+    }
+  };
 
-    const handleImageChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            setSelectedImage(URL.createObjectURL(file));
-            setImageFile(file);
-            setPredictionResult(null); // Reset previous predictions
-        } 
-        else {
-            setSelectedImage(null);
-            setImageFile(null);
-        }
-    };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setSelectedImage(URL.createObjectURL(file));
+      setImageFile(file);
+      setPredictionResult(null);
+    }
+  };
 
-    const handleUploadClick = async () => {
-        if (!imageFile) {
-            alert("Please select an image first!");
-            return;
-        }
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
 
-        const formData = new FormData();
-        formData.append("image", imageFile);
-        setStatusMessage(null);
+  const handleUploadClick = async () => {
+    if (!imageFile) return;
 
-        try {
-            const response = await postImageToPredict(formData);
-            if (response?.data) {
-                setPredictionResult(response.data); // Assuming API sends result in `data`
-                
-                // Extract status message if available
-                if (response.data.message) {
-                    setStatusMessage(response.data.message);
-                } else {
-                    setStatusMessage("Analysis completed successfully");
-                }
-            } else {
-                setPredictionResult(null);
-                setStatusMessage(null);
-                console.error("Unexpected response structure:", response);
-            }
-        } 
-        catch (err) {
-            console.error("Error during prediction:", err);
-            setStatusMessage(null);
-        }
-    };
+    const formData = new FormData();
+    formData.append("image", imageFile);
 
-    // Helper function to get full disease name if available
-    const getFullDiseaseName = (result) => {
-        // Check if disease_details exists and has a name property
-        if (result.disease_details && result.disease_details.name) {
-            return result.disease_details.name;
-        }
-        // Otherwise return the predicted_disease value
-        return result.predicted_disease;
-    };
+    try {
+      const response = await postImageToPredict(formData);
+      if (response?.data) {
+        setPredictionResult(response.data);
+      }
+    } catch (err) {
+      console.error("Error during prediction:", err);
+    }
+  };
 
-    // Helper function to get disease description if available
-    const getDiseaseDescription = (result) => {
-        // Check if disease_details exists and has a description property
-        if (result.disease_details && result.disease_details.description) {
-            return result.disease_details.description;
-        }
-        return null;
-    };
+  const handleClear = () => {
+    setSelectedImage(null);
+    setImageFile(null);
+    setPredictionResult(null);
+  };
 
-    // Helper function to render all result data
-    const renderResultData = (data) => {
-        // Skip rendering these fields as they're handled separately or not needed for display
-        const skipFields = ['predicted_disease', 'confidence', 'disease_details', 'message'];
-        
-        return Object.entries(data).map(([key, value]) => {
-            // Skip the fields we're handling separately
-            if (skipFields.includes(key)) return null;
-            
-            // Format the key for display (convert snake_case to Title Case)
-            const formattedKey = key
-                .split('_')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-            
-            // Handle different value types
-            if (typeof value === 'object' && value !== null) {
-                // For objects, render each property separately
-                return (
-                    <ResultSection key={key}>
-                        <ResultLabel>{formattedKey}: </ResultLabel>
-                        <NestedResultContainer>
-                            {Object.entries(value).map(([nestedKey, nestedValue]) => {
-                                // Skip description as it's handled separately
-                                if (nestedKey === 'description' || nestedKey === 'name' || nestedKey === 'message') return null;
-                                
-                                // Format nested key
-                                const formattedNestedKey = nestedKey
-                                    .split('_')
-                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                    .join(' ');
-                                
-                                return (
-                                    <ResultSection key={`${key}-${nestedKey}`}>
-                                        <ResultLabel>{formattedNestedKey}: </ResultLabel>
-                                        <ResultValue>{nestedValue}</ResultValue>
-                                    </ResultSection>
-                                );
-                            })}
-                        </NestedResultContainer>
-                    </ResultSection>
-                );
-            } else if (Array.isArray(value)) {
-                // For arrays, join the values with commas
-                return (
-                    <ResultSection key={key}>
-                        <ResultLabel>{formattedKey}: </ResultLabel>
-                        <ResultValue>{value.join(', ')}</ResultValue>
-                    </ResultSection>
-                );
-            } else {
-                // For simple values
-                return (
-                    <ResultSection key={key}>
-                        <ResultLabel>{formattedKey}: </ResultLabel>
-                        <ResultValue>{value}</ResultValue>
-                    </ResultSection>
-                );
-            }
-        });
-    };
+  const getDiseaseName = (result) => {
+    return result.disease_details?.name || result.predicted_disease;
+  };
 
-    return (
-        <Container>
-            <ImageUploadSection>
-                <UploadContainer>
-                    <Paragraph>Upload image</Paragraph>
-                    {selectedImage ? (
-                        <ImagePreview src={selectedImage} alt="Preview" />
-                    ) : (
-                        <ImagePlaceholder>
-                            <Image src={Disease_icon} alt="disease-image" />
-                        </ImagePlaceholder>
-                    )}
-                    <FileInput
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        placeholder="Select an image"
-                        disabled={loading}
-                    />
-                    <UploadButton 
-                        onClick={handleUploadClick} 
-                        disabled={loading || !imageFile}
-                    >
-                        {loading ? "Processing..." : "Upload"}
-                    </UploadButton>
-                    <Note>
-                        <strong>WARNING:</strong> This model is trained only for skin disease images. Other images may not work.
-                    </Note>
-                </UploadContainer>
-            </ImageUploadSection>
+  const getDescription = (result) => {
+    return result.disease_details?.description || null;
+  };
 
-            <ResultDisplaySection>
-                <Heading>
-                    Result Display
-                </Heading>
-                {loading ? (
-                    <ResultContainer>
-                        <Loader />
-                        <LoadingText>Analyzing image...</LoadingText>
-                        <ResultText>Please wait while we process your image</ResultText>
-                    </ResultContainer>
-                ) : error ? (
-                    <MessageBox style={{ 
-                        backgroundColor: '#fef2f2', 
-                        border: '1px dashed #fca5a5' 
-                    }}>
-                        <ErrorIconWrapper>
-                            <FiAlertCircle />
-                        </ErrorIconWrapper>
-                        <p style={{ color: '#dc2626' }}>
-                            {error.response?.data?.message || "An error occurred while processing the image. Please check your connection and try again."}
-                        </p>
-                    </MessageBox>
-                ) : predictionResult ? (
-                    <ResultContainer>
-                        <ResultCard>
-                            {statusMessage && (
-                                <SuccessMessage>{statusMessage}</SuccessMessage>
-                            )}
-                            <ResultTitle>Predicted disease</ResultTitle>
-                            
-                            {/* Display full disease name */}
-                            <DiseaseName>{getFullDiseaseName(predictionResult)}</DiseaseName>
-                            
-                            {/* Display disease description if available */}
-                            {getDiseaseDescription(predictionResult) && (
-                                <DiseaseDescription>
-                                    {getDiseaseDescription(predictionResult)}
-                                </DiseaseDescription>
-                            )}
-                            
-                            <ResultSection>
-                                <ResultLabel>Confidence: </ResultLabel>
-                                <ResultValue>{predictionResult.confidence}%</ResultValue>
-                            </ResultSection>
-                            
-                            {/* Render all other fields from the response */}
-                            {renderResultData(predictionResult)}
-                        </ResultCard>
-                    </ResultContainer>
-                ) : (
-                    <MessageBox>
-                        <IconWrapper>
-                            <FiUpload size={25} />
-                        </IconWrapper>
-                        <p style={{ color: '#1da6dd  ' }}>Upload an image to see prediction results.</p>
-                    </MessageBox>
-                )}
-            </ResultDisplaySection>
-        </Container>
-    );
+  return (
+    <Container>
+      <LeftPanel>
+        <PanelHeader>
+          <PanelHeaderContent>
+            <PanelTitle>Upload Image</PanelTitle>
+            <PanelSubtitle>Drag and drop or click to select</PanelSubtitle>
+          </PanelHeaderContent>
+        </PanelHeader>
+
+        <PanelContent>
+          <DropZone
+            $hasImage={!!selectedImage}
+            onClick={() => document.getElementById('file-input').click()}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+          >
+            {selectedImage ? (
+              <ImagePreview src={selectedImage} alt="Preview" />
+            ) : (
+              <>
+                <PlaceholderIcon>
+                  <FiImage size={28} />
+                </PlaceholderIcon>
+                <UploadHint>
+                  <span>Click to upload</span> or drag and drop
+                </UploadHint>
+                <SmallText style={{ marginTop: '8px' }} variant="tertiary">
+                  PNG, JPG up to 10MB
+                </SmallText>
+              </>
+            )}
+          </DropZone>
+
+          <HiddenInput
+            id="file-input"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            disabled={loading}
+          />
+
+          <ButtonGroup>
+            <Button
+              onClick={handleUploadClick}
+              disabled={loading || !imageFile}
+              fullWidth
+            >
+              {loading ? <Spinner size="sm" color="white" /> : "Analyze Image"}
+            </Button>
+            {selectedImage && (
+              <Button variant="secondary" onClick={handleClear} disabled={loading}>
+                Clear
+              </Button>
+            )}
+          </ButtonGroup>
+
+          <WarningBox>
+            <FiAlertCircle size={16} />
+            <WarningText>
+              This AI model is trained specifically for skin disease images. Results for other image types may be inaccurate.
+            </WarningText>
+          </WarningBox>
+        </PanelContent>
+      </LeftPanel>
+
+      <RightPanel>
+        <PanelHeader style={{ backgroundColor: 'transparent' }}>
+          <PanelHeaderContent>
+            <PanelTitle>Analysis Results</PanelTitle>
+            <PanelSubtitle>AI-powered skin condition detection</PanelSubtitle>
+          </PanelHeaderContent>
+        </PanelHeader>
+
+        <PanelContent>
+          {loading ? (
+            <LoadingState>
+              <Spinner size="lg" />
+              <Text style={{ marginTop: '16px' }} variant="secondary">Analyzing your image...</Text>
+              <SmallText variant="tertiary">This may take a few seconds</SmallText>
+            </LoadingState>
+          ) : error ? (
+            <ErrorState>
+              <ErrorIcon>
+                <FiAlertCircle size={32} />
+              </ErrorIcon>
+              <Text variant="secondary">Analysis failed</Text>
+              <SmallText variant="tertiary">
+                {error.response?.data?.message || "Please check your connection and try again."}
+              </SmallText>
+            </ErrorState>
+          ) : predictionResult ? (
+            <ResultCard>
+              <ResultHeader>
+                <SuccessIcon>
+                  <FiCheckCircle size={24} />
+                </SuccessIcon>
+                <div>
+                  <DiseaseName>{getDiseaseName(predictionResult)}</DiseaseName>
+                  <SmallText variant="tertiary">Detected condition</SmallText>
+                </div>
+                <ConfidenceBadge>{predictionResult.confidence}% confidence</ConfidenceBadge>
+              </ResultHeader>
+
+              {getDescription(predictionResult) && (
+                <Description>{getDescription(predictionResult)}</Description>
+              )}
+
+              <DetailGrid>
+                {Object.entries(predictionResult)
+                  .filter(([key]) => !['predicted_disease', 'confidence', 'disease_details', 'message'].includes(key))
+                  .slice(0, 4)
+                  .map(([key, value]) => (
+                    <DetailItem key={key}>
+                      <DetailLabel>
+                        {key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                      </DetailLabel>
+                      <DetailValue>
+                        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                      </DetailValue>
+                    </DetailItem>
+                  ))}
+              </DetailGrid>
+            </ResultCard>
+          ) : (
+            <EmptyState>
+              <EmptyIcon>
+                <FiUpload size={32} />
+              </EmptyIcon>
+              <Text variant="secondary">No results yet</Text>
+              <SmallText variant="tertiary">Upload an image to get started</SmallText>
+            </EmptyState>
+          )}
+        </PanelContent>
+      </RightPanel>
+    </Container>
+  );
 };
 
 export default DiseasePredictorTool;
-
-

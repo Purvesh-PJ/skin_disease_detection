@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { register } from '../services/authApi'; // Assume a register service exists
-import { Link } from 'react-router-dom';
-import loginImage from '../resources/images/7108455 1.png'; // Update the path if necessary
+import { register } from '../services/authApi';
+import { Link, useNavigate } from 'react-router-dom';
+import loginImage from '../resources/images/7108455 1.png';
+import { Button, Input, Alert } from '../components/ui';
+import { H2, SmallText } from '../styles/typography';
 
 const Container = styled.div`
-  min-height: 99.5vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: auto;
+  padding: ${({ theme }) => theme.spacing[4]};
+  background-color: ${({ theme }) => theme.colors.background.secondary};
 `;
 
 const SignupContainer = styled.div`
   display: flex;
-  height: 70vh;
-  width: 1150px;
-  box-sizing: border-box;
-  border-radius: 40px;
-  background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  width: 100%;
+  max-width: 1150px;
+  min-height: 70vh;
+  border-radius: ${({ theme }) => theme.borderRadius['3xl']};
+  box-shadow: ${({ theme }) => theme.shadows.subtle};
+  background-color: ${({ theme }) => theme.colors.background.primary};
+  overflow: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    flex-direction: column;
+    min-height: auto;
+  }
 `;
 
 const Column = styled.div`
@@ -27,11 +36,13 @@ const Column = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: ${({ theme }) => theme.spacing[6]};
 `;
 
 const LeftColumn = styled(Column)`
-  background-color: white;
-  border-radius: 40px;
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    display: none;
+  }
 `;
 
 const Illustration = styled.div`
@@ -44,73 +55,39 @@ const Illustration = styled.div`
   }
 `;
 
-const RightColumn = styled(Column)`
-  background-color: #ffffff;
-  border-radius: 40px;
-`;
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   width: 100%;
   max-width: 400px;
-  height: 70%;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-sizing: border-box;
+  gap: ${({ theme }) => theme.spacing[4]};
 `;
 
-const Input = styled.input`
-  margin-bottom: 15px;
-  padding: 10px;
+const StyledInput = styled(Input)`
   width: 100%;
-  border-radius: 5px;
-  font-size: 14px;
-  box-sizing: border-box;
-  border: 2px solid gray;
 `;
 
-const Button = styled.button`
-  padding: 10px;
-  width: 60%;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  box-sizing: border-box;
-
-  &:hover {
-    background-color: #3b82f6;
-  }
-`;
-
-const ErrorMessage = styled.p`
-  color: red;
-  font-size: 14px;
-`;
-
-const Heading = styled.h1`
-  color: #1e293b;
-  font-size: 1.8rem;
+const LinkText = styled(SmallText)`
   text-align: center;
-  margin-bottom: 20px;
-`;
-
-const LinkText = styled.p`
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-  color: gray;
+  color: ${({ theme }) => theme.colors.text.secondary};
 
   a {
-    color: #2563eb;
+    color: ${({ theme }) => theme.colors.primary[600]};
     text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
+`;
+
+const Divider = styled.hr`
+  width: 100%;
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.border.light};
+  margin: ${({ theme }) => theme.spacing[2]} 0;
 `;
 
 const Signup = () => {
@@ -119,6 +96,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -129,9 +107,9 @@ const Signup = () => {
     }
 
     try {
-      const userData = { username, email, password }; // Collect all data
-      await register(userData); // Pass the userData object to the service
-      window.location.href = '/dashboard'; // Redirect after successful signup
+      const userData = { username, email, password };
+      await register(userData);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     }
@@ -145,45 +123,45 @@ const Signup = () => {
             <img src={loginImage} alt="Signup Illustration" />
           </Illustration>
         </LeftColumn>
-        <RightColumn>
+        <Column>
           <Form onSubmit={handleSubmit}>
-            <Heading>Sign Up</Heading>
-            <Input
+            <H2>Sign Up</H2>
+            <StyledInput
               type="text"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
-            <Input
+            <StyledInput
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Input
+            <StyledInput
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Input
+            <StyledInput
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-            {error && <ErrorMessage>{error}</ErrorMessage>}
-            <Button type="submit">Sign Up</Button>
-            <hr />
+            {error && <Alert variant="error">{error}</Alert>}
+            <Button type="submit" style={{ width: '60%' }}>Sign Up</Button>
+            <Divider />
             <LinkText>
               Already have an account? <Link to="/login">Log in</Link>
             </LinkText>
           </Form>
-        </RightColumn>
+        </Column>
       </SignupContainer>
     </Container>
   );

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-
 export const UploadContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -8,20 +7,21 @@ export const UploadContainer = styled.div`
   height: auto;
   min-height: 600px;
   max-height: calc(100vh - 120px);
-  margin: 5px;
-  padding: 20px;
-  border: 2px dashed #ccc;
-  border-radius: 20px;
+  margin: ${({ theme }) => theme.spacing[1]};
+  padding: ${({ theme }) => theme.spacing[5]};
+  border: 2px dashed ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
   box-sizing: border-box;
   overflow-y: auto;
-  
-  @media (max-width: 1024px) {
+  background-color: ${({ theme }) => theme.colors.background.primary};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
     min-height: 500px;
   }
-  
-  @media (max-width: 768px) {
-    padding: 15px;
-    border-radius: 10px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing[4]};
+    border-radius: ${({ theme }) => theme.borderRadius.lg};
   }
 `;
 
@@ -31,18 +31,18 @@ export const ImagePlaceholder = styled.div`
   justify-content: center;
   width: 100%;
   height: 300px;
-  background-color: #f1f5f9;
-  border-radius: 20px;
-  margin-bottom: 15px;
+  background-color: ${({ theme }) => theme.colors.background.tertiary};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  margin-bottom: ${({ theme }) => theme.spacing[4]};
   font-size: 2em;
-  color: #aaa;
-  
-  @media (max-width: 768px) {
+  color: ${({ theme }) => theme.colors.text.tertiary};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     height: 250px;
-    border-radius: 10px;
+    border-radius: ${({ theme }) => theme.borderRadius.lg};
   }
-  
-  @media (max-width: 480px) {
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
     height: 200px;
   }
 `;
@@ -50,55 +50,62 @@ export const ImagePlaceholder = styled.div`
 export const Image = styled.img`
   width: 120px;
   height: 120px;
-  
-  @media (max-width: 768px) {
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     width: 100px;
     height: 100px;
   }
-  
-  @media (max-width: 480px) {
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
     width: 80px;
     height: 80px;
   }
 `;
 
 export const FileInput = styled.input`
-  margin-top: 10px;
-  padding: 8px;
+  margin-top: ${({ theme }) => theme.spacing[3]};
+  padding: ${({ theme }) => theme.spacing[2]};
   width: 100%;
   box-sizing: border-box;
-  border: 2px dashed gray;
-  border-radius: 5px;
-  background-color: white;
-  
+  border: 2px dashed ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  background-color: ${({ theme }) => theme.colors.background.primary};
+  color: ${({ theme }) => theme.colors.text.primary};
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover:not(:disabled) {
+    border-color: ${({ theme }) => theme.colors.primary[400]};
+    background-color: ${({ theme }) => theme.colors.interactive.selected};
+  }
+
   &:disabled {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
+    background-color: ${({ theme }) => theme.colors.background.tertiary};
+    border-color: ${({ theme }) => theme.colors.border.light};
     cursor: not-allowed;
     opacity: 0.7;
   }
 `;
 
 export const UploadButton = styled.button`
-  margin-top: 15px;
-  padding: 10px 20px;
-  background-color: black;
+  margin-top: ${({ theme }) => theme.spacing[4]};
+  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[5]}`};
+  background-color: ${({ theme }) => theme.colors.primary[600]};
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
   cursor: pointer;
   font-size: 1em;
+  font-weight: 500;
   width: 100%;
-  transition: all 0.3s ease;
-  
+  transition: all ${({ theme }) => theme.transitions.fast};
+
   &:hover:not(:disabled) {
-    background-color: #f1f5f9;
-    color: black;
+    background-color: ${({ theme }) => theme.colors.primary[700]};
   }
-  
+
   &:disabled {
-    background-color: #d1d5db;
-    color: #6b7280;
+    background-color: ${({ theme }) => theme.colors.background.tertiary};
+    color: ${({ theme }) => theme.colors.text.tertiary};
     cursor: not-allowed;
   }
 `;
@@ -106,30 +113,32 @@ export const UploadButton = styled.button`
 export const ImagePreview = styled.img`
   width: 100%;
   height: 300px;
-  border-radius: 10px;
-  // object-fit: cover;
-  // margin-bottom: 15px;
-  
-  @media (max-width: 768px) {
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  object-fit: contain;
+  background-color: ${({ theme }) => theme.colors.background.tertiary};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     height: 250px;
   }
-  
-  @media (max-width: 480px) {
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
     height: 200px;
   }
 `;
 
 export const Note = styled.p`
-  margin-top: 15px;
+  margin-top: ${({ theme }) => theme.spacing[4]};
   font-size: 0.8em;
-  color: #666;
+  color: ${({ theme }) => theme.colors.status.warning.text};
   text-align: center;
-  background-color: #f3f4f6;
-  padding: 10px;
-  border-radius: 8px;
+  background-color: ${({ theme }) => theme.colors.status.warning.bg};
+  padding: ${({ theme }) => theme.spacing[3]};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border: 1px solid ${({ theme }) => theme.colors.status.warning.border};
 `;
 
 export const Paragraph = styled.p`
-  color: #475569;
+  color: ${({ theme }) => theme.colors.text.secondary};
   text-align: center;
+  font-weight: 500;
 `;
