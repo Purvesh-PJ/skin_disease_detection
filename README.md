@@ -223,6 +223,21 @@ MIT License See [LICENSE]() file.
 [@Purvesh-PJ](https://github.com/Purvesh-PJ) 
 
 
+### 📚 Additional Documentation
+
+Detailed project documentation is available in the `docs/` folder:
+
+- **[Architecture Overview](docs/architecture.md)** - System design and component breakdown
+- **[Working Flow](docs/working-flow.md)** - End-to-end process flows
+- **[Modules Documentation](docs/modules.md)** - Detailed module and component reference
+- **[Frontend Flow](docs/frontend-flow.md)** - React architecture and patterns
+- **[Backend Flow](docs/backend-flow.md)** - Flask API and request lifecycle
+- **[API Overview](docs/api-overview.md)** - Complete API endpoint reference
+- **[Interview Notes](docs/interview-notes.md)** - Interview preparation guide
+- **[Improvements](docs/improvements.md)** - Future enhancements and recommendations
+
+---
+
 ### 🙏 Acknowledgements
 
 - [Kaggle HAM10000 Dataset](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)
