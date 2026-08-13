@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import os
+import urllib.request
+import zipfile
 import numpy as np
 import tensorflow as tf
 import cv2
@@ -21,19 +23,70 @@ else:
 # Global registry for loaded models
 _loaded_models = {}
 
+# Cloud storage URLs for automatic download if models are missing locally
+MODEL_CLOUD_URLS = {
+    "resnet": os.getenv("MODEL_URL_RESNET", ""),
+    "densenet": os.getenv("MODEL_URL_DENSENET", ""),
+    "efficientnet": os.getenv("MODEL_URL_EFFICIENTNET", "")
+}
+# Optional single ZIP download URL containing all 3 .h5 files
+MODEL_ZIP_URL = os.getenv("MODEL_ZIP_URL", "")
+
+def download_file_from_cloud(url, dest_path):
+    """Downloads a file from cloud storage URL to local disk."""
+    try:
+        logger.info(f"Downloading model from cloud: {url} -> {dest_path}")
+        os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+        urllib.request.urlretrieve(url, dest_path)
+        logger.info(f"Successfully downloaded model to {dest_path}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to download model from {url}: {e}")
+        return False
+
+def download_and_extract_zip(zip_url, target_dir):
+    """Downloads and extracts a zip file containing models."""
+    zip_path = os.path.join(target_dir, "models_download.zip")
+    if download_file_from_cloud(zip_url, zip_path):
+        try:
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(target_dir)
+            logger.info(f"Extracted model zip into {target_dir}")
+            os.remove(zip_path)
+            return True
+        except Exception as e:
+            logger.error(f"Failed to extract zip {zip_path}: {e}")
+    return False
+
 def get_models():
     """
     Lazy loads and returns AI models. Returns a dict of loaded models.
-    Prevents application crash if model files are missing during initial server startup.
+    If model files are missing locally, attempts automatic download from cloud URLs.
     """
     global _loaded_models
     if not _loaded_models:
+        os.makedirs(MODEL_DIR, exist_ok=True)
+
         model_files = {
             "resnet": os.path.join(MODEL_DIR, "resnet101.h5"),
             "densenet": os.path.join(MODEL_DIR, "densenet121.h5"),
             "efficientnet": os.path.join(MODEL_DIR, "efficientnetb3.h5")
         }
+
+        # Check if any model is missing
+        missing_models = [name for name, path in model_files.items() if not os.path.exists(path)]
+
+        # If models are missing and a ZIP URL is provided, try zip download
+        if missing_models and MODEL_ZIP_URL:
+            logger.info(f"Models missing {missing_models}. Attempting cloud ZIP download...")
+            download_and_extract_zip(MODEL_ZIP_URL, MODEL_DIR)
+
         for name, path in model_files.items():
+            # If still missing, check individual file URL
+            if not os.path.exists(path) and MODEL_CLOUD_URLS.get(name):
+                logger.info(f"Attempting individual cloud download for '{name}'...")
+                download_file_from_cloud(MODEL_CLOUD_URLS[name], path)
+
             if os.path.exists(path):
                 try:
                     _loaded_models[name] = tf.keras.models.load_model(path)
@@ -45,7 +98,7 @@ def get_models():
 
     return _loaded_models
 
-# Mapping from class names to indices (as used during training)
+# Mapping from class names to indices
 class_indices = {
     "akiec": 0,
     "bcc": 1,
@@ -136,7 +189,7 @@ def setup_prediction_routes(app: Flask):
         if not active_models:
             return jsonify({
                 "error": "Model files not available on server.",
-                "message": f"Please ensure trained .h5 model files exist in directory: {MODEL_DIR}"
+                "message": f"Please ensure trained .h5 model files exist in {MODEL_DIR} or set MODEL_ZIP_URL in .env"
             }), 503
 
         temp_dir = os.path.join(BASE_DIR, 'backend', 'uploads')
@@ -173,7 +226,6 @@ def setup_prediction_routes(app: Flask):
             logger.exception("Prediction processing error")
             return jsonify({"error": str(e)}), 500
         finally:
-            # Cleanup uploaded temp file after processing
             if os.path.exists(file_path):
                 try:
                     os.remove(file_path)
