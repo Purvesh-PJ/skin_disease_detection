@@ -25,9 +25,9 @@ try:
 except ImportError:
     print("python-dotenv package not found. Using system environment variables.")
 
-# Import routes
-from app.routes.home_routes import setup_home_routes
-from app.routes.prediction_routes import setup_prediction_routes
+# Import routes (Blueprints)
+from app.routes.home_routes import home_blueprint
+from app.routes.prediction_routes import prediction_blueprint
 from app.routes.auth_routes import auth_blueprint
 
 # Configure logging
@@ -122,8 +122,8 @@ def setup_jwt(app):
 def register_blueprints(app):
     """Register all blueprints and routes"""
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
-    setup_home_routes(app)
-    setup_prediction_routes(app)
+    app.register_blueprint(home_blueprint)
+    app.register_blueprint(prediction_blueprint)
     logger.info("All blueprints and routes registered")
 
 def register_error_handlers(app):

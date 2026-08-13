@@ -1,7 +1,17 @@
-from flask import Flask
+"""
+Home Routes (Controller)
+------------------------
+Flask route controller for base status endpoint.
+"""
 
-def setup_home_routes(app: Flask):
-    @app.route('/')
+from flask import Blueprint, jsonify
 
-    def home():
-        return "Welcome to the Skin Disease Detection API!"
+home_blueprint = Blueprint('home', __name__)
+
+@home_blueprint.route('/')
+def home():
+    return jsonify({
+        "status": "online",
+        "message": "Welcome to the Skin Disease Detection API!",
+        "version": "1.0.0"
+    }), 200
