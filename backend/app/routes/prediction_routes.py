@@ -4,19 +4,46 @@ import os
 import numpy as np
 import tensorflow as tf
 import cv2
+import logging
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
-app = Flask(__name__)
+logger = logging.getLogger(__name__)
 
-# Load models once at startup
-# Go up from routes -> app -> backend -> project root
+# Base directory setup
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-MODEL_PATHS = {
-    "resnet": os.path.join(BASE_DIR, "trained_models", "resnet101.h5"),
-    "densenet": os.path.join(BASE_DIR, "trained_models", "densenet121.h5"),
-    "efficientnet": os.path.join(BASE_DIR, "trained_models", "efficientnetb3.h5")
-}
-models = {name: tf.keras.models.load_model(path) for name, path in MODEL_PATHS.items()}
+MODEL_DIR_SETTING = os.getenv("MODEL_DIR", "trained_models")
+
+if os.path.isabs(MODEL_DIR_SETTING):
+    MODEL_DIR = MODEL_DIR_SETTING
+else:
+    MODEL_DIR = os.path.abspath(os.path.join(BASE_DIR, MODEL_DIR_SETTING))
+
+# Global registry for loaded models
+_loaded_models = {}
+
+def get_models():
+    """
+    Lazy loads and returns AI models. Returns a dict of loaded models.
+    Prevents application crash if model files are missing during initial server startup.
+    """
+    global _loaded_models
+    if not _loaded_models:
+        model_files = {
+            "resnet": os.path.join(MODEL_DIR, "resnet101.h5"),
+            "densenet": os.path.join(MODEL_DIR, "densenet121.h5"),
+            "efficientnet": os.path.join(MODEL_DIR, "efficientnetb3.h5")
+        }
+        for name, path in model_files.items():
+            if os.path.exists(path):
+                try:
+                    _loaded_models[name] = tf.keras.models.load_model(path)
+                    logger.info(f"Loaded model '{name}' from {path}")
+                except Exception as e:
+                    logger.error(f"Failed to load model '{name}' from {path}: {e}")
+            else:
+                logger.warning(f"Model file not found for '{name}' at path: {path}")
+
+    return _loaded_models
 
 # Mapping from class names to indices (as used during training)
 class_indices = {
@@ -28,10 +55,9 @@ class_indices = {
     "nv": 5,
     "vasc": 6
 }
-# Reverse mapping: index -> class label
 idx2class = {v: k for k, v in class_indices.items()}
 
-# Mapping for user-friendly display: label, full name, and description
+# User-friendly display mapping
 USER_FRIENDLY_MAPPING = {
     "akiec": {
         "name": "Actinic Keratoses",
@@ -85,21 +111,13 @@ USER_FRIENDLY_MAPPING = {
 }
 
 def load_and_preprocess_image(image_path, target_size=(224, 224)):
-    """
-    Loads an image from disk, converts it from BGR to RGB,
-    resizes it to target_size, preprocesses it using EfficientNet's preprocess_input,
-    and expands dimensions to create a batch of size 1.
-    """
+    """Loads, resizes, and preprocesses input skin image for AI model inference."""
     image = cv2.imread(image_path)
     if image is None:
         raise ValueError("Image not found or cannot be read: " + image_path)
-    # Convert BGR to RGB
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    # Resize image
     image = cv2.resize(image, target_size)
-    # Preprocess using EfficientNet's preprocessing function
     image = preprocess_input(image)
-    # Expand dimensions to match model input shape (batch_size, height, width, channels)
     image = np.expand_dims(image, axis=0)
     return image
 
@@ -107,64 +125,57 @@ def setup_prediction_routes(app: Flask):
 
     @app.route('/predict', methods=['POST'])
     def prediction():
-        print("Request Headers:", request.headers)
-
         if 'image' not in request.files:
-            print("No image part in the request.")
             return jsonify({"error": "No image file provided"}), 400
 
         image_file = request.files['image']
-        print("File Name:", image_file.filename)
-        print("Content Type:", image_file.content_type)
-
         if image_file.filename == '':
             return jsonify({"error": "No selected file"}), 400
 
-        file_data = image_file.read()
-        print("File Data (first 100 bytes):", file_data[:100])
+        active_models = get_models()
+        if not active_models:
+            return jsonify({
+                "error": "Model files not available on server.",
+                "message": f"Please ensure trained .h5 model files exist in directory: {MODEL_DIR}"
+            }), 503
 
-        temp_dir = 'uploads'
-        if not os.path.exists(temp_dir):
-            os.makedirs(temp_dir)
+        temp_dir = os.path.join(BASE_DIR, 'backend', 'uploads')
+        os.makedirs(temp_dir, exist_ok=True)
         
         filename = secure_filename(image_file.filename)
         file_path = os.path.join(temp_dir, filename)
 
-        with open(file_path, 'wb') as f:
-            f.write(file_data)
-
         try:
+            image_file.save(file_path)
             preprocessed_image = load_and_preprocess_image(file_path, target_size=(224, 224))
+
+            predictions = {}
+            for name, model in active_models.items():
+                pred = model.predict(preprocessed_image)[0]
+                predictions[name] = pred
+
+            avg_prediction = np.mean(list(predictions.values()), axis=0)
+            predicted_index = int(np.argmax(avg_prediction))
+            predicted_label = idx2class.get(predicted_index, str(predicted_index))
+            friendly_info = USER_FRIENDLY_MAPPING.get(predicted_label, {})
+
+            max_confidence = max(pred[predicted_index] for pred in predictions.values())
+            confidence_percent = f"{int(round(max_confidence * 100))}"
+
+            return jsonify({
+                "message": "Image processed successfully",
+                "filename": filename,
+                "predicted_disease": predicted_label,
+                "confidence": confidence_percent,
+                "disease_details": friendly_info
+            })
         except Exception as e:
-            return jsonify({"error": str(e)}), 400
-
-        predictions = {}
-        for name, model in models.items():
-            pred = model.predict(preprocessed_image)[0]
-            predictions[name] = pred
-            print(f"Prediction from {name}: {pred}")
-
-        # Ensemble predictions by averaging the probabilities
-        avg_prediction = np.mean(list(predictions.values()), axis=0)
-        predicted_index = np.argmax(avg_prediction)
-        predicted_label = idx2class.get(predicted_index, str(predicted_index))
-        friendly_info = USER_FRIENDLY_MAPPING.get(predicted_label, {})
-
-        # Instead of ensemble confidence, display the maximum confidence value for the predicted class among the models
-        max_confidence = max(prediction[predicted_index] for prediction in predictions.values())
-        # Convert to percentage and format as a string (e.g. "99.99%")
-        confidence_percent = f"{int(round(max_confidence * 100))}"
-
-
-        return jsonify({
-            "message": "Image received and processed successfully",
-            "filename": filename,
-            "predicted_disease": predicted_label,
-            "confidence": confidence_percent,
-            "disease_details": friendly_info
-        })
-
-setup_prediction_routes(app)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+            logger.exception("Prediction processing error")
+            return jsonify({"error": str(e)}), 500
+        finally:
+            # Cleanup uploaded temp file after processing
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except Exception:
+                    pass
