@@ -28,9 +28,9 @@ import os
 import shutil
 import argparse
 import pandas as pd
-from sklearn.model_selection import train_test_split
-
-CLASSES = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from app.constants.disease_constants import SKIN_DISEASE_CLASSES as CLASSES
 
 def prepare_dataset(raw_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ratio=0.1, random_state=42):
     """

@@ -39,70 +39,12 @@ MODEL_CLOUD_URLS = {
 }
 MODEL_ZIP_URL = os.getenv("MODEL_ZIP_URL", "")
 
-# Class Mapping
-CLASS_INDICES = {
-    "akiec": 0,
-    "bcc": 1,
-    "bkl": 2,
-    "df": 3,
-    "mel": 4,
-    "nv": 5,
-    "vasc": 6
-}
-IDX2CLASS = {v: k for k, v in CLASS_INDICES.items()}
-
-# User-Friendly Display Information
-USER_FRIENDLY_MAPPING = {
-    "akiec": {
-        "name": "Actinic Keratoses",
-        "description": (
-            "Actinic keratoses are rough, scaly patches on the skin caused by years of sun exposure. "
-            "They can sometimes develop into skin cancer and should be monitored by a dermatologist."
-        )
-    },
-    "bcc": {
-        "name": "Basal Cell Carcinoma",
-        "description": (
-            "Basal cell carcinoma is the most common type of skin cancer. It is usually slow-growing "
-            "and rarely metastasizes, but professional evaluation is recommended."
-        )
-    },
-    "bkl": {
-        "name": "Benign Keratosis",
-        "description": (
-            "Benign keratoses are non-cancerous skin growths. They are typically harmless, though any changes "
-            "should be evaluated by a healthcare provider."
-        )
-    },
-    "df": {
-        "name": "Dermatofibroma",
-        "description": (
-            "Dermatofibromas are benign skin nodules that generally do not require treatment unless they "
-            "cause discomfort or cosmetic concerns."
-        )
-    },
-    "mel": {
-        "name": "Melanoma",
-        "description": (
-            "Melanoma is a serious form of skin cancer that can be life-threatening if not detected early. "
-            "Immediate consultation with a dermatologist is crucial."
-        )
-    },
-    "nv": {
-        "name": "Melanocytic Nevus",
-        "description": (
-            "Melanocytic nevi (moles) are usually benign. However, any noticeable changes in size, shape, "
-            "or color should be examined by a professional."
-        )
-    },
-    "vasc": {
-        "name": "Vascular Lesion",
-        "description": (
-            "Vascular lesions are abnormalities of the blood vessels. While often benign, they may require "
-            "treatment if symptomatic or for cosmetic reasons."
-        )
-    }
-}
+from app.constants.disease_constants import (
+    CLASS_INDICES,
+    IDX2CLASS,
+    USER_FRIENDLY_MAPPING,
+    TARGET_IMAGE_SIZE
+)
 
 def transform_google_drive_url(url):
     """Transforms Google Drive view/share links into direct raw content download URLs."""
@@ -185,7 +127,7 @@ def get_models():
 
     return _loaded_models
 
-def load_and_preprocess_image(image_path, target_size=(224, 224)):
+def load_and_preprocess_image(image_path, target_size=TARGET_IMAGE_SIZE):
     """Loads, resizes, and preprocesses input skin image for model inference."""
     image = cv2.imread(image_path)
     if image is None:
@@ -207,7 +149,7 @@ def predict_skin_disease(image_path):
     if not active_models:
         raise RuntimeError(f"AI models not available. Ensure model files exist in {MODEL_DIR} or configure MODEL_ZIP_URL.")
 
-    preprocessed_image = load_and_preprocess_image(image_path, target_size=(224, 224))
+    preprocessed_image = load_and_preprocess_image(image_path, target_size=TARGET_IMAGE_SIZE)
 
     predictions = {}
     for name, model in active_models.items():
