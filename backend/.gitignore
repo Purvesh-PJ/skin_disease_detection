@@ -33,6 +33,7 @@ node_modules/
 # image uploads
 uploads/
 data/
+!data/prepare_dataset.py
 data2/
 own_data/
 own_data_2/
