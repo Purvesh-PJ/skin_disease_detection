@@ -48,7 +48,7 @@ def get_models():
 
             if os.path.exists(path):
                 try:
-                    _loaded_models[name] = tf.keras.models.load_model(path)
+                    _loaded_models[name] = tf.keras.models.load_model(path, compile=False)
                     logger.info(f"Loaded model '{name}' from {path}")
                 except Exception as e:
                     logger.error(f"Failed to load model '{name}' from {path}: {e}")
