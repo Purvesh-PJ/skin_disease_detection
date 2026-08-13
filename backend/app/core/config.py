@@ -20,7 +20,8 @@ class AppConfig:
     """Enterprise application configuration container."""
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev_default_secret_key_123")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev_jwt_secret_key_456")
-    MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/skin_disease_db")
+    MONGO_DB_URI = os.getenv("MONGO_DB_URI", os.getenv("MONGO_URI", "mongodb://localhost:27017/skin_disease_db"))
+    MONGO_URI = MONGO_DB_URI
     MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "skin_disease_db")
     CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "*").split(",")]
 

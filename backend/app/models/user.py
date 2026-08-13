@@ -8,7 +8,7 @@ from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
 from app.core.config import config
 
-mongo_client = MongoClient(config.MONGO_URI)
+mongo_client = MongoClient(config.MONGO_DB_URI)
 db = mongo_client[config.MONGO_DB_NAME]
 users_collection = db["users"]
 
