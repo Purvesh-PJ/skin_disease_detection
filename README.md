@@ -173,15 +173,14 @@ For detailed production deployment instructions (MongoDB Atlas, Render, Vercel, 
 
 ### (Optional) Train Your Own Models
 
-If you want to train the models yourself instead of using the pre-trained ones, download and extract the HAM10000 dataset into:
+If you want to train the models yourself instead of using the pre-trained ones:
 
-```bash 
-backend/data/skin_disease_dataset/base_dir/
-├── train_dir/
-├── val_dir/
-└── test_dir/
-```
-### Then run:
+1. Download raw HAM10000 dataset from Kaggle and extract into `backend/data/raw/` (containing `HAM10000_metadata.csv` and image folders).
+2. Run the **Automated Dataset Preparation Script**:
+   ```bash
+   python backend/data/prepare_dataset.py
+   ```
+   *This automatically performs stratified splitting (80% train, 10% val, 10% test) and organizes images into the 7 disease class subfolders (`akiec`, `bcc`, `bkl`, `df`, `mel`, `nv`, `vasc`).*
 
 ```bash
 python main.py
