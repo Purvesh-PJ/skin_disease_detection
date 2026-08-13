@@ -9,7 +9,13 @@ from flask_bcrypt import Bcrypt
 from app.core.config import config
 
 mongo_client = MongoClient(config.MONGO_DB_URI)
-db = mongo_client[config.MONGO_DB_NAME]
+try:
+    db = mongo_client.get_default_database()
+    if db is None:
+        db = mongo_client[config.MONGO_DB_NAME]
+except Exception:
+    db = mongo_client[config.MONGO_DB_NAME]
+
 users_collection = db["users"]
 
 bcrypt = Bcrypt()
