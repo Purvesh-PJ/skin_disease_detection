@@ -5,12 +5,17 @@ from app.db_models.user_model import find_user_by_email, create_user
 from functools import wraps
 import jwt
 
+import os
+
 # Initialize Bcrypt
 bcrypt = Bcrypt()
 # Initialize Blueprint
 auth_blueprint = Blueprint('auth', __name__)
-# Secret key for JWT decoding
-auth_secret_key = "d9574c5c06e96b0e2ef7bbfeb3e3cfae5920ad5d3f1b1a9a6f2b60c08a1e5dbf"
+
+def get_jwt_secret_key():
+    """Retrieve JWT secret key dynamically from environment variables."""
+    return os.getenv("JWT_SECRET_KEY", "d9574c5c06e96b0e2ef7bbfeb3e3cfae5920ad5d3f1b1a9a6f2b60c08a1e5dbf")
+
 
 # Login endpoint
 @auth_blueprint.route('/login', methods=['POST'])
@@ -23,7 +28,7 @@ def login():
     user = find_user_by_email(data["email"])
     if user and bcrypt.check_password_hash(user["password"], data["password"]):
         # Adjusted to extract roles
-        token = jwt.encode({"email": user["email"], "username": user["username"], "roles": user["roles"]}, auth_secret_key, algorithm="HS256")
+        token = jwt.encode({"email": user["email"], "username": user["username"], "roles": user["roles"]}, get_jwt_secret_key(), algorithm="HS256")
         return jsonify({"token": token, "message": "Login successful"}), 200
     return jsonify({"error": "Invalid credentials"}), 401
 
@@ -67,7 +72,7 @@ def token_required(f):
             return jsonify({'error': 'Token is missing'}), 401
 
         try:
-            payload = jwt.decode(token, auth_secret_key, algorithms=["HS256"])
+            payload = jwt.decode(token, get_jwt_secret_key(), algorithms=["HS256"])
             request.user = payload  # Attach payload to request for access in the route
         except jwt.ExpiredSignatureError:
             return jsonify({'error': 'Token expired'}), 401
