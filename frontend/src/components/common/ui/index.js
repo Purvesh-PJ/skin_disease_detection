@@ -7,3 +7,4 @@ export { default as Dropdown } from './Dropdown';
 export { default as Input } from './Input';
 export { default as Spinner } from './Spinner';
 export { default as ThemeToggle } from './ThemeToggle';
+export { default as Tooltip } from './Tooltip';

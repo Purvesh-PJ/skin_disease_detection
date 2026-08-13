@@ -1,4 +1,6 @@
+import React from 'react';
 import styled, { css } from 'styled-components';
+import { Slot } from '@radix-ui/react-slot';
 
 const variants = {
   primary: css`
@@ -86,7 +88,7 @@ const sizes = {
   `,
 };
 
-const Button = styled.button`
+const StyledButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -110,5 +112,12 @@ const Button = styled.button`
     outline-offset: 2px;
   }
 `;
+
+export const Button = React.forwardRef(({ asChild, ...props }, ref) => {
+  const Component = asChild ? Slot : StyledButton;
+  return <Component ref={ref} {...props} />;
+});
+
+Button.displayName = 'Button';
 
 export default Button;

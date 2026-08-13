@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
 import { ThemeToggle } from '../common/ui';
+import Dropdown from '../common/ui/Dropdown';
 import { authService } from '../../services';
 import DefaultProfile from '../../assets/images/default_profile.jpg';
 
@@ -55,9 +55,14 @@ const LogoText = styled.span`
   }
 `;
 
-const ProfileContainer = styled.div`
-  position: relative;
+const ProfileTrigger = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  outline: none;
 `;
 
 const ProfileImage = styled.img`
@@ -73,64 +78,8 @@ const ProfileImage = styled.img`
   }
 `;
 
-const DropdownMenu = styled.div`
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  min-width: 180px;
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  box-shadow: ${({ theme }) => theme.shadows.card};
-  padding: ${({ theme }) => theme.spacing[2]};
-  z-index: 100;
-`;
-
-const DropdownItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[2]};
-  padding: ${({ theme }) => `${theme.spacing[2]} ${theme.spacing[3]}`};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  color: ${({ theme }) => theme.colors.text.primary};
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.interactive.hover};
-  }
-
-  &.danger {
-    color: ${({ theme }) => theme.colors.error[600]};
-    
-    &:hover {
-      background-color: ${({ theme }) => theme.colors.status.error.bg};
-    }
-  }
-`;
-
-const DropdownDivider = styled.hr`
-  border: none;
-  border-top: 1px solid ${({ theme }) => theme.colors.border.light};
-  margin: ${({ theme }) => theme.spacing[2]} 0;
-`;
-
 const Header = () => {
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const user = authService.getUser();
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleLogout = () => {
     authService.logout();
@@ -148,27 +97,29 @@ const Header = () => {
       <HeaderRight>
         <ThemeToggle />
         
-        <ProfileContainer ref={dropdownRef} onClick={() => setDropdownOpen(!isDropdownOpen)}>
-          <ProfileImage src={DefaultProfile} alt="Profile" />
+        <Dropdown.Root>
+          <Dropdown.Trigger asChild>
+            <ProfileTrigger aria-label="User account menu">
+              <ProfileImage src={DefaultProfile} alt="Profile" />
+            </ProfileTrigger>
+          </Dropdown.Trigger>
 
-          {isDropdownOpen && (
-            <DropdownMenu>
-              <DropdownItem>
-                <FiUser size={14} />
-                {user?.username || 'Profile'}
-              </DropdownItem>
-              <DropdownItem>
-                <FiSettings size={14} />
-                Settings
-              </DropdownItem>
-              <DropdownDivider />
-              <DropdownItem className="danger" onClick={handleLogout}>
-                <FiLogOut size={14} />
-                Logout
-              </DropdownItem>
-            </DropdownMenu>
-          )}
-        </ProfileContainer>
+          <Dropdown.Content align="end" sideOffset={8}>
+            <Dropdown.Item>
+              <FiUser size={14} />
+              {user?.username || 'Profile'}
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <FiSettings size={14} />
+              Settings
+            </Dropdown.Item>
+            <Dropdown.Separator />
+            <Dropdown.Item className="danger" onClick={handleLogout}>
+              <FiLogOut size={14} />
+              Logout
+            </Dropdown.Item>
+          </Dropdown.Content>
+        </Dropdown.Root>
       </HeaderRight>
     </HeaderContainer>
   );
