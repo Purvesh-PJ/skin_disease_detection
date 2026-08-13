@@ -1,8 +1,8 @@
 """
 Skin Disease Detection API
 --------------------------
-Main application entry point with improved organization, error handling,
-configuration management, and security practices.
+Enterprise application entrypoint with modular router registration,
+centralized settings, and structured error handling.
 """
 
 import os
@@ -13,22 +13,9 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
-# Load environment variables from root or current directory
-try:
-    from dotenv import load_dotenv, find_dotenv
-    dotenv_path = find_dotenv(usecwd=True)
-    if dotenv_path:
-        load_dotenv(dotenv_path)
-        print(f"Environment variables loaded from: {dotenv_path}")
-    else:
-        load_dotenv()
-except ImportError:
-    print("python-dotenv package not found. Using system environment variables.")
-
-# Import routes (Blueprints)
-from app.routes.home_routes import home_blueprint
-from app.routes.prediction_routes import prediction_blueprint
-from app.routes.auth_routes import auth_blueprint
+from app.core.config import config
+from app.core.exceptions import BaseDomainException
+from app.api.router import register_routes
 
 # Configure logging
 logging.basicConfig(
@@ -44,28 +31,22 @@ logger = logging.getLogger(__name__)
 def create_app(testing=False):
     """
     Application factory function to create and configure the Flask app
-    
-    Args:
-        testing (bool): Flag to indicate if the app is being created for testing
-        
-    Returns:
-        Flask: Configured Flask application
     """
     app = Flask(__name__)
     
     configure_app(app, testing)
     setup_cors(app)
     jwt = setup_jwt(app)
-    register_blueprints(app)
+    register_routes(app)
     register_error_handlers(app)
     register_request_handlers(app)
     
     return app
 
 def configure_app(app, testing=False):
-    """Configure the Flask application with appropriate settings"""
-    app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'FlaskSecretKey12345!')
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'd9574c5c06e96b0e2ef7bbfeb3e3cfae5920ad5d3f1b1a9a6f2b60c08a1e5dbf')
+    """Configure the Flask application with settings from AppConfig"""
+    app.config['SECRET_KEY'] = config.SECRET_KEY
+    app.config['JWT_SECRET_KEY'] = config.JWT_SECRET_KEY
     
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
@@ -80,13 +61,8 @@ def configure_app(app, testing=False):
 
 def setup_cors(app):
     """Configure Cross-Origin Resource Sharing"""
-    cors_origins = os.getenv('CORS_ORIGINS', '*')
-    if cors_origins != '*':
-        origins = [origin.strip() for origin in cors_origins.split(',')]
-    else:
-        origins = '*'
-    CORS(app, resources={r"/*": {"origins": origins}})
-    logger.info(f"CORS configured with origins: {origins}")
+    CORS(app, resources={r"/*": {"origins": config.CORS_ORIGINS}})
+    logger.info(f"CORS configured with origins: {config.CORS_ORIGINS}")
 
 def setup_jwt(app):
     """Initialize and configure JWT manager"""
@@ -119,15 +95,13 @@ def setup_jwt(app):
     logger.info("JWT Manager configured")
     return jwt
 
-def register_blueprints(app):
-    """Register all blueprints and routes"""
-    app.register_blueprint(auth_blueprint, url_prefix='/auth')
-    app.register_blueprint(home_blueprint)
-    app.register_blueprint(prediction_blueprint)
-    logger.info("All blueprints and routes registered")
-
 def register_error_handlers(app):
-    """Register error handlers for the application"""
+    """Register domain and HTTP error handlers"""
+    @app.errorhandler(BaseDomainException)
+    def handle_domain_exception(error):
+        logger.warning(f"Domain Error [{error.status_code}]: {error.message}")
+        return jsonify({'status': 'error', 'message': error.message}), error.status_code
+
     @app.errorhandler(HTTPException)
     def handle_http_exception(error):
         response = {

@@ -1,120 +1,50 @@
 """
 Prediction Service
 ------------------
-Business logic layer for skin disease prediction:
-- Automatic cloud model downloading & lazy loading
-- Image loading & preprocessing
+Business service layer for skin disease classification:
+- Lazy loading AI models
+- Triggering cloud downloads if missing
+- Preprocessing skin lesion images
 - Multi-model ensemble inference
-- Result aggregation & disease detail mapping
 """
 
 import os
-import urllib.request
-import zipfile
-import shutil
 import logging
 import numpy as np
 import tensorflow as tf
 import cv2
 from tensorflow.keras.applications.efficientnet import preprocess_input
+from app.core.config import config
+from app.core.constants import IDX2CLASS, USER_FRIENDLY_MAPPING, TARGET_IMAGE_SIZE
+from app.core.exceptions import ModelNotFoundError, InvalidImageError
+from app.ml.cloud_downloader import download_and_extract_zip, download_file_from_cloud
 
 logger = logging.getLogger(__name__)
 
-# Base directory setup
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-MODEL_DIR_SETTING = os.getenv("MODEL_DIR", "trained_models")
-
-if os.path.isabs(MODEL_DIR_SETTING):
-    MODEL_DIR = MODEL_DIR_SETTING
-else:
-    MODEL_DIR = os.path.abspath(os.path.join(BASE_DIR, MODEL_DIR_SETTING))
-
-# Global registry for loaded models
 _loaded_models = {}
 
-MODEL_CLOUD_URLS = {
-    "resnet": os.getenv("MODEL_URL_RESNET", ""),
-    "densenet": os.getenv("MODEL_URL_DENSENET", ""),
-    "efficientnet": os.getenv("MODEL_URL_EFFICIENTNET", "")
-}
-MODEL_ZIP_URL = os.getenv("MODEL_ZIP_URL", "")
-
-from app.constants.disease_constants import (
-    CLASS_INDICES,
-    IDX2CLASS,
-    USER_FRIENDLY_MAPPING,
-    TARGET_IMAGE_SIZE
-)
-
-def transform_google_drive_url(url):
-    """Transforms Google Drive view/share links into direct raw content download URLs."""
-    if "drive.google.com" in url or "drive.usercontent.google.com" in url:
-        file_id = None
-        if "/file/d/" in url:
-            parts = url.split("/file/d/")
-            if len(parts) > 1:
-                file_id = parts[1].split("/")[0].split("?")[0]
-        elif "id=" in url:
-            file_id = url.split("id=")[1].split("&")[0]
-
-        if file_id:
-            return f"https://drive.usercontent.google.com/download?id={file_id}&confirm=t"
-    return url
-
-def download_file_from_cloud(url, dest_path):
-    """Downloads a file from cloud storage URL to local disk."""
-    try:
-        download_url = transform_google_drive_url(url)
-        logger.info(f"Downloading model from cloud: {download_url} -> {dest_path}")
-        os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-        req = urllib.request.Request(
-            download_url,
-            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-        )
-        with urllib.request.urlopen(req) as response, open(dest_path, 'wb') as out_file:
-            shutil.copyfileobj(response, out_file)
-        logger.info(f"Successfully downloaded model to {dest_path}")
-        return True
-    except Exception as e:
-        logger.error(f"Failed to download model from {url}: {e}")
-        return False
-
-def download_and_extract_zip(zip_url, target_dir):
-    """Downloads and extracts a zip file containing models."""
-    zip_path = os.path.join(target_dir, "models_download.zip")
-    if download_file_from_cloud(zip_url, zip_path):
-        try:
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(target_dir)
-            logger.info(f"Extracted model zip into {target_dir}")
-            os.remove(zip_path)
-            return True
-        except Exception as e:
-            logger.error(f"Failed to extract zip {zip_path}: {e}")
-    return False
-
 def get_models():
-    """Lazy loads and returns AI models dictionary."""
+    """Lazy loads AI model ensemble dictionary."""
     global _loaded_models
     if not _loaded_models:
-        os.makedirs(MODEL_DIR, exist_ok=True)
+        os.makedirs(config.MODEL_DIR, exist_ok=True)
 
         model_files = {
-            "resnet": os.path.join(MODEL_DIR, "resnet101.h5"),
-            "densenet": os.path.join(MODEL_DIR, "densenet121.h5"),
-            "efficientnet": os.path.join(MODEL_DIR, "efficientnetb3.h5")
+            "resnet": os.path.join(config.MODEL_DIR, "resnet101.h5"),
+            "densenet": os.path.join(config.MODEL_DIR, "densenet121.h5"),
+            "efficientnet": os.path.join(config.MODEL_DIR, "efficientnetb3.h5")
         }
 
         missing_models = [name for name, path in model_files.items() if not os.path.exists(path)]
 
-        if missing_models and MODEL_ZIP_URL:
-            logger.info(f"Models missing {missing_models}. Attempting cloud ZIP download...")
-            download_and_extract_zip(MODEL_ZIP_URL, MODEL_DIR)
+        if missing_models and config.MODEL_ZIP_URL:
+            logger.info(f"Models missing {missing_models}. Triggering cloud ZIP download...")
+            download_and_extract_zip(config.MODEL_ZIP_URL, config.MODEL_DIR)
 
         for name, path in model_files.items():
-            if not os.path.exists(path) and MODEL_CLOUD_URLS.get(name):
-                logger.info(f"Attempting individual cloud download for '{name}'...")
-                download_file_from_cloud(MODEL_CLOUD_URLS[name], path)
+            if not os.path.exists(path) and config.MODEL_CLOUD_URLS.get(name):
+                logger.info(f"Attempting individual download for '{name}'...")
+                download_file_from_cloud(config.MODEL_CLOUD_URLS[name], path)
 
             if os.path.exists(path):
                 try:
@@ -127,29 +57,26 @@ def get_models():
 
     return _loaded_models
 
-def load_and_preprocess_image(image_path, target_size=TARGET_IMAGE_SIZE):
-    """Loads, resizes, and preprocesses input skin image for model inference."""
+def load_and_preprocess_image(image_path: str, target_size=TARGET_IMAGE_SIZE):
+    """Loads, resizes, and preprocesses input image for inference."""
     image = cv2.imread(image_path)
     if image is None:
-        raise ValueError(f"Image not found or cannot be read: {image_path}")
+        raise InvalidImageError(f"Image not found or unreadable: {image_path}")
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = cv2.resize(image, target_size)
     image = preprocess_input(image)
     image = np.expand_dims(image, axis=0)
     return image
 
-def predict_skin_disease(image_path):
-    """
-    Executes ensemble prediction on an input skin image.
-    
-    Returns:
-        dict: Prediction results with predicted disease, confidence score, and disease details.
-    """
+def predict_skin_disease(image_path: str) -> dict:
+    """Executes ensemble prediction on input skin lesion image."""
     active_models = get_models()
     if not active_models:
-        raise RuntimeError(f"AI models not available. Ensure model files exist in {MODEL_DIR} or configure MODEL_ZIP_URL.")
+        raise ModelNotFoundError(
+            f"AI models unavailable. Ensure model files exist in {config.MODEL_DIR} or set MODEL_ZIP_URL."
+        )
 
-    preprocessed_image = load_and_preprocess_image(image_path, target_size=TARGET_IMAGE_SIZE)
+    preprocessed_image = load_and_preprocess_image(image_path)
 
     predictions = {}
     for name, model in active_models.items():

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required
 from flask_bcrypt import Bcrypt
-from app.db_models.user_model import find_user_by_email, create_user
+from app.models.user import find_user_by_email, create_user
 from functools import wraps
 import jwt
 

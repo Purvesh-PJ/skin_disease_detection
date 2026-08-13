@@ -1,7 +1,7 @@
 """
-Prediction Routes (Controller)
-------------------------------
-Flask route controller for image upload and skin disease prediction endpoint.
+Skin Lesion Prediction API Controller
+------------------------------------
+API endpoint for processing skin image uploads and returning ensemble predictions.
 """
 
 from flask import Blueprint, request, jsonify
@@ -9,15 +9,16 @@ from werkzeug.utils import secure_filename
 import os
 import logging
 from app.services.prediction_service import predict_skin_disease
+from app.core.exceptions import BaseDomainException
 
 logger = logging.getLogger(__name__)
 
-prediction_blueprint = Blueprint('prediction', __name__)
+predict_router = Blueprint('predict', __name__)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-@prediction_blueprint.route('/predict', methods=['POST'])
-def prediction():
+@predict_router.route('/predict', methods=['POST'])
+def handle_prediction():
     if 'image' not in request.files:
         return jsonify({"error": "No image file provided"}), 400
 
@@ -37,12 +38,12 @@ def prediction():
         result["message"] = "Image processed successfully"
         result["filename"] = filename
         return jsonify(result), 200
-    except RuntimeError as e:
-        logger.warning(f"Prediction service unavailable: {e}")
-        return jsonify({"error": str(e)}), 503
+    except BaseDomainException as e:
+        logger.warning(f"Domain Exception: {e.message}")
+        return jsonify({"error": e.message}), e.status_code
     except Exception as e:
-        logger.exception("Prediction processing error")
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Unexpected error in prediction handler")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         if os.path.exists(file_path):
             try:
