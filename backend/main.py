@@ -13,15 +13,17 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
-# Try to import dotenv, but continue if not available
+# Load environment variables from root or current directory
 try:
-    from dotenv import load_dotenv
-    # Load environment variables from .env file if it exists
-    load_dotenv()
-    print("Environment variables loaded from .env file")
+    from dotenv import load_dotenv, find_dotenv
+    dotenv_path = find_dotenv(usecwd=True)
+    if dotenv_path:
+        load_dotenv(dotenv_path)
+        print(f"Environment variables loaded from: {dotenv_path}")
+    else:
+        load_dotenv()
 except ImportError:
-    print("python-dotenv package not found. Using default environment variables.")
-    # You can install it with: pip install python-dotenv
+    print("python-dotenv package not found. Using system environment variables.")
 
 # Import routes
 from app.routes.home_routes import setup_home_routes
@@ -49,55 +51,40 @@ def create_app(testing=False):
     Returns:
         Flask: Configured Flask application
     """
-    # Create Flask app instance
     app = Flask(__name__)
     
-    # Load configuration based on environment
     configure_app(app, testing)
-    
-    # Setup CORS
     setup_cors(app)
-    
-    # Initialize JWT
     jwt = setup_jwt(app)
-    
-    # Register blueprints and routes
     register_blueprints(app)
-    
-    # Register error handlers
     register_error_handlers(app)
-    
-    # Register request handlers for logging
     register_request_handlers(app)
     
     return app
 
 def configure_app(app, testing=False):
     """Configure the Flask application with appropriate settings"""
-    # Basic configuration
     app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'FlaskSecretKey12345!')
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'd9574c5c06e96b0e2ef7bbfeb3e3cfae5920ad5d3f1b1a9a6f2b60c08a1e5dbf')
     
-    # JWT configuration
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
     
-    # Upload configuration
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
     app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
     
-    # Ensure upload directory exists
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
-    # Testing configuration
     if testing:
         app.config['TESTING'] = True
-        # Add any testing-specific configuration here
 
 def setup_cors(app):
     """Configure Cross-Origin Resource Sharing"""
-    # In production, you should restrict origins to your frontend domain
-    origins = os.getenv('CORS_ORIGINS', '*')
+    cors_origins = os.getenv('CORS_ORIGINS', '*')
+    if cors_origins != '*':
+        origins = [origin.strip() for origin in cors_origins.split(',')]
+    else:
+        origins = '*'
     CORS(app, resources={r"/*": {"origins": origins}})
     logger.info(f"CORS configured with origins: {origins}")
 
@@ -134,20 +121,15 @@ def setup_jwt(app):
 
 def register_blueprints(app):
     """Register all blueprints and routes"""
-    # Register authentication routes
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
-    
-    # Register other routes
     setup_home_routes(app)
     setup_prediction_routes(app)
-    
     logger.info("All blueprints and routes registered")
 
 def register_error_handlers(app):
     """Register error handlers for the application"""
     @app.errorhandler(HTTPException)
     def handle_http_exception(error):
-        """Handle all HTTP exceptions"""
         response = {
             'status': 'error',
             'message': error.description,
@@ -158,7 +140,6 @@ def register_error_handlers(app):
     
     @app.errorhandler(Exception)
     def handle_generic_exception(error):
-        """Handle all unhandled exceptions"""
         response = {
             'status': 'error',
             'message': 'An unexpected error occurred',
@@ -173,18 +154,17 @@ def register_request_handlers(app):
     """Register request handlers for logging"""
     @app.before_request
     def log_request_info():
-        """Log information about each request"""
         logger.debug(f"Request: {request.method} {request.path} - {request.remote_addr}")
     
     @app.after_request
     def log_response_info(response):
-        """Log information about each response"""
         logger.debug(f"Response: {response.status}")
         return response
 
-# Entry point for running the app
+# Create WSGI application object for Gunicorn / uWSGI / Render / Railway
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     debug_mode = os.getenv('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
     host = os.getenv('FLASK_HOST', '0.0.0.0')
     port = int(os.getenv('FLASK_PORT', 5000))
