@@ -9,11 +9,13 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[4]};
+  flex: 1;
 `;
 
 const DropZone = styled.div`
   width: 100%;
-  aspect-ratio: 4 / 3;
+  flex: 1;
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,20 +27,23 @@ const DropZone = styled.div`
     $hasImage ? theme.colors.status.success.bg : theme.colors.background.tertiary};
   padding: ${({ theme }) => theme.spacing[4]};
   cursor: pointer;
-  transition: all ${({ theme }) => theme.transitions.fast};
+  transition: all ${({ theme }) => theme.transitions.normal};
   overflow: hidden;
+  position: relative;
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.primary[400]};
+    border-color: ${({ theme }) => theme.colors.primary[500]};
     background-color: ${({ theme }) => theme.colors.interactive.selected};
+    transform: translateY(-2px);
   }
 `;
 
 const ImagePreview = styled.img`
   max-width: 100%;
-  max-height: 100%;
+  max-height: 260px;
   object-fit: contain;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  box-shadow: ${({ theme }) => theme.shadows.md};
 `;
 
 const IconWrapper = styled.div`
@@ -48,8 +53,9 @@ const IconWrapper = styled.div`
     width: 64px;
     height: 64px;
     object-fit: contain;
-    opacity: 0.7;
+    opacity: 0.85;
     filter: ${({ theme }) => theme.mode === 'dark' ? 'invert(1) brightness(0.9)' : 'none'};
+    transition: transform ${({ theme }) => theme.transitions.fast};
   }
 `;
 
@@ -58,31 +64,33 @@ const HiddenInput = styled.input`
 `;
 
 const UploadHint = styled(SmallText)`
-  color: ${({ theme }) => theme.colors.text.tertiary};
+  color: ${({ theme }) => theme.colors.text.secondary};
   text-align: center;
+  font-size: 0.95rem;
   
   span {
     color: ${({ theme }) => theme.colors.primary[500]};
-    font-weight: 500;
+    font-weight: 600;
   }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing[3]};
-  margin-top: ${({ theme }) => theme.spacing[2]};
+  margin-top: ${({ theme }) => theme.spacing[1]};
 `;
 
 const WarningBox = styled.div`
   padding: ${({ theme }) => theme.spacing[3]};
   background-color: ${({ theme }) => theme.colors.status.warning.bg};
   border: 1px solid ${({ theme }) => theme.colors.status.warning.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
 `;
 
 const WarningText = styled(SmallText)`
   color: ${({ theme }) => theme.colors.status.warning.text};
-  font-size: 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
 `;
 
 const ImageUploadCard = ({
@@ -165,10 +173,11 @@ const ImageUploadCard = ({
               <img src={DiseaseIcon} alt="Skin analysis" />
             </IconWrapper>
             <UploadHint>
-              <span>Click to upload</span> or drag and drop
+              <span>Click to upload</span> or drag & drop
             </UploadHint>
-            <SmallText style={{ marginTop: '4px', fontSize: '0.75rem' }} variant="tertiary">
-              PNG, JPG up to 10MB
+
+            <SmallText style={{ marginTop: '6px', fontSize: '0.78rem' }} variant="tertiary">
+              Supports PNG, JPG, JPEG up to 16MB
             </SmallText>
           </>
         )}
@@ -200,7 +209,7 @@ const ImageUploadCard = ({
 
       <WarningBox>
         <WarningText>
-          This AI is trained for skin disease images only. Other images may give inaccurate results.
+          This AI model is specialized for skin disease lesion analysis. Non-skin images may yield inaccurate diagnostic scores.
         </WarningText>
       </WarningBox>
     </Card>

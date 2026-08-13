@@ -3,14 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 import { ROUTES } from '../../constants';
 import { Button, Input, Alert, Spinner } from '../../components/common/ui';
-import { H2, SmallText } from '../../styles/typography';
-import signupImage from '../../assets/images/7108455 1.png';
+import { AuthLayout } from '../../components/layout';
+import { H2, Text } from '../../styles/typography';
 import {
-  Container,
-  AuthContainer,
-  LeftColumn,
-  RightColumn,
-  Illustration,
+  FormHeader,
   Form,
   StyledInput,
   LinkText,
@@ -39,63 +35,64 @@ const Signup = () => {
       await register({ username, email, password });
       navigate(ROUTES.LOGIN);
     } catch {
-      // Error is handled by useAuth hook
+      // Error handled by useAuth
     }
   };
 
   const displayError = localError || error;
 
   return (
-    <Container>
-      <AuthContainer>
-        <LeftColumn>
-          <Illustration>
-            <img src={signupImage} alt="Signup Illustration" />
-          </Illustration>
-        </LeftColumn>
-        <RightColumn>
-          <Form onSubmit={handleSubmit}>
-            <H2>Sign Up</H2>
-            <StyledInput
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-            <StyledInput
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <StyledInput
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <StyledInput
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-            {displayError && <Alert variant="error">{displayError}</Alert>}
-            <Button type="submit" disabled={loading} style={{ width: '60%' }}>
-              {loading ? <Spinner size="sm" color="white" /> : 'Sign Up'}
-            </Button>
-            <Divider />
-            <LinkText>
-              Already have an account? <Link to={ROUTES.LOGIN}>Log in</Link>
-            </LinkText>
-          </Form>
-        </RightColumn>
-      </AuthContainer>
-    </Container>
+    <AuthLayout>
+      <FormHeader>
+        <H2>Create account</H2>
+        <Text variant="secondary" size="sm">
+          Get started with AI-driven skin lesion classification
+        </Text>
+      </FormHeader>
+
+      <Form onSubmit={handleSubmit}>
+        <StyledInput
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <StyledInput
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <StyledInput
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <StyledInput
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
+
+        {displayError && <Alert variant="error">{displayError}</Alert>}
+
+        <Button type="submit" disabled={loading} fullWidth size="lg">
+          {loading ? <Spinner size="sm" color="white" /> : 'Create Account'}
+        </Button>
+
+        <Divider />
+
+        <LinkText>
+          Already have an account? <Link to={ROUTES.LOGIN}>Log in</Link>
+        </LinkText>
+      </Form>
+    </AuthLayout>
   );
 };
 

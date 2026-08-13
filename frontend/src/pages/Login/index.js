@@ -3,14 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 import { ROUTES } from '../../constants';
 import { Button, Input, Alert, Spinner } from '../../components/common/ui';
-import { H2, SmallText } from '../../styles/typography';
-import loginImage from '../../assets/images/7108455 1.png';
+import { AuthLayout } from '../../components/layout';
+import { H2, Text, SmallText } from '../../styles/typography';
 import {
-  Container,
-  AuthContainer,
-  LeftColumn,
-  RightColumn,
-  Illustration,
+  FormHeader,
   Form,
   StyledInput,
   LinkText,
@@ -34,7 +30,7 @@ const Login = () => {
       await login(email, password);
       navigate(ROUTES.DASHBOARD);
     } catch {
-      // Error is handled by useAuth hook
+      // Error handled by useAuth
     }
   };
 
@@ -44,47 +40,49 @@ const Login = () => {
   };
 
   return (
-    <Container>
-      <AuthContainer>
-        <LeftColumn>
-          <Illustration>
-            <img src={loginImage} alt="Skin Disease Illustration" />
-          </Illustration>
-        </LeftColumn>
-        <RightColumn>
-          <Form onSubmit={handleSubmit}>
-            <H2>Login</H2>
-            <StyledInput
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={handleInputChange(setEmail)}
-              error={!!error}
-              required
-            />
-            <StyledInput
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={handleInputChange(setPassword)}
-              error={!!error}
-              required
-            />
-            {error && <Alert variant="error">{error}</Alert>}
-            <Button type="submit" disabled={loading} style={{ width: '60%' }}>
-              {loading ? <Spinner size="sm" color="white" /> : 'Login'}
-            </Button>
-            <LinkText>
-              <Link to="/forgot-password">Forgot password?</Link>
-            </LinkText>
-            <Divider />
-            <LinkText>
-              Don't have an account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
-            </LinkText>
-          </Form>
-        </RightColumn>
-      </AuthContainer>
-    </Container>
+    <AuthLayout>
+      <FormHeader>
+        <H2>Welcome back</H2>
+        <Text variant="secondary" size="sm">
+          Sign in to your account to analyze skin lesion diagnostics
+        </Text>
+      </FormHeader>
+
+      <Form onSubmit={handleSubmit}>
+        <StyledInput
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={handleInputChange(setEmail)}
+          error={!!error}
+          required
+        />
+        <StyledInput
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={handleInputChange(setPassword)}
+          error={!!error}
+          required
+        />
+
+        {error && <Alert variant="error">{error}</Alert>}
+
+        <Button type="submit" disabled={loading} fullWidth size="lg">
+          {loading ? <Spinner size="sm" color="white" /> : 'Sign In'}
+        </Button>
+
+        <LinkText>
+          <Link to="/forgot-password">Forgot password?</Link>
+        </LinkText>
+
+        <Divider />
+
+        <LinkText>
+          Don't have an account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
+        </LinkText>
+      </Form>
+    </AuthLayout>
   );
 };
 

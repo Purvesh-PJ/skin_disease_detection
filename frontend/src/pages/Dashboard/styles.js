@@ -10,49 +10,50 @@ export const Container = styled.div`
 export const Main = styled.main`
   flex: 1;
   display: flex;
-  gap: ${({ theme }) => theme.spacing[4]};
-  padding: ${({ theme }) => theme.spacing[4]};
-  
-  @media (min-width: 1400px) {
-    padding: ${({ theme }) => `${theme.spacing[6]} ${theme.spacing[10]}`};
-  }
-  
-  @media (min-width: 1600px) {
-    padding: ${({ theme }) => `${theme.spacing[6]} ${theme.spacing[16]}`};
-  }
-  
-  @media (min-width: 1920px) {
-    padding: ${({ theme }) => `${theme.spacing[8]} 80px`};
-  }
+  gap: ${({ theme }) => theme.spacing[6]};
+  padding: ${({ theme }) => `${theme.spacing[6]} ${theme.spacing[8]}`};
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
     flex-direction: column;
+    padding: ${({ theme }) => theme.spacing[4]};
   }
 `;
 
 export const Panel = styled.div`
   background-color: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
   box-shadow: ${({ theme }) => theme.shadows.subtle};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 540px;
+  transition: all ${({ theme }) => theme.transitions.normal};
 `;
 
 export const LeftPanel = styled(Panel)`
-  flex: 0 0 45%;
-  
+  flex: 1;
+
   @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
     flex: none;
+    min-height: auto;
   }
 `;
 
 export const RightPanel = styled(Panel)`
-  flex: 1;
+  flex: 1.2;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    flex: none;
+    min-height: auto;
+  }
 `;
 
 export const PanelHeader = styled.div`
-  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[4]}`};
+  padding: ${({ theme }) => `${theme.spacing[4]} ${theme.spacing[6]}`};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
   background-color: ${({ theme }) => theme.colors.background.tertiary};
 `;
@@ -60,13 +61,14 @@ export const PanelHeader = styled.div`
 export const PanelTitle = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing[2]};
+  gap: ${({ theme }) => theme.spacing[3]};
   color: ${({ theme }) => theme.colors.text.primary};
   
   h3 {
     margin: 0;
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
   
   svg {
@@ -76,7 +78,7 @@ export const PanelTitle = styled.div`
 
 export const PanelContent = styled.div`
   flex: 1;
-  padding: ${({ theme }) => theme.spacing[4]};
+  padding: ${({ theme }) => theme.spacing[6]};
   display: flex;
   flex-direction: column;
 `;

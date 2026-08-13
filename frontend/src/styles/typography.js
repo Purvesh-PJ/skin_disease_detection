@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components';
 // Typography scale
 export const typography = {
   fontFamily: {
-    heading: '"Open Sans", sans-serif',
-    body: '"Poppins", sans-serif',
+    heading: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    body: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     mono: 'source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace',
   },
   fontSize: {
