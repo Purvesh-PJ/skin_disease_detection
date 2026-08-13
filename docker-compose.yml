@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: skin_disease_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skin_disease_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/skin_disease_db
+      - MONGO_DB_NAME=skin_disease_db
+      - FLASK_SECRET_KEY=dev_flask_secret_key_987654321
+      - JWT_SECRET_KEY=d9574c5c06e96b0e2ef7bbfeb3e3cfae5920ad5d3f1b1a9a6f2b60c08a1e5dbf
+      - CORS_ORIGINS=*
+      - MODEL_DIR=/app/trained_models
+    volumes:
+      - ./trained_models:/app/trained_models
+    depends_on:
+      - mongodb
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: skin_disease_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  mongo_data:
