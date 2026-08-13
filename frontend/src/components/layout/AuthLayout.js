@@ -6,10 +6,7 @@ const PageWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) =>
-    theme.mode === 'dark'
-      ? 'radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 100%)'
-      : 'radial-gradient(circle at 50% 0%, #e0f2fe 0%, #fafbff 100%)'};
+  background: ${({ theme }) => theme.gradients.authBg};
   transition: background ${({ theme }) => theme.transitions.normal};
 `;
 
@@ -33,7 +30,7 @@ const Brand = styled.div`
 const BrandIcon = styled.div`
   width: 38px;
   height: 38px;
-  background: linear-gradient(135deg, ${({ theme }) => theme.colors.primary[500]}, ${({ theme }) => theme.colors.primary[700]});
+  background: ${({ theme }) => theme.gradients.brandIcon};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   display: flex;
   align-items: center;
@@ -41,7 +38,7 @@ const BrandIcon = styled.div`
   color: white;
   font-weight: 800;
   font-size: 1rem;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+  box-shadow: ${({ theme }) => theme.shadows.md};
 `;
 
 const BrandTitle = styled.span`
@@ -63,16 +60,10 @@ const MainContent = styled.main`
 const AuthCard = styled.div`
   width: 100%;
   max-width: 440px;
-  background: ${({ theme }) =>
-    theme.mode === 'dark'
-      ? 'rgba(30, 41, 59, 0.75)'
-      : 'rgba(255, 255, 255, 0.85)'};
+  background: ${({ theme }) => theme.gradients.authCardBg};
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid ${({ theme }) =>
-    theme.mode === 'dark'
-      ? 'rgba(255, 255, 255, 0.1)'
-      : 'rgba(226, 232, 240, 0.8)'};
+  border: 1px solid ${({ theme }) => theme.gradients.authCardBorder};
   border-radius: ${({ theme }) => theme.borderRadius['2xl']};
   box-shadow: ${({ theme }) => theme.shadows.xl};
   padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[8]}`};

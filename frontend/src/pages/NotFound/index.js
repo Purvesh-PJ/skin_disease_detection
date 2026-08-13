@@ -21,15 +21,19 @@ const ErrorCode = styled(H1)`
   margin-bottom: ${({ theme }) => theme.spacing[2]};
 `;
 
+const SubTitle = styled(Text)`
+  margin-bottom: ${({ theme }) => theme.spacing[6]};
+`;
+
 const NotFound = () => {
   return (
     <Container>
       <ErrorCode>404</ErrorCode>
-      <Text variant="secondary" style={{ marginBottom: '24px' }}>
+      <SubTitle variant="secondary">
         Page not found
-      </Text>
+      </SubTitle>
       <Link to={ROUTES.HOME}>
-        <Button>Go Home</Button>
+        <Button size="lg">Go Home</Button>
       </Link>
     </Container>
   );

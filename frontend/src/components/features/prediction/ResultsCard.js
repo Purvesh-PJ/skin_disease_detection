@@ -53,7 +53,7 @@ const StateIcon = styled.div`
     if ($variant === 'success') return theme.colors.status.success.icon;
     return theme.colors.status.info.icon;
   }};
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme }) => theme.shadows.sm};
 `;
 
 const ResultContainer = styled.div`
@@ -97,6 +97,11 @@ const DiseaseName = styled.h3`
   letter-spacing: -0.01em;
 `;
 
+const SubText = styled(SmallText)`
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.colors.text.tertiary};
+`;
+
 const ConfidenceBadge = styled.span`
   display: inline-flex;
   align-items: center;
@@ -122,6 +127,16 @@ const ProgressLabelRow = styled.div`
   align-items: center;
 `;
 
+const ProgressTitle = styled(SmallText)`
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
+const ProgressPercentText = styled(SmallText)`
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.primary[500]};
+`;
+
 const ProgressBarContainer = styled.div`
   width: 100%;
   height: 8px;
@@ -132,7 +147,7 @@ const ProgressBarContainer = styled.div`
 
 const ProgressBarFill = styled.div`
   height: 100%;
-  background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary[500]}, ${({ theme }) => theme.colors.primary[600]});
+  background: ${({ theme }) => theme.gradients.progressBar};
   border-radius: ${({ theme }) => theme.borderRadius.full};
   --progress-width: ${({ $percentage }) => `${$percentage}%`};
   animation: ${fillProgress} 0.8s ease-out forwards;
@@ -194,6 +209,41 @@ const DetailValue = styled(Text)`
   color: ${({ theme }) => theme.colors.text.primary};
 `;
 
+const LoadingText = styled(Text)`
+  margin-top: ${({ theme }) => theme.spacing[5]};
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
+const LoadingSubText = styled(SmallText)`
+  margin-top: ${({ theme }) => theme.spacing[1]};
+  color: ${({ theme }) => theme.colors.text.tertiary};
+`;
+
+const ErrorTitle = styled(Text)`
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
+const ErrorSubText = styled(SmallText)`
+  margin-top: ${({ theme }) => theme.spacing[1]};
+  max-width: 320px;
+  color: ${({ theme }) => theme.colors.text.tertiary};
+`;
+
+const EmptyTitle = styled(Text)`
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
+const EmptySubText = styled(SmallText)`
+  margin-top: ${({ theme }) => theme.spacing[1]};
+  max-width: 280px;
+  color: ${({ theme }) => theme.colors.text.tertiary};
+`;
+
 const ResultsCard = ({ predictionResult, loading, error }) => {
   const getDiseaseName = (result) => {
     return result.disease_details?.name || result.predicted_disease;
@@ -210,8 +260,8 @@ const ResultsCard = ({ predictionResult, loading, error }) => {
       <Card>
         <EmptyState>
           <Spinner size="lg" />
-          <Text style={{ marginTop: '20px', fontWeight: 600 }} variant="secondary">Analyzing Skin Lesion...</Text>
-          <SmallText variant="tertiary" style={{ marginTop: '4px' }}>Running ensemble deep neural network inference</SmallText>
+          <LoadingText>Analyzing Skin Lesion...</LoadingText>
+          <LoadingSubText>Running ensemble deep neural network inference</LoadingSubText>
         </EmptyState>
       </Card>
     );
@@ -224,10 +274,10 @@ const ResultsCard = ({ predictionResult, loading, error }) => {
           <StateIcon $variant="error">
             <FiAlertCircle size={32} />
           </StateIcon>
-          <Text variant="secondary" style={{ fontWeight: 600, fontSize: '1.05rem' }}>Analysis Failed</Text>
-          <SmallText variant="tertiary" style={{ marginTop: '4px', maxWidth: '320px' }}>
+          <ErrorTitle>Analysis Failed</ErrorTitle>
+          <ErrorSubText>
             {error.response?.data?.message || 'Unable to process image. Please verify input and try again.'}
-          </SmallText>
+          </ErrorSubText>
         </EmptyState>
       </Card>
     );
@@ -243,15 +293,15 @@ const ResultsCard = ({ predictionResult, loading, error }) => {
             </SuccessIcon>
             <div>
               <DiseaseName>{getDiseaseName(predictionResult)}</DiseaseName>
-              <SmallText variant="tertiary" style={{ fontSize: '0.8rem' }}>AI Diagnosis Output</SmallText>
+              <SubText>AI Diagnosis Output</SubText>
             </div>
             <ConfidenceBadge>{confidenceValue}% Match</ConfidenceBadge>
           </ResultHeader>
 
           <ProgressSection>
             <ProgressLabelRow>
-              <SmallText style={{ fontWeight: 600 }} variant="secondary">Ensemble Confidence Score</SmallText>
-              <SmallText style={{ fontWeight: 700, color: '#0ea5e9' }}>{confidenceValue}%</SmallText>
+              <ProgressTitle>Ensemble Confidence Score</ProgressTitle>
+              <ProgressPercentText>{confidenceValue}%</ProgressPercentText>
             </ProgressLabelRow>
             <ProgressBarContainer>
               <ProgressBarFill $percentage={confidenceValue} />
@@ -293,10 +343,10 @@ const ResultsCard = ({ predictionResult, loading, error }) => {
         <StateIcon>
           <FiShield size={32} />
         </StateIcon>
-        <Text variant="secondary" style={{ fontWeight: 600, fontSize: '1.05rem' }}>No Diagnostic Data</Text>
-        <SmallText variant="tertiary" style={{ marginTop: '4px', maxWidth: '280px' }}>
+        <EmptyTitle>No Diagnostic Data</EmptyTitle>
+        <EmptySubText>
           Upload a skin lesion image on the left panel to execute multi-model ensemble analysis.
-        </SmallText>
+        </EmptySubText>
       </EmptyState>
     </Card>
   );
