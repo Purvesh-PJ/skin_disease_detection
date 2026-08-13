@@ -4,8 +4,13 @@ User Database Model & Data Access Operations
 Interacts with MongoDB users collection for account management.
 """
 
-from app.config.mongo_config import users_collection
+from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
+from app.core.config import config
+
+mongo_client = MongoClient(config.MONGO_URI)
+db = mongo_client[config.MONGO_DB_NAME]
+users_collection = db["users"]
 
 bcrypt = Bcrypt()
 
