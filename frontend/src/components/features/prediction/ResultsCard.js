@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-import { FiUpload, FiAlertCircle, FiCheckCircle, FiShield, FiFileText } from 'react-icons/fi';
+import { FiAlertCircle, FiCheckCircle, FiShield, FiFileText } from 'react-icons/fi';
 import { Spinner } from '../../common/ui';
 import { Text, SmallText } from '../../../styles/typography';
 

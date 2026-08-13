@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 import { ROUTES } from '../../constants';
-import { Button, Input, Alert, Spinner } from '../../components/common/ui';
+import { Button, Alert, Spinner } from '../../components/common/ui';
 import { AuthLayout } from '../../components/layout';
-import { H2, Text, SmallText } from '../../styles/typography';
+import { H2, Text } from '../../styles/typography';
 import {
   FormHeader,
   Form,
