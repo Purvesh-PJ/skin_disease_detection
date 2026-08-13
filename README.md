@@ -161,13 +161,15 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-###  Create a .env file in backend/ with:
+### 🔑 Environment Configuration
 
+Copy the unified environment template from project root:
 ```bash
-FLASK_SECRET_KEY=YourSecretKey
-JWT_SECRET_KEY=YourJWTSecretKey
-MONGO_URI=mongodb://localhost:27017/skin_disease_db
+cp .env.example .env
 ```
+Edit `.env` to configure your Flask secret keys, MongoDB URI, and Frontend API URL.
+
+For detailed production deployment instructions (MongoDB Atlas, Render, Vercel, Docker), see the [Deployment Guide](docs/deployment-guide.md).
 
 ### (Optional) Train Your Own Models
 
