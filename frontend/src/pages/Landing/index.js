@@ -10,7 +10,6 @@ import {
   FiShield,
   FiDatabase,
   FiCheckCircle,
-  FiSliders,
   FiInfo,
   FiExternalLink,
 } from 'react-icons/fi';
@@ -29,24 +28,26 @@ import {
   SectionTag,
   SectionTitle,
   SectionDescription,
-  StatsGrid,
-  StatCard,
+  StatsStrip,
+  StatItem,
   StatValue,
   StatLabel,
-  DatasetProcessGrid,
-  ProcessCard,
-  ProcessIcon,
-  ModelsGrid,
-  ModelCard,
-  ModelHeader,
+  ProcessFlow,
+  ProcessStep,
+  StepNumber,
+  StepTitle,
+  StepDesc,
+  ModelSpecsContainer,
+  ModelSpecRow,
+  ModelInfo,
+  ModelTitleRow,
   ModelBadge,
-  ModelSvgWrapper,
-  EnsembleBanner,
-  ConditionsGrid,
-  ConditionCard,
+  ModelSvgPanel,
+  ConditionsMatrix,
+  ConditionRow,
   ConditionPill,
-  DisclaimerCard,
-  DisclaimerItem,
+  NoticeStrip,
+  NoticeItem,
   CtaCard,
   FooterWrapper,
   FooterContainer,
@@ -151,7 +152,7 @@ const Landing = ({ isAuthenticated }) => {
             <path d="M 130 160 L 900 160" stroke="#2a2a2a" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Connecting Directed Arrows */}
-            <path d="M 170 160 L 220 160" stroke="#16a34a" strokeWidth="1.5" markerEnd="url(#arrow)" />
+            <path d="M 170 160 L 220 160" stroke="#16a34a" strokeWidth="1.5" />
             <path d="M 370 160 L 420 160" stroke="#16a34a" strokeWidth="1.5" />
             <path d="M 420 160 L 460 90" stroke="#16a34a" strokeWidth="1.5" />
             <path d="M 420 160 L 460 160" stroke="#16a34a" strokeWidth="1.5" />
@@ -249,7 +250,7 @@ const Landing = ({ isAuthenticated }) => {
         </PipelineSvgContainer>
       </HeroSection>
 
-      {/* Section 2: Kaggle Dataset & Data Preprocessing */}
+      {/* Section 2: Kaggle Dataset & Data Preprocessing (Borderless Metric Strip + Stepper Flow) */}
       <SectionWrapper id="dataset" $alt>
         <Container>
           <SectionHeader>
@@ -264,225 +265,194 @@ const Landing = ({ isAuthenticated }) => {
             </SectionDescription>
           </SectionHeader>
 
-          {/* Key Metrics */}
-          <StatsGrid>
-            <StatCard>
+          {/* Borderless Key Metric Strip */}
+          <StatsStrip>
+            <StatItem>
               <StatValue>10,015</StatValue>
               <StatLabel>Dermoscopic Images</StatLabel>
-            </StatCard>
-            <StatCard>
+            </StatItem>
+            <StatItem>
               <StatValue>7</StatValue>
               <StatLabel>Skin Disease Classes</StatLabel>
-            </StatCard>
-            <StatCard>
+            </StatItem>
+            <StatItem>
               <StatValue>224 × 224</StatValue>
               <StatLabel>Input Matrix Resolution</StatLabel>
-            </StatCard>
-            <StatCard>
+            </StatItem>
+            <StatItem>
               <StatValue>CLAHE</StatValue>
               <StatLabel>Contrast Equalization</StatLabel>
-            </StatCard>
-          </StatsGrid>
+            </StatItem>
+          </StatsStrip>
 
-          {/* 3-Step Data Preparation Pipeline */}
-          <DatasetProcessGrid>
-            <ProcessCard>
-              <ProcessIcon>
-                <FiDatabase />
-              </ProcessIcon>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 4px 0' }}>
-                1. Data Cleaning & Splitting
-              </h3>
-              <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+          {/* 3-Step Fluid Stepper Flow (No Box Cards) */}
+          <ProcessFlow>
+            <ProcessStep>
+              <StepNumber>STAGE 01</StepNumber>
+              <StepTitle>Data Cleaning & Splitting</StepTitle>
+              <StepDesc>
                 Images are partitioned into train, validation, and test subsets with patient-level isolation
-                to ensure reliable real-world evaluation.
-              </p>
-            </ProcessCard>
+                to ensure reliable real-world evaluation across diverse skin types.
+              </StepDesc>
+            </ProcessStep>
 
-            <ProcessCard>
-              <ProcessIcon>
-                <FiSliders />
-              </ProcessIcon>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 4px 0' }}>
-                2. Data Augmentation
-              </h3>
-              <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+            <ProcessStep>
+              <StepNumber>STAGE 02</StepNumber>
+              <StepTitle>Data Augmentation</StepTitle>
+              <StepDesc>
                 Random rotations, horizontal and vertical flips, and zoom crops address class imbalance
                 among rarer malignant conditions like Dermatofibroma and Vascular lesions.
-              </p>
-            </ProcessCard>
+              </StepDesc>
+            </ProcessStep>
 
-            <ProcessCard>
-              <ProcessIcon>
-                <FiCheckCircle />
-              </ProcessIcon>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 4px 0' }}>
-                3. RGB Normalization
-              </h3>
-              <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+            <ProcessStep>
+              <StepNumber>STAGE 03</StepNumber>
+              <StepTitle>RGB Normalization</StepTitle>
+              <StepDesc>
                 Pixel intensities are mapped to standard [0, 1] tensor distributions and standardized
                 across color channels to maximize backpropagation stability.
-              </p>
-            </ProcessCard>
-          </DatasetProcessGrid>
+              </StepDesc>
+            </ProcessStep>
+          </ProcessFlow>
         </Container>
       </SectionWrapper>
 
-      {/* Section 3: Ensemble AI Strategy & Model Architectures */}
+      {/* Section 3: Ensemble AI Strategy & Model Specifications (Spacious Technical Rows, No Box Cards) */}
       <SectionWrapper id="models">
         <Container>
           <SectionHeader>
             <SectionTag>
               <FiLayers size={14} />
-              <span>Model Architectures</span>
+              <span>Model Topologies</span>
             </SectionTag>
             <SectionTitle>Tri-Model Ensemble Backbone</SectionTitle>
             <SectionDescription>
               Combining three distinct neural network topologies allows the ensemble to capture complementary
-              spatial features while minimizing individual model blind spots.
+              spatial features while eliminating individual model blind spots.
             </SectionDescription>
           </SectionHeader>
 
-          <ModelsGrid>
+          <ModelSpecsContainer>
             {/* Model 1: ResNet-101 */}
-            <ModelCard>
-              <ModelHeader>
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 2px 0' }}>ResNet-101</h3>
-                  <span style={{ fontSize: '0.825rem', color: '#888888' }}>Residual Deep CNN</span>
-                </div>
-                <ModelBadge>44.5M Params</ModelBadge>
-              </ModelHeader>
+            <ModelSpecRow>
+              <ModelInfo>
+                <ModelTitleRow>
+                  <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0 }}>ResNet-101</h3>
+                  <ModelBadge>44.5M Params</ModelBadge>
+                </ModelTitleRow>
+                <span style={{ fontSize: '0.85rem', color: '#888888' }}>Residual Deep Convolutional Network</span>
+                <p style={{ color: '#888888', fontSize: '0.95rem', lineHeight: 1.65, margin: 0 }}>
+                  Uses identity shortcut connections to allow gradient signals to travel directly across 101 layers
+                  without vanishing, capturing fine-grained lesion borders and subtle pigment networks.
+                </p>
+              </ModelInfo>
 
-              {/* Clean Outlined ResNet Diagram */}
-              <ModelSvgWrapper>
+              <ModelSvgPanel>
                 <svg viewBox="0 0 320 80" fill="none">
-                  {/* Conv Layer 1 */}
                   <rect x="25" y="25" width="60" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="55" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Conv Layer</text>
 
-                  {/* Flow Arrow */}
                   <path d="M 85 40 L 125 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  {/* Conv Layer 2 */}
                   <rect x="125" y="25" width="60" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="155" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Conv Layer</text>
 
-                  {/* Flow Arrow */}
                   <path d="M 185 40 L 225 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  {/* Addition Node */}
                   <circle cx="240" cy="40" r="14" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="240" y="45" textAnchor="middle" fontSize="14" fontWeight="700" fill="#4ade80">+</text>
 
-                  {/* Output Flow */}
                   <path d="M 254 40 L 295 40" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="295" y="44" fontSize="10" fontWeight="700" fill="#4ade80">F(x)+x</text>
 
-                  {/* Residual Skip Connection */}
                   <path d="M 55 25 C 55 8, 240 8, 240 26" stroke="#4ade80" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
                   <text x="145" y="14" textAnchor="middle" fontSize="8" fontWeight="600" fill="#4ade80">Residual Skip Highway</text>
                 </svg>
-              </ModelSvgWrapper>
-
-              <p style={{ color: '#888888', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
-                Identity shortcuts allow gradient signals to travel directly across 101 layers without attenuation,
-                capturing fine-grained lesion borders and subtle pigment networks.
-              </p>
-            </ModelCard>
+              </ModelSvgPanel>
+            </ModelSpecRow>
 
             {/* Model 2: DenseNet-121 */}
-            <ModelCard>
-              <ModelHeader>
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 2px 0' }}>DenseNet-121</h3>
-                  <span style={{ fontSize: '0.825rem', color: '#888888' }}>Dense Feature Reuse</span>
-                </div>
-                <ModelBadge>8.0M Params</ModelBadge>
-              </ModelHeader>
+            <ModelSpecRow>
+              <ModelInfo>
+                <ModelTitleRow>
+                  <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0 }}>DenseNet-121</h3>
+                  <ModelBadge>8.0M Params</ModelBadge>
+                </ModelTitleRow>
+                <span style={{ fontSize: '0.85rem', color: '#888888' }}>Dense Feature Concatenation Architecture</span>
+                <p style={{ color: '#888888', fontSize: '0.95rem', lineHeight: 1.65, margin: 0 }}>
+                  Every layer receives direct inputs from all preceding layers. Encourages extensive feature reuse
+                  and maintains strong gradient flow with a compact parameter footprint.
+                </p>
+              </ModelInfo>
 
-              {/* Clean Outlined DenseNet Diagram */}
-              <ModelSvgWrapper>
+              <ModelSvgPanel>
                 <svg viewBox="0 0 320 80" fill="none">
-                  {/* Layer 1 */}
                   <rect x="25" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="52" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 1</text>
 
-                  {/* Layer 2 */}
                   <rect x="130" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="157" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 2</text>
 
-                  {/* Layer 3 */}
                   <rect x="235" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="262" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 3</text>
 
-                  {/* Interconnections */}
                   <path d="M 80 40 L 130 40" stroke="#16a34a" strokeWidth="1.5" />
                   <path d="M 185 40 L 235 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  {/* Dense Curved Connectors */}
                   <path d="M 52 25 C 52 8, 262 8, 262 25" stroke="#4ade80" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
                   <text x="157" y="14" textAnchor="middle" fontSize="8" fontWeight="600" fill="#4ade80">Dense Cross-Layer Concatenation</text>
                 </svg>
-              </ModelSvgWrapper>
-
-              <p style={{ color: '#888888', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
-                Every layer receives direct inputs from all preceding layers. Encourages extensive feature reuse
-                and provides strong gradient flow with a compact parameter footprint.
-              </p>
-            </ModelCard>
+              </ModelSvgPanel>
+            </ModelSpecRow>
 
             {/* Model 3: EfficientNet-B3 */}
-            <ModelCard>
-              <ModelHeader>
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 2px 0' }}>EfficientNet-B3</h3>
-                  <span style={{ fontSize: '0.825rem', color: '#888888' }}>Compound Scaling CNN</span>
-                </div>
-                <ModelBadge>12.2M Params</ModelBadge>
-              </ModelHeader>
+            <ModelSpecRow>
+              <ModelInfo>
+                <ModelTitleRow>
+                  <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0 }}>EfficientNet-B3</h3>
+                  <ModelBadge>12.2M Params</ModelBadge>
+                </ModelTitleRow>
+                <span style={{ fontSize: '0.85rem', color: '#888888' }}>Compound Scaling Convolutional Model</span>
+                <p style={{ color: '#888888', fontSize: '0.95rem', lineHeight: 1.65, margin: 0 }}>
+                  Scales network depth, channel width, and resolution simultaneously using a compound coefficient,
+                  achieving high diagnostic accuracy without excessive computational overhead.
+                </p>
+              </ModelInfo>
 
-              {/* Clean Outlined EfficientNet Diagram */}
-              <ModelSvgWrapper>
+              <ModelSvgPanel>
                 <svg viewBox="0 0 320 80" fill="none">
-                  {/* Depth */}
                   <rect x="35" y="25" width="45" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="57" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Depth (d)</text>
 
                   <path d="M 80 40 L 120 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  {/* Width */}
                   <rect x="120" y="18" width="60" height="44" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="150" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Width (w)</text>
 
                   <path d="M 180 40 L 220 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  {/* Resolution */}
                   <rect x="220" y="12" width="70" height="56" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="255" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Res (r)</text>
                 </svg>
-              </ModelSvgWrapper>
+              </ModelSvgPanel>
+            </ModelSpecRow>
 
-              <p style={{ color: '#888888', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
-                Scales network depth, channel width, and resolution simultaneously using a compound coefficient,
-                achieving high diagnostic accuracy without excessive computational overhead.
-              </p>
-            </ModelCard>
+            {/* Model 4: Meta-Classifier */}
+            <ModelSpecRow>
+              <ModelInfo>
+                <ModelTitleRow>
+                  <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0 }}>Meta-Classifier</h3>
+                  <ModelBadge>Probability Fusion</ModelBadge>
+                </ModelTitleRow>
+                <span style={{ fontSize: '0.85rem', color: '#888888' }}>Logistic Stacking Consensus Layer</span>
+                <p style={{ color: '#888888', fontSize: '0.95rem', lineHeight: 1.65, margin: 0 }}>
+                  Aggregates output prediction logits from all three neural networks using a second-stage meta-classifier,
+                  averaging out individual model variance for calibrated confidence rankings.
+                </p>
+              </ModelInfo>
 
-            {/* Model 4: Stacking Meta-Classifier */}
-            <ModelCard>
-              <ModelHeader>
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 2px 0' }}>Meta-Classifier</h3>
-                  <span style={{ fontSize: '0.825rem', color: '#888888' }}>Logistic Stacking Layer</span>
-                </div>
-                <ModelBadge>Probability Fusion</ModelBadge>
-              </ModelHeader>
-
-              {/* Clean Outlined Meta-Classifier Diagram */}
-              <ModelSvgWrapper>
+              <ModelSvgPanel>
                 <svg viewBox="0 0 320 80" fill="none">
-                  {/* Inputs */}
                   <rect x="20" y="10" width="70" height="18" rx="4" fill="none" stroke="#525252" strokeWidth="1" />
                   <text x="55" y="22" textAnchor="middle" fontSize="8" fill="currentColor">P(ResNet)</text>
 
@@ -492,50 +462,21 @@ const Landing = ({ isAuthenticated }) => {
                   <rect x="20" y="52" width="70" height="18" rx="4" fill="none" stroke="#525252" strokeWidth="1" />
                   <text x="55" y="64" textAnchor="middle" fontSize="8" fill="currentColor">P(EfficientNet)</text>
 
-                  {/* Convergence Lines */}
                   <path d="M 90 19 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
                   <path d="M 90 40 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
                   <path d="M 90 61 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  {/* Stacking Node */}
                   <rect x="140" y="20" width="90" height="40" rx="8" fill="rgba(34,197,94,0.1)" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="185" y="38" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4ade80">Meta-Learner</text>
                   <text x="185" y="50" textAnchor="middle" fontSize="8" fill="#888888">Weighted Voting</text>
 
-                  {/* Output */}
                   <path d="M 230 40 L 260 40" stroke="#16a34a" strokeWidth="1.5" />
                   <rect x="260" y="25" width="50" height="30" rx="6" fill="rgba(34,197,94,0.15)" stroke="#16a34a" strokeWidth="1.5" />
                   <text x="285" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4ade80">Class %</text>
                 </svg>
-              </ModelSvgWrapper>
-
-              <p style={{ color: '#888888', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
-                Aggregates output prediction logits from all three neural networks using a second-stage meta-classifier,
-                averaging out individual model variance for calibrated confidence rankings.
-              </p>
-            </ModelCard>
-          </ModelsGrid>
-
-          {/* Balanced Decision Stacking Banner */}
-          <EnsembleBanner>
-            <div>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 4px 0' }}>
-                Parallel Inference & Stacking Execution
-              </h3>
-              <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
-                When an image is submitted, the Flask backend executes inference across all 3 architectures
-                simultaneously and calculates the weighted softmax consensus.
-              </p>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <Button asChild variant="brand" size="md">
-                <Link to={ctaRoute}>
-                  Launch Detection Tool
-                  <FiArrowRight size={14} />
-                </Link>
-              </Button>
-            </div>
-          </EnsembleBanner>
+              </ModelSvgPanel>
+            </ModelSpecRow>
+          </ModelSpecsContainer>
         </Container>
       </SectionWrapper>
 
@@ -545,7 +486,7 @@ const Landing = ({ isAuthenticated }) => {
           <SectionHeader>
             <SectionTag>
               <FiCheckCircle size={14} />
-              <span>Diagnostic Classes</span>
+              <span>Diagnostic Scope</span>
             </SectionTag>
             <SectionTitle>7 Supported Skin Conditions</SectionTitle>
             <SectionDescription>
@@ -553,30 +494,30 @@ const Landing = ({ isAuthenticated }) => {
             </SectionDescription>
           </SectionHeader>
 
-          <ConditionsGrid>
+          {/* Clean Diagnostic Matrix (No Box Cards) */}
+          <ConditionsMatrix>
             {CONDITIONS_LIST.map((cond) => (
-              <ConditionCard key={cond.code}>
+              <ConditionRow key={cond.code}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>{cond.name}</h4>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#888888' }}>
+                      ({cond.code.toUpperCase()})
+                    </span>
+                  </div>
                   <ConditionPill $type={cond.type}>{cond.tag}</ConditionPill>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#888888' }}>
-                    {cond.code.toUpperCase()}
-                  </span>
                 </div>
-
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '4px 0 0 0' }}>
-                  {cond.name}
-                </h3>
 
                 <p style={{ fontSize: '0.875rem', color: '#888888', lineHeight: 1.55, margin: 0 }}>
                   {cond.description}
                 </p>
-              </ConditionCard>
+              </ConditionRow>
             ))}
-          </ConditionsGrid>
+          </ConditionsMatrix>
         </Container>
       </SectionWrapper>
 
-      {/* Section 5: Project Scope & Limitations */}
+      {/* Section 5: Project Scope & Limitations (Clean Notice Strip, No Box Cards) */}
       <SectionWrapper id="disclaimer">
         <Container>
           <SectionHeader>
@@ -590,46 +531,46 @@ const Landing = ({ isAuthenticated }) => {
             </SectionDescription>
           </SectionHeader>
 
-          <DisclaimerCard>
-            <DisclaimerItem>
-              <div style={{ color: '#16a34a', marginBottom: '4px' }}>
-                <FiInfo size={22} />
+          <NoticeStrip>
+            <NoticeItem>
+              <div style={{ color: '#16a34a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FiInfo size={18} />
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, color: 'currentColor' }}>
+                  Academic Project Scope
+                </h4>
               </div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
-                Academic Project Scope
-              </h4>
               <p style={{ fontSize: '0.875rem', color: '#888888', lineHeight: 1.6, margin: 0 }}>
                 This tool is an engineering project developed to evaluate ensemble deep learning on dermatoscopic images.
                 It is not a commercial medical diagnostic system.
               </p>
-            </DisclaimerItem>
+            </NoticeItem>
 
-            <DisclaimerItem>
-              <div style={{ color: '#f59e0b', marginBottom: '4px' }}>
-                <FiShield size={22} />
+            <NoticeItem>
+              <div style={{ color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FiShield size={18} />
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, color: 'currentColor' }}>
+                  AI Model Limitations
+                </h4>
               </div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
-                AI Model Limitations
-              </h4>
               <p style={{ fontSize: '0.875rem', color: '#888888', lineHeight: 1.6, margin: 0 }}>
                 Deep learning models can make errors, especially on blurry photos, non-standard lighting,
                 or skin lesions outside the HAM10000 dataset distribution.
               </p>
-            </DisclaimerItem>
+            </NoticeItem>
 
-            <DisclaimerItem>
-              <div style={{ color: '#16a34a', marginBottom: '4px' }}>
-                <FiCheckCircle size={22} />
+            <NoticeItem>
+              <div style={{ color: '#16a34a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FiCheckCircle size={18} />
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, color: 'currentColor' }}>
+                  Consult Qualified Doctors
+                </h4>
               </div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
-                Consult Qualified Doctors
-              </h4>
               <p style={{ fontSize: '0.875rem', color: '#888888', lineHeight: 1.6, margin: 0 }}>
                 Always consult a certified dermatologist for actual clinical evaluation, dermoscopy,
                 or biopsy confirmation of any concerning skin spot.
               </p>
-            </DisclaimerItem>
-          </DisclaimerCard>
+            </NoticeItem>
+          </NoticeStrip>
         </Container>
       </SectionWrapper>
 

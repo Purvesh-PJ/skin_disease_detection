@@ -10,8 +10,8 @@ export const LandingPageWrapper = styled.div`
 // Hero Section
 export const HeroSection = styled.section`
   position: relative;
-  padding: ${({ theme }) => `${theme.spacing[16]} ${theme.spacing[6]} ${theme.spacing[16]}`};
-  max-width: 1280px;
+  padding: ${({ theme }) => `${theme.spacing[16]} ${theme.spacing[6]} ${theme.spacing[12]}`};
+  max-width: 1240px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -19,7 +19,7 @@ export const HeroSection = styled.section`
   text-align: center;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    padding: ${({ theme }) => `${theme.spacing[10]} ${theme.spacing[4]} ${theme.spacing[10]}`};
+    padding: ${({ theme }) => `${theme.spacing[10]} ${theme.spacing[4]} ${theme.spacing[8]}`};
   }
 `;
 
@@ -40,7 +40,7 @@ export const HeroBadge = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing[2]};
   padding: 6px 16px;
-  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(24, 24, 24, 0.8)' : '#ffffff')};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
   border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : '#bbf7d0')};
   border-radius: ${({ theme }) => theme.borderRadius.pill};
   color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#15803d')};
@@ -117,12 +117,10 @@ export const PipelineSvgContainer = styled.div`
   background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
   border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.container};
-  box-shadow: ${({ theme }) => theme.shadows.paper};
   padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[6]}`};
   position: relative;
   z-index: 1;
   overflow-x: auto;
-  transition: border-color ${({ theme }) => theme.transitions.normal};
 
   svg {
     width: 100%;
@@ -136,7 +134,7 @@ export const PipelineSvgContainer = styled.div`
   }
 `;
 
-// Common Section Styles (Smooth Natural Flow)
+// Section Layout
 export const SectionWrapper = styled.section`
   padding: ${({ theme }) => `${theme.spacing[16]} ${theme.spacing[6]}`};
   background-color: ${({ theme, $alt }) =>
@@ -148,7 +146,7 @@ export const SectionWrapper = styled.section`
 `;
 
 export const Container = styled.div`
-  max-width: 1240px;
+  max-width: 1140px;
   margin: 0 auto;
 `;
 
@@ -163,8 +161,8 @@ export const SectionTag = styled.div`
   align-items: center;
   gap: 6px;
   padding: 4px 14px;
-  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : '#f5f5f5')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#1e1e1e' : '#f5f5f5')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#2e2e2e' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.pill};
   color: ${({ theme }) => theme.colors.text.secondary};
   font-size: 0.8125rem;
@@ -190,15 +188,18 @@ export const SectionDescription = styled.p`
   line-height: 1.6;
 `;
 
-// Dataset & Stats Grid
-export const StatsGrid = styled.div`
+// Sleek Borderless Stats Strip (No Box Cards)
+export const StatsStrip = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: ${({ theme }) => theme.spacing[5]};
-  margin-bottom: ${({ theme }) => theme.spacing[10]};
+  padding: ${({ theme }) => `${theme.spacing[6]} 0`};
+  margin-bottom: ${({ theme }) => theme.spacing[12]};
+  border-top: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  border-bottom: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: repeat(2, 1fr);
+    gap: ${({ theme }) => theme.spacing[6]};
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
@@ -206,112 +207,124 @@ export const StatsGrid = styled.div`
   }
 `;
 
-export const StatCard = styled.div`
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-radius: ${({ theme }) => theme.borderRadius.card};
-  padding: ${({ theme }) => `${theme.spacing[6]} ${theme.spacing[4]}`};
+export const StatItem = styled.div`
   text-align: center;
-  transition: transform ${({ theme }) => theme.transitions.fast}, border-color ${({ theme }) => theme.transitions.fast};
+  padding: 0 ${({ theme }) => theme.spacing[4]};
 
-  &:hover {
-    border-color: ${({ theme }) => (theme.mode === 'dark' ? '#404040' : '#d4d4d4')};
-    transform: translateY(-2px);
+  &:not(:last-child) {
+    border-right: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    &:not(:last-child) {
+      border-right: none;
+    }
   }
 `;
 
 export const StatValue = styled.div`
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 800;
   color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
   letter-spacing: -0.02em;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 `;
 
 export const StatLabel = styled.div`
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: ${({ theme }) => theme.colors.text.secondary};
   font-weight: 500;
 `;
 
-// Dataset 3-Step Process
-export const DatasetProcessGrid = styled.div`
+// Fluid Horizontal Stepper / Process Flow (No Box Cards)
+export const ProcessFlow = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: ${({ theme }) => theme.spacing[6]};
+  gap: ${({ theme }) => theme.spacing[8]};
+  position: relative;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: 1fr;
+    gap: ${({ theme }) => theme.spacing[6]};
   }
 `;
 
-export const ProcessCard = styled.div`
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-radius: ${({ theme }) => theme.borderRadius.card};
-  padding: ${({ theme }) => theme.spacing[7]};
+export const ProcessStep = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[3]};
-  transition: transform ${({ theme }) => theme.transitions.fast}, border-color ${({ theme }) => theme.transitions.fast};
+`;
 
-  &:hover {
-    border-color: ${({ theme }) => (theme.mode === 'dark' ? '#404040' : '#d4d4d4')};
-    transform: translateY(-2px);
+export const StepNumber = styled.div`
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   }
 `;
 
-export const ProcessIcon = styled.div`
-  width: 42px;
-  height: 42px;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.12)' : '#f0fdf4')};
-  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.25)' : '#bbf7d0')};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-  margin-bottom: ${({ theme }) => theme.spacing[1]};
+export const StepTitle = styled.h3`
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
-// Models Architecture Grid
-export const ModelsGrid = styled.div`
+export const StepDesc = styled.p`
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin: 0;
+`;
+
+// Technical Architecture Specs Section (Clean Split Layout, No Box Cards)
+export const ModelSpecsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing[10]};
+`;
+
+export const ModelSpecRow = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: ${({ theme }) => theme.spacing[6]};
-  margin-bottom: ${({ theme }) => theme.spacing[8]};
+  grid-template-columns: 1fr 1.2fr;
+  gap: ${({ theme }) => theme.spacing[8]};
+  align-items: center;
+  padding-bottom: ${({ theme }) => theme.spacing[10]};
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: 1fr;
+    gap: ${({ theme }) => theme.spacing[6]};
   }
 `;
 
-export const ModelCard = styled.div`
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-radius: ${({ theme }) => theme.borderRadius.card};
-  padding: ${({ theme }) => theme.spacing[7]};
+export const ModelInfo = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[4]};
-  transition: transform ${({ theme }) => theme.transitions.fast}, border-color ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    border-color: ${({ theme }) => (theme.mode === 'dark' ? '#404040' : '#d4d4d4')};
-    transform: translateY(-2px);
-  }
+  gap: ${({ theme }) => theme.spacing[3]};
 `;
 
-export const ModelHeader = styled.div`
+export const ModelTitleRow = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: ${({ theme }) => theme.spacing[3]};
 `;
 
 export const ModelBadge = styled.span`
   display: inline-block;
-  padding: 4px 12px;
+  padding: 3px 10px;
   background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.12)' : '#f0fdf4')};
   color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#15803d')};
   border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.25)' : '#bbf7d0')};
@@ -320,12 +333,12 @@ export const ModelBadge = styled.span`
   font-weight: 700;
 `;
 
-export const ModelSvgWrapper = styled.div`
+export const ModelSvgPanel = styled.div`
   width: 100%;
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#121212' : '#f9fafb')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: ${({ theme }) => theme.spacing[4]};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#fafafa')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  padding: ${({ theme }) => theme.spacing[5]};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,50 +350,35 @@ export const ModelSvgWrapper = styled.div`
   }
 `;
 
-// Ensemble Highlight Banner
-export const EnsembleBanner = styled.div`
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : '#bbf7d0')};
-  border-radius: ${({ theme }) => theme.borderRadius.container};
-  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[8]}`};
-  box-shadow: ${({ theme }) => theme.shadows.sm};
+// Conditions Matrix / Minimal List (No Box Cards)
+export const ConditionsMatrix = styled.div`
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: ${({ theme }) => theme.spacing[6]};
-  align-items: center;
+  grid-template-columns: repeat(2, 1fr);
+  gap: ${({ theme }) => theme.spacing[4]};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: 1fr;
-    padding: ${({ theme }) => theme.spacing[6]};
   }
 `;
 
-// Conditions Grid
-export const ConditionsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing[5]};
-`;
-
-export const ConditionCard = styled.div`
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-radius: ${({ theme }) => theme.borderRadius.card};
-  padding: ${({ theme }) => theme.spacing[6]};
+export const ConditionRow = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[3]};
-  transition: all ${({ theme }) => theme.transitions.fast};
+  gap: ${({ theme }) => theme.spacing[2]};
+  padding: ${({ theme }) => theme.spacing[5]};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
+  transition: border-color ${({ theme }) => theme.transitions.fast};
 
   &:hover {
     border-color: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.4)' : '#86efac')};
-    transform: translateY(-2px);
   }
 `;
 
 export const ConditionPill = styled.span`
   display: inline-block;
-  padding: 3px 10px;
+  padding: 2px 8px;
   background: ${({ theme, $type }) => {
     if ($type === 'danger') return theme.colors.status.error.bg;
     if ($type === 'warning') return theme.colors.status.warning.bg;
@@ -397,46 +395,41 @@ export const ConditionPill = styled.span`
     return theme.colors.status.success.border;
   }};
   border-radius: ${({ theme }) => theme.borderRadius.pill};
-  font-size: 0.75rem;
+  font-size: 0.725rem;
   font-weight: 700;
-  width: fit-content;
 `;
 
-// Disclaimer Section
-export const DisclaimerCard = styled.div`
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-radius: ${({ theme }) => theme.borderRadius.container};
-  padding: ${({ theme }) => theme.spacing[8]};
+// Notice Strip (Clean Engineering Note, No Box Cards)
+export const NoticeStrip = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing[8]};
+  padding: ${({ theme }) => `${theme.spacing[6]} 0`};
+  border-top: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: 1fr;
     gap: ${({ theme }) => theme.spacing[6]};
-    padding: ${({ theme }) => theme.spacing[6]};
   }
 `;
 
-export const DisclaimerItem = styled.div`
+export const NoticeItem = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[2]};
 `;
 
-// CTA Section
+// Bottom Action Banner
 export const CtaCard = styled.div`
   background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#171717')};
   border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : '#262626')};
   border-radius: ${({ theme }) => theme.borderRadius.container};
-  padding: ${({ theme }) => `${theme.spacing[14]} ${theme.spacing[8]}`};
+  padding: ${({ theme }) => `${theme.spacing[12]} ${theme.spacing[8]}`};
   color: white;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: ${({ theme }) => theme.shadows.paper};
 `;
 
 // Footer
@@ -447,7 +440,7 @@ export const FooterWrapper = styled.footer`
 `;
 
 export const FooterContainer = styled.div`
-  max-width: 1240px;
+  max-width: 1140px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
