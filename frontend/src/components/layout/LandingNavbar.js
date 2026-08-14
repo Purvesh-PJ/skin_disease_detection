@@ -48,7 +48,7 @@ const BrandIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
 `;
 
 const BrandName = styled.span`
