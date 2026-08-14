@@ -1,5 +1,9 @@
+import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { ThemeToggle } from '../common/ui';
+import { ROUTES } from '../../constants';
+import { FiActivity } from 'react-icons/fi';
 
 const PageWrapper = styled.div`
   min-height: 100vh;
@@ -21,32 +25,31 @@ const AuthHeader = styled.header`
   }
 `;
 
-const Brand = styled.div`
+const Brand = styled(Link)`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing[3]};
+  gap: ${({ theme }) => theme.spacing[2.5] || '10px'};
+  text-decoration: none;
 `;
 
 const BrandIcon = styled.div`
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   background: ${({ theme }) => theme.gradients.brandIcon};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 800;
-  font-size: 1rem;
-  box-shadow: ${({ theme }) => theme.shadows.md};
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
 `;
 
 const BrandTitle = styled.span`
   font-family: ${({ theme }) => theme.fontFamily?.heading || 'inherit'};
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text.primary};
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 `;
 
 const MainContent = styled.main`
@@ -61,11 +64,11 @@ const AuthCard = styled.div`
   width: 100%;
   max-width: 440px;
   background: ${({ theme }) => theme.gradients.authCardBg};
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid ${({ theme }) => theme.gradients.authCardBorder};
-  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
-  box-shadow: ${({ theme }) => theme.shadows.xl};
+  border-radius: ${({ theme }) => theme.borderRadius.container};
+  box-shadow: ${({ theme }) => theme.shadows.floating};
   padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[8]}`};
   display: flex;
   flex-direction: column;
@@ -80,9 +83,11 @@ export const AuthLayout = ({ children }) => {
   return (
     <PageWrapper>
       <AuthHeader>
-        <Brand>
-          <BrandIcon>SP</BrandIcon>
-          <BrandTitle>Skin AI Detector</BrandTitle>
+        <Brand to={ROUTES.HOME}>
+          <BrandIcon>
+            <FiActivity size={20} />
+          </BrandIcon>
+          <BrandTitle>Skin AI</BrandTitle>
         </Brand>
         <ThemeToggle />
       </AuthHeader>

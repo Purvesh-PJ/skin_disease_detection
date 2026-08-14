@@ -2,23 +2,43 @@ import styled, { css } from 'styled-components';
 
 const cardVariants = {
   elevated: css`
-    box-shadow: ${({ theme }) => theme.shadows.card};
+    background-color: ${({ theme }) => theme.colors.background.primary};
+    border: 1px solid ${({ theme }) => theme.colors.border.light};
+    box-shadow: ${({ theme }) => theme.shadows.paper};
   `,
   outlined: css`
-    border: 1px solid ${({ theme }) => theme.colors.border.light};
+    background-color: ${({ theme }) => theme.colors.background.primary};
+    border: 1px solid ${({ theme }) => theme.colors.border.default};
+    box-shadow: none;
   `,
   subtle: css`
-    box-shadow: ${({ theme }) => theme.shadows.subtle};
+    background-color: ${({ theme }) => theme.colors.background.tertiary};
+    border: 1px solid ${({ theme }) => theme.colors.border.light};
+    box-shadow: none;
   `,
   flat: css`
     background-color: ${({ theme }) => theme.colors.background.tertiary};
+    border: none;
+    box-shadow: none;
+  `,
+  interactive: css`
+    background-color: ${({ theme }) => theme.colors.background.primary};
+    border: 1px solid ${({ theme }) => theme.colors.border.light};
+    box-shadow: ${({ theme }) => theme.shadows.paper};
+    transition: all ${({ theme }) => theme.transitions.normal};
+    cursor: pointer;
+
+    &:hover {
+      border-color: ${({ theme }) => theme.colors.primary[200]};
+      box-shadow: ${({ theme }) => theme.shadows.hover};
+      transform: translateY(-2px);
+    }
   `,
 };
 
 const Card = styled.div`
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme, radius }) => theme.borderRadius[radius] || theme.borderRadius.xl};
-  padding: ${({ theme, padding }) => theme.spacing[padding] || theme.spacing[5]};
+  border-radius: ${({ theme, radius }) => (radius && theme.borderRadius[radius]) || theme.borderRadius.card};
+  padding: ${({ theme, padding }) => (padding && theme.spacing[padding]) || theme.spacing[6]};
   ${({ variant = 'elevated' }) => cardVariants[variant]}
 `;
 

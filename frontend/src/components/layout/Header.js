@@ -1,8 +1,11 @@
+import React from 'react';
 import styled from 'styled-components';
-import { FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import { FiLogOut, FiUser, FiSettings, FiActivity, FiHome } from 'react-icons/fi';
 import { ThemeToggle } from '../common/ui';
 import Dropdown from '../common/ui/Dropdown';
 import { authService } from '../../services';
+import { ROUTES } from '../../constants';
 import DefaultProfile from '../../assets/images/default_profile.jpg';
 
 const HeaderContainer = styled.header`
@@ -23,31 +26,33 @@ const HeaderLeft = styled.div`
 const HeaderRight = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing[4]};
+  gap: ${({ theme }) => theme.spacing[3]};
 `;
 
-const Logo = styled.div`
+const Logo = styled(Link)`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing[2]};
+  gap: ${({ theme }) => theme.spacing[2.5] || '10px'};
+  text-decoration: none;
 `;
 
 const LogoIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, ${({ theme }) => theme.colors.primary[500]}, ${({ theme }) => theme.colors.primary[700]});
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  width: 34px;
+  height: 34px;
+  background: ${({ theme }) => theme.gradients.brandIcon};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 700;
-  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
 `;
 
 const LogoText = styled.span`
+  font-family: ${({ theme }) => theme.fontFamily?.heading || 'inherit'};
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: ${({ theme }) => theme.colors.text.primary};
   
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
@@ -70,7 +75,7 @@ const ProfileImage = styled.img`
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid ${({ theme }) => theme.colors.border.light};
+  border: 2px solid ${({ theme }) => theme.colors.border.default};
   transition: border-color ${({ theme }) => theme.transitions.fast};
 
   &:hover {
@@ -88,9 +93,11 @@ const Header = () => {
   return (
     <HeaderContainer>
       <HeaderLeft>
-        <Logo>
-          <LogoIcon>SP</LogoIcon>
-          <LogoText>Skin Disease Predictor</LogoText>
+        <Logo to={ROUTES.HOME}>
+          <LogoIcon>
+            <FiActivity size={18} />
+          </LogoIcon>
+          <LogoText>Skin AI Diagnostics</LogoText>
         </Logo>
       </HeaderLeft>
 
@@ -108,6 +115,12 @@ const Header = () => {
             <Dropdown.Item>
               <FiUser size={14} />
               {user?.username || 'Profile'}
+            </Dropdown.Item>
+            <Dropdown.Item asChild>
+              <Link to={ROUTES.HOME} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                <FiHome size={14} />
+                Landing Page
+              </Link>
             </Dropdown.Item>
             <Dropdown.Item>
               <FiSettings size={14} />

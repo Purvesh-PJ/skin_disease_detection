@@ -11,7 +11,7 @@ export const Main = styled.main`
   flex: 1;
   display: flex;
   gap: ${({ theme }) => theme.spacing[6]};
-  padding: ${({ theme }) => `${theme.spacing[6]} ${theme.spacing[8]}`};
+  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[8]}`};
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
@@ -24,13 +24,13 @@ export const Main = styled.main`
 
 export const Panel = styled.div`
   background-color: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
-  box-shadow: ${({ theme }) => theme.shadows.subtle};
+  border-radius: ${({ theme }) => theme.borderRadius.container};
+  box-shadow: ${({ theme }) => theme.shadows.paper};
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 540px;
+  min-height: 560px;
   transition: all ${({ theme }) => theme.transitions.normal};
 `;
 
@@ -55,7 +55,7 @@ export const RightPanel = styled(Panel)`
 export const PanelHeader = styled.div`
   padding: ${({ theme }) => `${theme.spacing[4]} ${theme.spacing[6]}`};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
-  background-color: ${({ theme }) => theme.colors.background.tertiary};
+  background-color: ${({ theme }) => theme.colors.background.primary};
 `;
 
 export const PanelTitle = styled.div`
@@ -66,9 +66,9 @@ export const PanelTitle = styled.div`
   
   h3 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
   
   svg {

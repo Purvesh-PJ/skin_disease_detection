@@ -1,3 +1,4 @@
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FiAlertCircle, FiCheckCircle, FiShield, FiFileText } from 'react-icons/fi';
 import { Spinner } from '../../common/ui';
@@ -46,7 +47,7 @@ const StateIcon = styled.div`
     if ($variant === 'success') return theme.colors.status.success.border;
     return theme.colors.status.info.border;
   }};
-  border-radius: 50%;
+  border-radius: ${({ theme }) => theme.borderRadius.pill};
   margin-bottom: ${({ theme }) => theme.spacing[4]};
   color: ${({ theme, $variant }) => {
     if ($variant === 'error') return theme.colors.status.error.icon;
@@ -84,7 +85,7 @@ const SuccessIcon = styled.div`
   justify-content: center;
   background-color: ${({ theme }) => theme.colors.status.success.bg};
   border: 1px solid ${({ theme }) => theme.colors.status.success.border};
-  border-radius: 50%;
+  border-radius: ${({ theme }) => theme.borderRadius.pill};
   color: ${({ theme }) => theme.colors.status.success.icon};
   flex-shrink: 0;
 `;
@@ -107,9 +108,9 @@ const ConfidenceBadge = styled.span`
   align-items: center;
   padding: ${({ theme }) => `${theme.spacing[1]} ${theme.spacing[3]}`};
   background-color: ${({ theme }) => theme.colors.primary[50]};
-  color: ${({ theme }) => theme.colors.primary[600]};
+  color: ${({ theme }) => theme.colors.primary[700]};
   border: 1px solid ${({ theme }) => theme.colors.primary[200]};
-  border-radius: ${({ theme }) => theme.borderRadius.full};
+  border-radius: ${({ theme }) => theme.borderRadius.pill};
   font-size: 0.85rem;
   font-weight: 700;
   margin-left: auto;
@@ -134,21 +135,21 @@ const ProgressTitle = styled(SmallText)`
 
 const ProgressPercentText = styled(SmallText)`
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary[500]};
+  color: ${({ theme }) => theme.colors.primary[600]};
 `;
 
 const ProgressBarContainer = styled.div`
   width: 100%;
   height: 8px;
   background-color: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme }) => theme.borderRadius.full};
+  border-radius: ${({ theme }) => theme.borderRadius.pill};
   overflow: hidden;
 `;
 
 const ProgressBarFill = styled.div`
   height: 100%;
   background: ${({ theme }) => theme.gradients.progressBar};
-  border-radius: ${({ theme }) => theme.borderRadius.full};
+  border-radius: ${({ theme }) => theme.borderRadius.pill};
   --progress-width: ${({ $percentage }) => `${$percentage}%`};
   animation: ${fillProgress} 0.8s ease-out forwards;
 `;

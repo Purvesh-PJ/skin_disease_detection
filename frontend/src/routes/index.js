@@ -3,14 +3,14 @@ import { ROUTES } from '../constants';
 import ProtectedRoute from './ProtectedRoute';
 
 // Pages
-import { Login, Signup, Dashboard, NotFound } from '../pages';
+import { Landing, Login, Signup, Dashboard, NotFound } from '../pages';
 
 const AppRoutes = ({ isAuthenticated }) => {
   return (
     <Routes>
       <Route 
         path={ROUTES.HOME} 
-        element={isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <Navigate to={ROUTES.LOGIN} />} 
+        element={<Landing isAuthenticated={isAuthenticated} />} 
       />
       <Route 
         path={ROUTES.LOGIN} 

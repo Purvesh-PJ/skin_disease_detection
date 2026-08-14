@@ -26,11 +26,13 @@ const alertVariants = {
 const Alert = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing[2]};
-  padding: ${({ theme }) => `${theme.spacing[2]} ${theme.spacing[3]}`};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  gap: ${({ theme }) => theme.spacing[2.5] || '10px'};
+  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[4]}`};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
   border: 1px solid;
   font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
 
   ${({ variant = 'info' }) => alertVariants[variant]}
 `;

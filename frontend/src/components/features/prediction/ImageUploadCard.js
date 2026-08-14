@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import { Spinner, Button } from '../../common/ui';
 import { SmallText } from '../../../styles/typography';
@@ -14,6 +15,7 @@ const Card = styled.div`
 
 const DropZone = styled.div`
   width: 100%;
+  box-sizing: border-box;
   flex: 1;
   min-height: 280px;
   display: flex;
@@ -25,7 +27,7 @@ const DropZone = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.xl};
   background-color: ${({ theme, $hasImage }) => 
     $hasImage ? theme.colors.status.success.bg : theme.colors.background.tertiary};
-  padding: ${({ theme }) => theme.spacing[4]};
+  padding: ${({ theme }) => theme.spacing[6]};
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.normal};
   overflow: hidden;
@@ -43,19 +45,26 @@ const ImagePreview = styled.img`
   max-height: 260px;
   object-fit: contain;
   border-radius: ${({ theme }) => theme.borderRadius.lg};
-  box-shadow: ${({ theme }) => theme.shadows.md};
+  box-shadow: ${({ theme }) => theme.shadows.paper};
 `;
 
 const IconWrapper = styled.div`
+  width: 64px;
+  height: 64px;
+  border-radius: ${({ theme }) => theme.borderRadius.pill};
+  background: ${({ theme }) => theme.colors.background.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: ${({ theme }) => theme.spacing[3]};
+  box-shadow: ${({ theme }) => theme.shadows.sm};
   
   img {
-    width: 64px;
-    height: 64px;
+    width: 36px;
+    height: 36px;
     object-fit: contain;
-    opacity: 0.85;
     filter: ${({ theme }) => theme.mode === 'dark' ? 'invert(1) brightness(0.9)' : 'none'};
-    transition: transform ${({ theme }) => theme.transitions.fast};
   }
 `;
 
@@ -69,9 +78,15 @@ const UploadHint = styled(SmallText)`
   font-size: 0.95rem;
   
   span {
-    color: ${({ theme }) => theme.colors.primary[500]};
+    color: ${({ theme }) => theme.colors.primary[600]};
     font-weight: 600;
   }
+`;
+
+const FileSupportText = styled(SmallText)`
+  margin-top: ${({ theme }) => theme.spacing[1.5] || '6px'};
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.colors.text.tertiary};
 `;
 
 const ButtonGroup = styled.div`
@@ -81,16 +96,16 @@ const ButtonGroup = styled.div`
 `;
 
 const WarningBox = styled.div`
-  padding: ${({ theme }) => theme.spacing[3]};
-  background-color: ${({ theme }) => theme.colors.status.warning.bg};
-  border: 1px solid ${({ theme }) => theme.colors.status.warning.border};
+  padding: ${({ theme }) => theme.spacing[3.5] || '14px'};
+  background-color: ${({ theme }) => theme.colors.background.tertiary};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
 `;
 
 const WarningText = styled(SmallText)`
-  color: ${({ theme }) => theme.colors.status.warning.text};
-  font-size: 0.78rem;
-  line-height: 1.4;
+  color: ${({ theme }) => theme.colors.text.tertiary};
+  font-size: 0.8rem;
+  line-height: 1.5;
 `;
 
 const ImageUploadCard = ({
@@ -173,12 +188,11 @@ const ImageUploadCard = ({
               <img src={DiseaseIcon} alt="Skin analysis" />
             </IconWrapper>
             <UploadHint>
-              <span>Click to upload</span> or drag & drop
+              <span>Click to upload</span> or drag & drop dermoscopy image
             </UploadHint>
-
-            <SmallText style={{ marginTop: '6px', fontSize: '0.78rem' }} variant="tertiary">
+            <FileSupportText>
               Supports PNG, JPG, JPEG up to 16MB
-            </SmallText>
+            </FileSupportText>
           </>
         )}
       </DropZone>
@@ -197,8 +211,9 @@ const ImageUploadCard = ({
           disabled={loading || !imageFile}
           fullWidth
           size="lg"
+          variant="accent"
         >
-          {loading ? <Spinner size="sm" color="white" /> : 'Analyze Image'}
+          {loading ? <Spinner size="sm" color="white" /> : 'Analyze Lesion Image'}
         </Button>
         {selectedImage && (
           <Button variant="secondary" onClick={handleClear} disabled={loading} size="lg">
@@ -209,7 +224,7 @@ const ImageUploadCard = ({
 
       <WarningBox>
         <WarningText>
-          This AI model is specialized for skin disease lesion analysis. Non-skin images may yield inaccurate diagnostic scores.
+          Specialized for dermoscopic skin lesion classification. For clinical triage and research use only.
         </WarningText>
       </WarningBox>
     </Card>

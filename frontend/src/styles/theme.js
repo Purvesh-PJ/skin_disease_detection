@@ -1,6 +1,7 @@
-// Theme configuration for the application
+// Design tokens - Modern "White Paper" Aesthetic (Apple / Android Developers Inspired)
+
 const colors = {
-  // Primary colors - Tailwind Sky
+  // Primary brand (Deep Medical Azure)
   primary: {
     50: '#f0f9ff',
     100: '#e0f2fe',
@@ -13,20 +14,20 @@ const colors = {
     800: '#075985',
     900: '#0c4a6e',
   },
-  // Neutral/Gray colors
+  // Neutral slate (Ultra-clean, crisp paper grays)
   neutral: {
-    50: '#f8fafc',
-    100: '#f1f5f9',
-    200: '#e2e8f0',
-    300: '#cbd5e1',
-    400: '#94a3b8',
-    500: '#64748b',
-    600: '#475569',
-    700: '#334155',
-    800: '#1e293b',
-    900: '#0f172a',
+    50: '#fbfbfd',
+    100: '#f4f4f7',
+    200: '#e5e7eb',
+    300: '#d1d5db',
+    400: '#9ca3af',
+    500: '#6b7280',
+    600: '#4b5563',
+    700: '#374151',
+    800: '#1f2937',
+    900: '#111827',
   },
-  // Success colors
+  // Accent colors (Emerald success)
   success: {
     50: '#f0fdf4',
     100: '#dcfce7',
@@ -39,7 +40,7 @@ const colors = {
     800: '#166534',
     900: '#14532d',
   },
-  // Error colors
+  // Error colors (Crimson coral)
   error: {
     50: '#fef2f2',
     100: '#fee2e2',
@@ -94,29 +95,37 @@ const spacing = {
   12: '48px',
   16: '64px',
   20: '80px',
+  24: '96px',
+  32: '128px',
 };
 
-// Border radius
+// Hyper-rounded border radius scale
 const borderRadius = {
   none: '0',
-  sm: '4px',
-  md: '8px',
-  lg: '12px',
-  xl: '16px',
-  '2xl': '20px',
-  '3xl': '24px',
+  sm: '6px',
+  md: '10px',
+  lg: '14px',
+  xl: '18px',
+  '2xl': '24px',
+  '3xl': '32px',
+  card: '24px',
+  container: '28px',
+  pill: '9999px',
   full: '9999px',
 };
 
-// Shadows
+// Apple / Material You Elevation Shadows
 const shadows = {
   none: 'none',
-  sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-  md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-  lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-  card: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
-  subtle: 'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
+  sm: '0 1px 2px 0 rgba(0, 0, 0, 0.03)',
+  md: '0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)',
+  lg: '0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03)',
+  xl: '0 16px 36px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03)',
+  paper: '0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 30px -5px rgba(0, 0, 0, 0.04)',
+  hover: '0 14px 34px -4px rgba(0, 0, 0, 0.1), 0 4px 12px -2px rgba(0, 0, 0, 0.04)',
+  card: '0 2px 16px -2px rgba(0, 0, 0, 0.05)',
+  floating: '0 20px 48px -10px rgba(0, 0, 0, 0.12), 0 0 1px 1px rgba(0, 0, 0, 0.04)',
+  subtle: 'rgba(0, 0, 0, 0.04) 0px 4px 20px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px',
 };
 
 // Breakpoints
@@ -126,35 +135,39 @@ const breakpoints = {
   md: '768px',
   lg: '1024px',
   xl: '1280px',
+  '2xl': '1536px',
 };
 
 // Transitions
 const transitions = {
-  fast: '150ms ease',
-  normal: '200ms ease',
-  slow: '300ms ease',
+  fast: '150ms cubic-bezier(0.16, 1, 0.3, 1)',
+  normal: '220ms cubic-bezier(0.16, 1, 0.3, 1)',
+  slow: '350ms cubic-bezier(0.16, 1, 0.3, 1)',
 };
 
-// Light theme
+// Light Theme (Clean White Paper Aesthetic)
 export const lightTheme = {
   mode: 'light',
   colors: {
     ...colors,
     background: {
-      primary: '#fafbff',
-      secondary: '#f0f4ff',
-      tertiary: '#e8eeff',
+      primary: '#ffffff',
+      secondary: '#fbfbfd',
+      tertiary: '#f4f4f7',
+      paper: '#ffffff',
+      card: '#ffffff',
+      elevated: '#ffffff',
     },
     text: {
-      primary: '#1a1a2e',
-      secondary: '#4a4a68',
-      tertiary: '#7a7a98',
+      primary: '#111827',
+      secondary: '#4b5563',
+      tertiary: '#9ca3af',
       inverse: '#ffffff',
     },
     border: {
-      light: '#e0e5f0',
-      default: '#c8d0e8',
-      dark: '#a0a8c8',
+      light: '#f1f3f5',
+      default: '#e5e7eb',
+      dark: '#d1d5db',
     },
     status: {
       success: {
@@ -183,32 +196,34 @@ export const lightTheme = {
       },
     },
     interactive: {
-      hover: colors.neutral[100],
-      active: colors.neutral[200],
-      selected: colors.primary[50],
-      selectedHover: colors.primary[100],
+      hover: '#f4f4f7',
+      active: '#e5e7eb',
+      selected: '#f0f9ff',
+      selectedHover: '#e0f2fe',
     },
     button: {
       primary: {
-        bg: colors.primary[600],
-        bgHover: colors.primary[700],
-        bgActive: colors.primary[800],
+        bg: '#111827',
+        bgHover: '#1f2937',
+        bgActive: '#030712',
         text: '#ffffff',
       },
       secondary: {
-        bg: colors.neutral[100],
-        bgHover: colors.neutral[200],
-        bgActive: colors.neutral[300],
-        text: colors.neutral[800],
-        border: colors.neutral[300],
+        bg: '#f4f4f7',
+        bgHover: '#e5e7eb',
+        bgActive: '#d1d5db',
+        text: '#111827',
+        border: '#e5e7eb',
       },
     },
   },
   gradients: {
-    authBg: 'radial-gradient(circle at 50% 0%, #e0f2fe 0%, #fafbff 100%)',
-    authCardBg: 'rgba(255, 255, 255, 0.85)',
-    authCardBorder: 'rgba(226, 232, 240, 0.8)',
-    brandIcon: 'linear-gradient(135deg, #0ea5e9, #0369a1)',
+    heroGlow: 'radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12) 0%, rgba(255, 255, 255, 0) 70%)',
+    heroBadge: 'linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(59, 130, 246, 0.12) 100%)',
+    authBg: 'radial-gradient(circle at 50% 0%, #f0f9ff 0%, #fbfbfd 100%)',
+    authCardBg: 'rgba(255, 255, 255, 0.95)',
+    authCardBorder: 'rgba(229, 231, 235, 0.8)',
+    brandIcon: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
     progressBar: 'linear-gradient(90deg, #0ea5e9, #0284c7)',
   },
   spacing,
@@ -218,26 +233,29 @@ export const lightTheme = {
   transitions,
 };
 
-// Dark theme
+// Dark Theme (Obsidian White-Paper Inverted)
 export const darkTheme = {
   mode: 'dark',
   colors: {
     ...colors,
     background: {
-      primary: '#1a1a2e',
-      secondary: '#16162a',
-      tertiary: '#252542',
+      primary: '#0f172a',
+      secondary: '#090d16',
+      tertiary: '#1e293b',
+      paper: '#1e293b',
+      card: '#1e293b',
+      elevated: '#334155',
     },
     text: {
-      primary: '#f1f5f9',
+      primary: '#f8fafc',
       secondary: '#cbd5e1',
       tertiary: '#94a3b8',
       inverse: '#0f172a',
     },
     border: {
-      light: '#2d2d4a',
-      default: '#3d3d5c',
-      dark: '#4d4d6a',
+      light: '#1e293b',
+      default: '#334155',
+      dark: '#475569',
     },
     status: {
       success: {
@@ -266,43 +284,42 @@ export const darkTheme = {
       },
     },
     interactive: {
-      hover: '#252542',
-      active: '#2d2d4a',
-      selected: 'rgba(59, 130, 246, 0.15)',
-      selectedHover: 'rgba(59, 130, 246, 0.25)',
+      hover: '#1e293b',
+      active: '#334155',
+      selected: 'rgba(14, 165, 233, 0.15)',
+      selectedHover: 'rgba(14, 165, 233, 0.25)',
     },
     button: {
       primary: {
-        bg: colors.primary[500],
-        bgHover: colors.primary[400],
-        bgActive: colors.primary[600],
-        text: '#ffffff',
+        bg: '#f8fafc',
+        bgHover: '#e2e8f0',
+        bgActive: '#cbd5e1',
+        text: '#0f172a',
       },
       secondary: {
-        bg: '#2d2d4a',
-        bgHover: '#3d3d5c',
-        bgActive: '#4d4d6a',
-        text: '#f1f5f9',
-        border: '#3d3d5c',
+        bg: '#1e293b',
+        bgHover: '#334155',
+        bgActive: '#475569',
+        text: '#f8fafc',
+        border: '#334155',
       },
     },
   },
   gradients: {
+    heroGlow: 'radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.18) 0%, rgba(15, 23, 42, 0) 70%)',
+    heroBadge: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(59, 130, 246, 0.2) 100%)',
     authBg: 'radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 100%)',
-    authCardBg: 'rgba(30, 41, 59, 0.75)',
+    authCardBg: 'rgba(30, 41, 59, 0.85)',
     authCardBorder: 'rgba(255, 255, 255, 0.1)',
-    brandIcon: 'linear-gradient(135deg, #0ea5e9, #0369a1)',
+    brandIcon: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
     progressBar: 'linear-gradient(90deg, #0ea5e9, #0284c7)',
   },
   spacing,
   borderRadius,
-  shadows: {
-    ...shadows,
-    card: 'rgba(0, 0, 0, 0.3) 0px 8px 24px',
-    subtle: 'rgba(0, 0, 0, 0.2) 0px 6px 24px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px',
-  },
+  shadows,
   breakpoints,
   transitions,
 };
 
-export default lightTheme;
+const theme = { lightTheme, darkTheme };
+export default theme;
