@@ -100,11 +100,11 @@ const LandingNavbar = ({ isAuthenticated }) => {
 
         <NavLinks>
           <NavLink href="#overview">Overview</NavLink>
-          <NavLink href="#pipeline">AI Pipeline</NavLink>
+          <NavLink href="#how-it-works">How It Works</NavLink>
+          <NavLink href="#architecture">Architecture</NavLink>
           <NavLink href="#dataset">HAM10000 Dataset</NavLink>
-          <NavLink href="#models">Ensemble Models</NavLink>
           <NavLink href="#conditions">7 Conditions</NavLink>
-          <NavLink href="#disclaimer">Project Notice</NavLink>
+          <NavLink href="#transparency">Project Scope</NavLink>
         </NavLinks>
 
         <NavActions>

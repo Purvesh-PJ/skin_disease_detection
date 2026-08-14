@@ -81,7 +81,7 @@ export const HeroSubtitle = styled.p`
   font-size: 1.15rem;
   line-height: 1.65;
   color: ${({ theme }) => theme.colors.text.secondary};
-  max-width: 720px;
+  max-width: 740px;
   margin: 0 auto ${({ theme }) => theme.spacing[8]};
   position: relative;
   z-index: 1;
@@ -110,31 +110,67 @@ export const HeroCtaRow = styled.div`
   }
 `;
 
-// Large Outlined Architecture Pipeline Container
-export const PipelineSvgContainer = styled.div`
+// Hero Overview Highlights (4 Key Pillars)
+export const HeroPillarsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: ${({ theme }) => theme.spacing[4]};
   width: 100%;
-  max-width: 1140px;
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-radius: ${({ theme }) => theme.borderRadius.container};
-  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[6]}`};
+  max-width: 1040px;
+  margin-top: ${({ theme }) => theme.spacing[4]};
   position: relative;
   z-index: 1;
-  overflow-x: auto;
 
-  svg {
-    width: 100%;
-    min-width: 900px;
-    height: auto;
-    display: block;
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    padding: ${({ theme }) => theme.spacing[4]};
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+    grid-template-columns: 1fr;
   }
 `;
 
-// Section Layout
+export const HeroPillar = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[3]};
+  padding: ${({ theme }) => `${theme.spacing[3.5]} ${theme.spacing[4]}`};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#161616' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  text-align: left;
+`;
+
+export const PillarIcon = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.12)' : '#f0fdf4')};
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+`;
+
+export const PillarText = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: ${({ theme }) => theme.colors.text.primary};
+  }
+
+  span {
+    font-size: 0.75rem;
+    color: ${({ theme }) => theme.colors.text.secondary};
+  }
+`;
+
+// Common Section Wrapper
 export const SectionWrapper = styled.section`
   padding: ${({ theme }) => `${theme.spacing[16]} ${theme.spacing[6]}`};
   background-color: ${({ theme, $alt }) =>
@@ -152,7 +188,7 @@ export const Container = styled.div`
 
 export const SectionHeader = styled.div`
   text-align: center;
-  max-width: 760px;
+  max-width: 780px;
   margin: 0 auto ${({ theme }) => theme.spacing[10]};
 `;
 
@@ -185,21 +221,40 @@ export const SectionTitle = styled.h2`
 export const SectionDescription = styled.p`
   font-size: 1.05rem;
   color: ${({ theme }) => theme.colors.text.secondary};
-  line-height: 1.6;
+  line-height: 1.65;
 `;
 
-// Sleek Borderless Stats Strip (No Box Cards)
-export const StatsStrip = styled.div`
+// Outlined Pipeline SVG Container
+export const PipelineSvgContainer = styled.div`
+  width: 100%;
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#fafafa')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  border-radius: ${({ theme }) => theme.borderRadius.container};
+  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[6]}`};
+  margin-top: ${({ theme }) => theme.spacing[8]};
+  overflow-x: auto;
+
+  svg {
+    width: 100%;
+    min-width: 900px;
+    height: auto;
+    display: block;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    padding: ${({ theme }) => theme.spacing[4]};
+  }
+`;
+
+// Fluid Horizontal Stepper / User Journey
+export const ProcessFlow = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding: ${({ theme }) => `${theme.spacing[6]} 0`};
-  margin-bottom: ${({ theme }) => theme.spacing[12]};
-  border-top: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-bottom: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  gap: ${({ theme }) => theme.spacing[6]};
+  position: relative;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: repeat(2, 1fr);
-    gap: ${({ theme }) => theme.spacing[6]};
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
@@ -207,52 +262,10 @@ export const StatsStrip = styled.div`
   }
 `;
 
-export const StatItem = styled.div`
-  text-align: center;
-  padding: 0 ${({ theme }) => theme.spacing[4]};
-
-  &:not(:last-child) {
-    border-right: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    &:not(:last-child) {
-      border-right: none;
-    }
-  }
-`;
-
-export const StatValue = styled.div`
-  font-size: 2.25rem;
-  font-weight: 800;
-  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
-  letter-spacing: -0.02em;
-  margin-bottom: 2px;
-`;
-
-export const StatLabel = styled.div`
-  font-size: 0.875rem;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  font-weight: 500;
-`;
-
-// Fluid Horizontal Stepper / Process Flow (No Box Cards)
-export const ProcessFlow = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: ${({ theme }) => theme.spacing[8]};
-  position: relative;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing[6]};
-  }
-`;
-
 export const ProcessStep = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[3]};
+  gap: ${({ theme }) => theme.spacing[2.5]};
 `;
 
 export const StepNumber = styled.div`
@@ -273,7 +286,7 @@ export const StepNumber = styled.div`
 `;
 
 export const StepTitle = styled.h3`
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   margin: 0;
   color: ${({ theme }) => theme.colors.text.primary};
@@ -281,16 +294,16 @@ export const StepTitle = styled.h3`
 
 export const StepDesc = styled.p`
   color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: 0.95rem;
-  line-height: 1.65;
+  font-size: 0.9rem;
+  line-height: 1.6;
   margin: 0;
 `;
 
-// Technical Architecture Specs Section (Clean Split Layout, No Box Cards)
+// Technical Architecture Specs (Model Rows)
 export const ModelSpecsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[10]};
+  gap: ${({ theme }) => theme.spacing[8]};
 `;
 
 export const ModelSpecRow = styled.div`
@@ -298,7 +311,7 @@ export const ModelSpecRow = styled.div`
   grid-template-columns: 1fr 1.2fr;
   gap: ${({ theme }) => theme.spacing[8]};
   align-items: center;
-  padding-bottom: ${({ theme }) => theme.spacing[10]};
+  padding-bottom: ${({ theme }) => theme.spacing[8]};
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
@@ -350,7 +363,68 @@ export const ModelSvgPanel = styled.div`
   }
 `;
 
-// Conditions Matrix / Minimal List (No Box Cards)
+// Borderless Key Metrics Strip
+export const StatsStrip = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: ${({ theme }) => `${theme.spacing[6]} 0`};
+  margin-bottom: ${({ theme }) => theme.spacing[10]};
+  border-top: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  border-bottom: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: ${({ theme }) => theme.spacing[6]};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const StatItem = styled.div`
+  text-align: center;
+  padding: 0 ${({ theme }) => theme.spacing[4]};
+
+  &:not(:last-child) {
+    border-right: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    &:not(:last-child) {
+      border-right: none;
+    }
+  }
+`;
+
+export const StatValue = styled.div`
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+`;
+
+export const StatLabel = styled.div`
+  font-size: 0.875rem;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-weight: 500;
+`;
+
+// Conditions Matrix (Categorized by Risk)
+export const ConditionCategory = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing[8]};
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: ${({ theme }) => theme.spacing[4]};
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+`;
+
 export const ConditionsMatrix = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -365,7 +439,7 @@ export const ConditionRow = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[2]};
-  padding: ${({ theme }) => theme.spacing[5]};
+  padding: ${({ theme }) => theme.spacing[4.5]};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
   border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
@@ -399,7 +473,7 @@ export const ConditionPill = styled.span`
   font-weight: 700;
 `;
 
-// Notice Strip (Clean Engineering Note, No Box Cards)
+// Notice Strip
 export const NoticeStrip = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
