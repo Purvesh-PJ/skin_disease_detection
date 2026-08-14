@@ -211,7 +211,7 @@ const ImageUploadCard = ({
           disabled={loading || !imageFile}
           fullWidth
           size="lg"
-          variant="accent"
+          variant="android"
         >
           {loading ? <Spinner size="sm" color="white" /> : 'Analyze Lesion Image'}
         </Button>

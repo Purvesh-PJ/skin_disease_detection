@@ -3,6 +3,40 @@ import styled, { css } from 'styled-components';
 import { Slot } from '@radix-ui/react-slot';
 
 const variants = {
+  android: css`
+    background-color: ${({ theme }) => theme.colors.button.android.bg};
+    color: ${({ theme }) => theme.colors.button.android.text};
+    border: 1px solid transparent;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(61, 220, 132, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.android.bgHover};
+      box-shadow: 0 6px 20px rgba(61, 220, 132, 0.45);
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.android.bgActive};
+      transform: translateY(0);
+    }
+  `,
+  pine: css`
+    background-color: ${({ theme }) => theme.colors.button.pine.bg};
+    color: ${({ theme }) => theme.colors.button.pine.text};
+    border: 1px solid transparent;
+    box-shadow: 0 4px 14px rgba(7, 48, 66, 0.25);
+
+    &:hover:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.pine.bgHover};
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.pine.bgActive};
+      transform: translateY(0);
+    }
+  `,
   primary: css`
     background-color: ${({ theme }) => theme.colors.button.primary.bg};
     color: ${({ theme }) => theme.colors.button.primary.text};
@@ -37,19 +71,20 @@ const variants = {
     }
   `,
   accent: css`
-    background-color: ${({ theme }) => theme.colors.primary[600]};
-    color: #ffffff;
+    background-color: ${({ theme }) => theme.colors.emerald.android};
+    color: #073042;
     border: 1px solid transparent;
-    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(61, 220, 132, 0.35);
 
     &:hover:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.primary[700]};
-      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+      background-color: ${({ theme }) => theme.colors.emerald[400]};
+      box-shadow: 0 6px 24px rgba(61, 220, 132, 0.45);
       transform: translateY(-1px);
     }
 
     &:active:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.primary[800]};
+      background-color: ${({ theme }) => theme.colors.emerald[500]};
       transform: translateY(0);
     }
   `,
@@ -83,31 +118,16 @@ const variants = {
       background-color: ${({ theme }) => theme.colors.interactive.active};
     }
   `,
-  danger: css`
-    background-color: ${({ theme }) => theme.colors.error[600]};
-    color: white;
-    border: 1px solid transparent;
-
-    &:hover:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.error[700]};
-      transform: translateY(-1px);
-    }
-
-    &:active:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.error[800]};
-      transform: translateY(0);
-    }
-  `,
 };
 
 const sizes = {
   sm: css`
-    padding: ${({ theme }) => `${theme.spacing[1.5] || '6px'} ${theme.spacing[3]}`};
+    padding: ${({ theme }) => `${theme.spacing[1.5] || '6px'} ${theme.spacing[3.5] || '14px'}`};
     font-size: 0.8125rem;
     gap: ${({ theme }) => theme.spacing[1.5] || '6px'};
   `,
   md: css`
-    padding: ${({ theme }) => `${theme.spacing[2.5] || '10px'} ${theme.spacing[5]}`};
+    padding: ${({ theme }) => `${theme.spacing[2.5] || '10px'} ${theme.spacing[5] || '20px'}`};
     font-size: 0.9375rem;
     gap: ${({ theme }) => theme.spacing[2]};
   `,
@@ -142,7 +162,7 @@ const StyledButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary[500]};
+    outline: 2px solid ${({ theme }) => theme.colors.emerald.android};
     outline-offset: 2px;
   }
 `;
