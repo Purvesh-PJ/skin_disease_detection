@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FiLogOut, FiUser, FiSettings, FiActivity, FiHome } from 'react-icons/fi';
+import { FiLogOut, FiUser, FiLogIn, FiActivity, FiHome } from 'react-icons/fi';
 import { ThemeToggle } from '../common/ui';
 import Dropdown from '../common/ui/Dropdown';
 import { authService } from '../../services';
@@ -14,7 +14,7 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
   padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[6]}`};
   background-color: ${({ theme }) => theme.colors.background.primary};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
 `;
 
 const HeaderLeft = styled.div`
@@ -39,13 +39,13 @@ const Logo = styled(Link)`
 const LogoIcon = styled.div`
   width: 34px;
   height: 34px;
-  background: ${({ theme }) => theme.gradients.brandIcon};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  background: ${({ theme }) => theme.colors.primary[600]};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 `;
 
 const LogoText = styled.span`
@@ -56,6 +56,20 @@ const LogoText = styled.span`
   color: ${({ theme }) => theme.colors.text.primary};
   
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    display: none;
+  }
+`;
+
+const GuestBadge = styled.span`
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: ${({ theme }) => theme.borderRadius.pill};
+  background: ${({ theme }) => theme.colors.background.tertiary};
+  color: ${({ theme }) => theme.colors.text.secondary};
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  font-weight: 600;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
     display: none;
   }
 `;
@@ -97,11 +111,13 @@ const Header = () => {
           <LogoIcon>
             <FiActivity size={18} />
           </LogoIcon>
-          <LogoText>Skin AI Diagnostics</LogoText>
+          <LogoText>Skin Disease AI</LogoText>
         </Logo>
       </HeaderLeft>
 
       <HeaderRight>
+        {!user && <GuestBadge>Demo / Guest Mode</GuestBadge>}
+        
         <ThemeToggle />
         
         <Dropdown.Root>
@@ -114,23 +130,31 @@ const Header = () => {
           <Dropdown.Content align="end" sideOffset={8}>
             <Dropdown.Item>
               <FiUser size={14} />
-              {user?.username || 'Profile'}
+              {user?.username ? user.username : 'Guest User'}
             </Dropdown.Item>
+
             <Dropdown.Item asChild>
               <Link to={ROUTES.HOME} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
                 <FiHome size={14} />
-                Landing Page
+                Project Home
               </Link>
             </Dropdown.Item>
-            <Dropdown.Item>
-              <FiSettings size={14} />
-              Settings
-            </Dropdown.Item>
+
             <Dropdown.Separator />
-            <Dropdown.Item className="danger" onClick={handleLogout}>
-              <FiLogOut size={14} />
-              Logout
-            </Dropdown.Item>
+
+            {user ? (
+              <Dropdown.Item className="danger" onClick={handleLogout}>
+                <FiLogOut size={14} />
+                Logout
+              </Dropdown.Item>
+            ) : (
+              <Dropdown.Item asChild>
+                <Link to={ROUTES.LOGIN} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                  <FiLogIn size={14} />
+                  Sign in / Register
+                </Link>
+              </Dropdown.Item>
+            )}
           </Dropdown.Content>
         </Dropdown.Root>
       </HeaderRight>

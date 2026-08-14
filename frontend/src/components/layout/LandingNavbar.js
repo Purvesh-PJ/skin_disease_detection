@@ -123,7 +123,7 @@ const LandingNavbar = ({ isAuthenticated }) => {
                 <Link to={ROUTES.LOGIN}>Log in</Link>
               </Button>
               <Button asChild variant="brand" size="sm">
-                <Link to={ROUTES.SIGNUP}>
+                <Link to={ROUTES.DASHBOARD}>
                   Try Predictor
                   <FiArrowRight size={14} />
                 </Link>

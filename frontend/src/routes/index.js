@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ROUTES } from '../constants';
-import ProtectedRoute from './ProtectedRoute';
 
 // Pages
 import { Landing, Login, Signup, Dashboard, NotFound } from '../pages';
@@ -22,11 +21,7 @@ const AppRoutes = ({ isAuthenticated }) => {
       />
       <Route 
         path={ROUTES.DASHBOARD} 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
+        element={<Dashboard />} 
       />
       <Route path="*" element={<NotFound />} />
     </Routes>

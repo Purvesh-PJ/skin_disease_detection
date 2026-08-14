@@ -106,8 +106,8 @@ const CONDITIONS_LIST = [
 ];
 
 const Landing = ({ isAuthenticated }) => {
-  const ctaRoute = isAuthenticated ? ROUTES.DASHBOARD : ROUTES.SIGNUP;
-  const ctaText = isAuthenticated ? 'Open Diagnosis Dashboard' : 'Try Image Detection';
+  const ctaRoute = ROUTES.DASHBOARD;
+  const ctaText = 'Try Image Detection';
 
   return (
     <LandingPageWrapper id="overview">
