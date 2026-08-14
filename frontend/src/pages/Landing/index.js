@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants';
 import { Button } from '../../components/common/ui';
@@ -8,816 +8,650 @@ import {
   FiCpu,
   FiLayers,
   FiShield,
-  FiZap,
+  FiDatabase,
   FiCheckCircle,
-  FiActivity,
-  FiCrosshair,
-  FiGitBranch,
-  FiBarChart2,
-  FiCompass,
+  FiSliders,
+  FiInfo,
+  FiExternalLink,
 } from 'react-icons/fi';
 import {
   LandingPageWrapper,
   HeroSection,
   HeroGlow,
-  HeroPillBadge,
+  HeroBadge,
   HeroTitle,
   HeroSubtitle,
   HeroCtaRow,
-  SandboxWrapper,
-  SandboxCard,
-  SandboxTopBar,
-  SamplePillsRow,
-  SamplePillBtn,
-  SandboxGrid,
-  LesionDisplayCard,
-  ScanningReticle,
-  ScannerHeaderBadge,
-  ConsensusBreakdown,
-  ConsensusBarRow,
-  BarHeader,
-  BarTrack,
-  BarFill,
+  PipelineSvgContainer,
   SectionWrapper,
   Container,
   SectionHeader,
   SectionTag,
   SectionTitle,
   SectionDescription,
-  BentoGrid,
-  BentoCardLarge,
-  BentoCardSmall,
-  TabList,
-  TabButton,
-  TabContentCard,
-  AtlasGrid,
-  AtlasCard,
-  RiskBadge,
-  WorkflowGrid,
-  WorkflowStep,
-  StepIndexPill,
-  DarkCtaSection,
-  DarkCtaCard,
+  StatsGrid,
+  StatCard,
+  StatValue,
+  StatLabel,
+  DatasetProcessGrid,
+  ProcessCard,
+  ProcessIcon,
+  ModelsGrid,
+  ModelCard,
+  ModelHeader,
+  ModelBadge,
+  ModelSvgWrapper,
+  EnsembleBanner,
+  ConditionsGrid,
+  ConditionCard,
+  ConditionPill,
+  DisclaimerCard,
+  DisclaimerItem,
+  CtaCard,
   FooterWrapper,
   FooterContainer,
 } from './styles';
 
-// Interactive Sample Cases for Hero Sandbox
-const SAMPLE_CASES = [
-  {
-    id: 'sample-1',
-    name: 'Melanocytic Nevus (nv)',
-    category: 'Benign Proliferation',
-    type: 'benign',
-    confidence: 98.2,
-    resnet: 97.5,
-    densenet: 98.6,
-    efficientnet: 98.8,
-    markers: 'Symmetrical pigment network, regular globular borders.',
-    recommendation: 'Routine annual dermatoscopy monitoring recommended.',
-  },
-  {
-    id: 'sample-2',
-    name: 'Malignant Melanoma (mel)',
-    category: 'High-Risk Malignancy',
-    type: 'malignant',
-    confidence: 97.4,
-    resnet: 96.9,
-    densenet: 97.8,
-    efficientnet: 98.1,
-    markers: 'Asymmetric border irregularity, multiple color variegation.',
-    recommendation: 'Immediate surgical excision biopsy and clinical staging.',
-  },
-  {
-    id: 'sample-3',
-    name: 'Vascular Angioma (vasc)',
-    category: 'Benign Vascular',
-    type: 'benign',
-    confidence: 99.1,
-    resnet: 98.8,
-    densenet: 99.2,
-    efficientnet: 99.4,
-    markers: 'Well-demarcated red-purple lacunae, lack of pigment reticulum.',
-    recommendation: 'Benign vascular lesion; no invasive intervention required.',
-  },
-];
-
-// Interactive Architecture Tabs
-const MODEL_TABS = [
-  {
-    id: 'resnet',
-    name: 'ResNet-101',
-    family: 'Residual Deep Networks',
-    parameters: '44.5 Million Params',
-    depth: '101 Convolutional Layers',
-    receptiveField: 'Large Receptive Field (Residual Skip Highway)',
-    description:
-      'Employs identity shortcut connections to solve the vanishing gradient problem in deep neural networks. Excels at extracting fine-grained pigment boundary structures and macro lesion geometry.',
-    keyAdvantage: 'Zero-degradation gradient flow across deep architectural layers.',
-  },
-  {
-    id: 'densenet',
-    name: 'DenseNet-121',
-    family: 'Dense Feature Reuse',
-    parameters: '8.0 Million Params',
-    depth: '121 Interconnected Layers',
-    receptiveField: 'Multi-Scale Dense Concatenation',
-    description:
-      'Directly connects every single layer to all subsequent layers in a feed-forward topology. Drastically enhances feature propagation and maximizes subtle cellular texture reuse without parameter bloat.',
-    keyAdvantage: 'Maximum feature reuse with ultra-compact parameter footprint.',
-  },
-  {
-    id: 'efficientnet',
-    name: 'EfficientNet-B3',
-    family: 'Compound Scaling CNN',
-    parameters: '12.2 Million Params',
-    depth: 'Compound Depth & Width Scaled',
-    receptiveField: 'MBConv Inverted Residual Blocks',
-    description:
-      'Uniformly balances network depth, width, and input image resolution using a principled compound scaling coefficient. Delivers superior FLOPs efficiency and top-1 feature representation.',
-    keyAdvantage: 'Optimal balance of computational efficiency and accuracy.',
-  },
-  {
-    id: 'meta-ensemble',
-    name: 'Logistic Meta-Ensemble',
-    family: 'Stacked Probability Classifier',
-    parameters: 'Meta-Calibration Matrix',
-    depth: 'Softmax Stacking Layer',
-    receptiveField: 'Multi-Logit Probability Fusion',
-    description:
-      'Takes the non-linear probability outputs and uncalibrated logits of all three base models and computes an optimal weighted meta-classification, virtually eliminating false positive rates.',
-    keyAdvantage: 'High diagnostic consensus score with minimal variance.',
-  },
-];
-
-// Pathology Atlas Data
-const PATHOLOGY_CONDITIONS = [
+// 7 Supported Skin Diseases Data
+const CONDITIONS_LIST = [
   {
     code: 'mel',
-    name: 'Malignant Melanoma',
-    category: 'Malignant',
-    type: 'malignant',
-    incidence: 'High Severity',
-    features: 'Asymmetric contours, atypical pigment network, blue-white veil.',
-    guidance: 'Urgent histological examination and depth staging required.',
-  },
-  {
-    code: 'bcc',
-    name: 'Basal Cell Carcinoma',
-    category: 'Malignant',
-    type: 'malignant',
-    incidence: 'Most Common Skin Cancer',
-    features: 'Arborizing telangiectasia, translucent pearly border, ulceration.',
-    guidance: 'Mohs micrographic surgery or topical therapy per clinical site.',
-  },
-  {
-    code: 'akiec',
-    name: 'Actinic Keratoses',
-    category: 'Pre-Malignant',
-    type: 'pre-malignant',
-    incidence: 'UV-Induced Dysplasia',
-    features: 'Erythematous scaly patches, keratotic plug, rosette signs.',
-    guidance: 'Cryotherapy, photodynamic therapy, or topical 5-FU application.',
-  },
-  {
-    code: 'bkl',
-    name: 'Benign Keratosis',
-    category: 'Benign',
-    type: 'benign',
-    incidence: 'Extremely Common',
-    features: 'Stuck-on appearance, comedo-like openings, milia-like cysts.',
-    guidance: 'Non-malignant; biopsy only if clinical ambiguity persists.',
-  },
-  {
-    code: 'df',
-    name: 'Dermatofibroma',
-    category: 'Benign',
-    type: 'benign',
-    incidence: 'Cutaneous Fibroma',
-    features: 'Central white patch, delicate peripheral pigment network, dimple sign.',
-    guidance: 'Reassure patient; benign reactive fibrohistiocytic lesion.',
+    name: 'Melanoma',
+    type: 'danger',
+    tag: 'Malignant',
+    description: 'A serious type of skin cancer that begins in melanocytes. Early identification is critical.',
   },
   {
     code: 'nv',
     name: 'Melanocytic Nevi',
-    category: 'Benign',
-    type: 'benign',
-    incidence: 'Common Mole',
-    features: 'Uniform pigmentation, symmetric globular or reticular architecture.',
-    guidance: 'Standard dermatoscopic surveillance if stability is confirmed.',
+    type: 'success',
+    tag: 'Benign (Harmless)',
+    description: 'Common moles or birthmarks formed by clusters of pigment cells. Typically harmless.',
+  },
+  {
+    code: 'bcc',
+    name: 'Basal Cell Carcinoma',
+    type: 'danger',
+    tag: 'Malignant',
+    description: 'The most common form of skin cancer. Usually slow-growing and treatable when detected early.',
+  },
+  {
+    code: 'akiec',
+    name: 'Actinic Keratoses',
+    type: 'warning',
+    tag: 'Pre-Cancerous',
+    description: 'Rough, dry, scaly patches on skin caused by long-term sun exposure. Can progress if untreated.',
+  },
+  {
+    code: 'bkl',
+    name: 'Benign Keratosis',
+    type: 'success',
+    tag: 'Benign (Harmless)',
+    description: 'Non-cancerous skin growths like seborrheic keratosis, commonly appearing with aging.',
+  },
+  {
+    code: 'df',
+    name: 'Dermatofibroma',
+    type: 'success',
+    tag: 'Benign (Harmless)',
+    description: 'Small, firm, non-cancerous skin nodules often found on the lower legs.',
   },
   {
     code: 'vasc',
     name: 'Vascular Lesions',
-    category: 'Benign',
-    type: 'benign',
-    incidence: 'Vascular Malformation',
-    features: 'Red-blue lacunae, absence of pigment network, hemorrhagic crust.',
-    guidance: 'Clinical observation; pulsed dye laser for cosmetic concerns.',
+    type: 'success',
+    tag: 'Benign (Harmless)',
+    description: 'Benign blood vessel spots including cherry angiomas and vascular malformations.',
   },
 ];
 
 const Landing = ({ isAuthenticated }) => {
-  const [activeSample, setActiveSample] = useState(SAMPLE_CASES[0]);
-  const [activeModelTab, setActiveModelTab] = useState(MODEL_TABS[0]);
-
   const ctaRoute = isAuthenticated ? ROUTES.DASHBOARD : ROUTES.SIGNUP;
-  const ctaText = isAuthenticated ? 'Open Diagnosis Dashboard' : 'Launch Free AI Analysis';
+  const ctaText = isAuthenticated ? 'Open Diagnosis Dashboard' : 'Try Image Detection';
 
   return (
     <LandingPageWrapper id="overview">
-      {/* Sticky Android Developers Pill Navigation */}
+      {/* Top Navigation */}
       <LandingNavbar isAuthenticated={isAuthenticated} />
 
       {/* Hero Section */}
       <HeroSection>
         <HeroGlow />
 
-        <HeroPillBadge>
-          <span className="dot" />
-          <span>Material 3 • Tri-Model Deep Learning Pipeline</span>
-        </HeroPillBadge>
+        <HeroBadge>
+          <FiCpu size={14} />
+          <span>Deep Learning Project • Ensemble Multi-Model Architecture</span>
+        </HeroBadge>
 
         <HeroTitle>
-          Clinical-Grade Skin Lesion Analysis with <span className="highlight">Ensemble AI</span>
+          Skin Disease Classification Using <span className="highlight">Ensemble Deep Learning</span>
         </HeroTitle>
 
         <HeroSubtitle>
-          Experience multi-model consensus inference powered by ResNet-101, DenseNet-121, and
-          EfficientNet-B3. Engineered to assist medical triage with real-time classification metrics.
+          An engineering project trained on Kaggle's HAM10000 dataset. We combine ResNet-101,
+          DenseNet-121, and EfficientNet-B3 into a stacked ensemble to detect and classify 7 common skin conditions.
         </HeroSubtitle>
 
         <HeroCtaRow>
-          <Button asChild variant="android" size="lg">
+          <Button asChild variant="brand" size="lg">
             <Link to={ctaRoute}>
               {ctaText}
               <FiArrowRight size={16} />
             </Link>
           </Button>
           <Button asChild variant="secondary" size="lg">
-            <a href="#sandbox">Explore Live Sandbox</a>
+            <a href="#pipeline">Explore AI Pipeline</a>
           </Button>
         </HeroCtaRow>
 
-        {/* Live Interactive Diagnostic Sandbox */}
-        <SandboxWrapper id="sandbox">
-          <SandboxCard>
-            <SandboxTopBar>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <FiCrosshair size={20} style={{ color: '#16a34a' }} />
-                <span style={{ fontWeight: 800, fontSize: '1.05rem' }}>
-                  Interactive Dermoscopy Diagnostic Sandbox
-                </span>
-              </div>
+        {/* Large Visual Neural Network Pipeline SVG Diagram */}
+        <PipelineSvgContainer id="pipeline">
+          <svg viewBox="0 0 1000 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Background Grid Accent */}
+            <defs>
+              <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#3b82f6" />
+                <stop offset="100%" stopColor="#1d4ed8" />
+              </linearGradient>
+              <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#f8fafc" />
+              </linearGradient>
+              <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+                <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.06" />
+              </filter>
+            </defs>
 
-              {/* Sample Switcher Pills */}
-              <SamplePillsRow>
-                {SAMPLE_CASES.map((sample) => (
-                  <SamplePillBtn
-                    key={sample.id}
-                    $active={activeSample.id === sample.id}
-                    onClick={() => setActiveSample(sample)}
-                  >
-                    {sample.name.split(' (')[0]}
-                  </SamplePillBtn>
-                ))}
-              </SamplePillsRow>
-            </SandboxTopBar>
+            {/* Connecting Flow Lines */}
+            <path d="M 170 180 L 260 180" stroke="#94a3b8" strokeWidth="2.5" strokeDasharray="5 5" />
+            <path d="M 400 180 L 480 90" stroke="#3b82f6" strokeWidth="2.5" />
+            <path d="M 400 180 L 480 180" stroke="#3b82f6" strokeWidth="2.5" />
+            <path d="M 400 180 L 480 270" stroke="#3b82f6" strokeWidth="2.5" />
+            <path d="M 660 90 L 730 180" stroke="#3b82f6" strokeWidth="2.5" />
+            <path d="M 660 180 L 730 180" stroke="#3b82f6" strokeWidth="2.5" />
+            <path d="M 660 270 L 730 180" stroke="#3b82f6" strokeWidth="2.5" />
+            <path d="M 870 180 L 910 180" stroke="#10b981" strokeWidth="3" />
 
-            <SandboxGrid>
-              {/* Lesion Simulator Card */}
-              <LesionDisplayCard>
-                <ScanningReticle />
-                <ScannerHeaderBadge>
-                  <FiActivity size={12} style={{ display: 'inline', marginRight: '4px' }} />
-                  Live Tensor Ingestion (224x224x3)
-                </ScannerHeaderBadge>
+            {/* Stage 1: Raw Image Ingest */}
+            <g transform="translate(30, 110)">
+              <rect width="140" height="140" rx="16" fill="url(#cardGrad)" stroke="#cbd5e1" strokeWidth="1.5" filter="url(#shadow)" />
+              <rect x="20" y="20" width="100" height="70" rx="8" fill="#e2e8f0" />
+              <circle cx="70" cy="55" r="16" fill="#94a3b8" />
+              <text x="70" y="112" textAnchor="middle" fill="#0f172a" fontSize="13" fontWeight="700">Skin Photo</text>
+              <text x="70" y="128" textAnchor="middle" fill="#64748b" fontSize="11">Raw Input</text>
+            </g>
 
-                <div style={{ textAlign: 'center', padding: '24px', zIndex: 1 }}>
-                  <FiZap size={40} style={{ color: '#3ddc84', marginBottom: '10px' }} />
-                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc' }}>
-                    {activeSample.name}
-                  </div>
-                  <div style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '4px' }}>
-                    {activeSample.category}
-                  </div>
-                </div>
-              </LesionDisplayCard>
+            {/* Stage 2: Preprocessing */}
+            <g transform="translate(260, 110)">
+              <rect width="140" height="140" rx="16" fill="url(#cardGrad)" stroke="#cbd5e1" strokeWidth="1.5" filter="url(#shadow)" />
+              <rect x="20" y="20" width="100" height="70" rx="8" fill="#eff6ff" stroke="#bfdbfe" />
+              <text x="70" y="50" textAnchor="middle" fill="#2563eb" fontSize="12" fontWeight="700">224 x 224</text>
+              <text x="70" y="68" textAnchor="middle" fill="#64748b" fontSize="11">CLAHE Resize</text>
+              <text x="70" y="112" textAnchor="middle" fill="#0f172a" fontSize="13" fontWeight="700">Preprocessing</text>
+              <text x="70" y="128" textAnchor="middle" fill="#64748b" fontSize="11">RGB Normalization</text>
+            </g>
 
-              {/* Dynamic Consensus Meter */}
-              <ConsensusBreakdown>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <RiskBadge $type={activeSample.type}>{activeSample.category}</RiskBadge>
-                    <h3 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '8px 0 2px 0' }}>
-                      {activeSample.name}
-                    </h3>
-                  </div>
+            {/* Stage 3: Three Parallel Models */}
+            {/* Model A: ResNet-101 */}
+            <g transform="translate(480, 45)">
+              <rect width="180" height="90" rx="14" fill="#ffffff" stroke="#3b82f6" strokeWidth="1.5" filter="url(#shadow)" />
+              <circle cx="30" cy="45" r="14" fill="#eff6ff" />
+              <text x="30" y="50" textAnchor="middle" fill="#2563eb" fontSize="11" fontWeight="800">R</text>
+              <text x="56" y="38" fill="#0f172a" fontSize="14" fontWeight="700">ResNet-101</text>
+              <text x="56" y="56" fill="#64748b" fontSize="11">Residual Skip Layers</text>
+              <text x="56" y="72" fill="#2563eb" fontSize="11" fontWeight="600">44.5M Parameters</text>
+            </g>
 
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#16a34a' }}>
-                      {activeSample.confidence}%
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Ensemble Match</div>
-                  </div>
-                </div>
+            {/* Model B: DenseNet-121 */}
+            <g transform="translate(480, 140)">
+              <rect width="180" height="80" rx="14" fill="#ffffff" stroke="#3b82f6" strokeWidth="1.5" filter="url(#shadow)" />
+              <circle cx="30" cy="40" r="14" fill="#eff6ff" />
+              <text x="30" y="45" textAnchor="middle" fill="#2563eb" fontSize="11" fontWeight="800">D</text>
+              <text x="56" y="34" fill="#0f172a" fontSize="14" fontWeight="700">DenseNet-121</text>
+              <text x="56" y="52" fill="#64748b" fontSize="11">Dense Feature Reuse</text>
+              <text x="56" y="68" fill="#2563eb" fontSize="11" fontWeight="600">8.0M Parameters</text>
+            </g>
 
-                {/* Progress Bars for Models */}
-                <ConsensusBarRow>
-                  <BarHeader>
-                    <span>ResNet-101 Residual Logit</span>
-                    <span className="val">{activeSample.resnet}%</span>
-                  </BarHeader>
-                  <BarTrack>
-                    <BarFill $width={activeSample.resnet} $color="#0284c7" />
-                  </BarTrack>
-                </ConsensusBarRow>
+            {/* Model C: EfficientNet-B3 */}
+            <g transform="translate(480, 230)">
+              <rect width="180" height="85" rx="14" fill="#ffffff" stroke="#3b82f6" strokeWidth="1.5" filter="url(#shadow)" />
+              <circle cx="30" cy="42" r="14" fill="#eff6ff" />
+              <text x="30" y="47" textAnchor="middle" fill="#2563eb" fontSize="11" fontWeight="800">E</text>
+              <text x="56" y="34" fill="#0f172a" fontSize="14" fontWeight="700">EfficientNet-B3</text>
+              <text x="56" y="52" fill="#64748b" fontSize="11">Compound Scaling</text>
+              <text x="56" y="68" fill="#2563eb" fontSize="11" fontWeight="600">12.2M Parameters</text>
+            </g>
 
-                <ConsensusBarRow>
-                  <BarHeader>
-                    <span>DenseNet-121 Feature Reuse</span>
-                    <span className="val">{activeSample.densenet}%</span>
-                  </BarHeader>
-                  <BarTrack>
-                    <BarFill $width={activeSample.densenet} $color="#6366f1" />
-                  </BarTrack>
-                </ConsensusBarRow>
+            {/* Stage 4: Ensemble Meta-Classifier */}
+            <g transform="translate(730, 110)">
+              <rect width="140" height="140" rx="16" fill="url(#blueGrad)" filter="url(#shadow)" />
+              <text x="70" y="50" textAnchor="middle" fill="#ffffff" fontSize="13" fontWeight="800">Ensemble</text>
+              <text x="70" y="70" textAnchor="middle" fill="#dbeafe" fontSize="11">Stacking Layer</text>
+              <rect x="25" y="90" width="90" height="30" rx="6" fill="rgba(255,255,255,0.2)" />
+              <text x="70" y="110" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="700">Softmax Fusion</text>
+            </g>
 
-                <ConsensusBarRow>
-                  <BarHeader>
-                    <span>EfficientNet-B3 Scaled Probability</span>
-                    <span className="val">{activeSample.efficientnet}%</span>
-                  </BarHeader>
-                  <BarTrack>
-                    <BarFill $width={activeSample.efficientnet} $color="#16a34a" />
-                  </BarTrack>
-                </ConsensusBarRow>
-
-                {/* Clinical Notes Box */}
-                <div
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.03)',
-                    borderRadius: '16px',
-                    padding: '12px 16px',
-                    fontSize: '0.85rem',
-                    color: '#4b5563',
-                    lineHeight: 1.5,
-                  }}
-                >
-                  <strong>Dermoscopic Hallmark:</strong> {activeSample.markers}
-                </div>
-              </ConsensusBreakdown>
-            </SandboxGrid>
-          </SandboxCard>
-        </SandboxWrapper>
+            {/* Stage 5: Prediction Output */}
+            <g transform="translate(910, 110)">
+              <rect width="70" height="140" rx="16" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.5" filter="url(#shadow)" />
+              <circle cx="35" cy="45" r="16" fill="#dcfce7" />
+              <text x="35" y="50" textAnchor="middle" fill="#16a34a" fontSize="14">✓</text>
+              <text x="35" y="90" textAnchor="middle" fill="#166534" fontSize="11" fontWeight="800">Output</text>
+              <text x="35" y="110" textAnchor="middle" fill="#15803d" fontSize="10">Class & %</text>
+            </g>
+          </svg>
+        </PipelineSvgContainer>
       </HeroSection>
 
-      {/* Section 2: Asymmetric Bento Grid (Tonal Mint) */}
-      <SectionWrapper id="architecture" $bg="mint">
+      {/* Section 2: Kaggle Dataset & Data Preprocessing */}
+      <SectionWrapper id="dataset" $alt>
+        <Container>
+          <SectionHeader>
+            <SectionTag>
+              <FiDatabase size={14} />
+              <span>Dataset & Training</span>
+            </SectionTag>
+            <SectionTitle>Trained on Kaggle's HAM10000 Dataset</SectionTitle>
+            <SectionDescription>
+              HAM10000 ("Human Against Machine with 10,000 training images") is a benchmark dermatoscopic
+              dataset collected from multiple clinical institutions to train dermatological deep learning models.
+            </SectionDescription>
+          </SectionHeader>
+
+          {/* Dataset Key Metrics */}
+          <StatsGrid>
+            <StatCard>
+              <StatValue>10,015</StatValue>
+              <StatLabel>Dermoscopic Images</StatLabel>
+            </StatCard>
+            <StatCard>
+              <StatValue>7</StatValue>
+              <StatLabel>Disease Classes</StatLabel>
+            </StatCard>
+            <StatCard>
+              <StatValue>224 x 224</StatValue>
+              <StatLabel>Input Matrix Resolution</StatLabel>
+            </StatCard>
+            <StatCard>
+              <StatValue>CLAHE</StatValue>
+              <StatLabel>Contrast Enhancement</StatLabel>
+            </StatCard>
+          </StatsGrid>
+
+          {/* Preprocessing Steps */}
+          <DatasetProcessGrid>
+            <ProcessCard>
+              <ProcessIcon>
+                <FiDatabase />
+              </ProcessIcon>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 6px 0' }}>
+                1. Data Cleaning & Splitting
+              </h3>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                Images are partitioned into standard training, validation, and test subsets to evaluate
+                real-world generalization across diverse skin types.
+              </p>
+            </ProcessCard>
+
+            <ProcessCard>
+              <ProcessIcon>
+                <FiSliders />
+              </ProcessIcon>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 6px 0' }}>
+                2. Data Augmentation
+              </h3>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                Random rotations, horizontal and vertical flips, and zoom scaling are applied during training
+                to address class imbalance in rarer skin conditions.
+              </p>
+            </ProcessCard>
+
+            <ProcessCard>
+              <ProcessIcon>
+                <FiCheckCircle />
+              </ProcessIcon>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 6px 0' }}>
+                3. Image Normalization
+              </h3>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                Pixels are scaled to standard [0, 1] tensor distributions and standardized across RGB channels
+                to accelerate network convergence.
+              </p>
+            </ProcessCard>
+          </DatasetProcessGrid>
+        </Container>
+      </SectionWrapper>
+
+      {/* Section 3: Ensemble AI Strategy & Architectures */}
+      <SectionWrapper id="models">
         <Container>
           <SectionHeader>
             <SectionTag>
               <FiLayers size={14} />
-              <span>Engineering & Scale</span>
+              <span>Model Architectures</span>
             </SectionTag>
-            <SectionTitle>Engineered with Asymmetric Precision</SectionTitle>
+            <SectionTitle>Why Ensemble Deep Learning?</SectionTitle>
             <SectionDescription>
-              A high-throughput convolutional pipeline fusing three specialized vision architectures
-              to achieve clinical-grade generalization across heterogeneous patient data.
+              A single convolutional neural network can have architectural blind spots. By combining three
+              diverse models with different strengths, our ensemble achieves more reliable predictions.
             </SectionDescription>
           </SectionHeader>
 
-          <BentoGrid>
-            {/* Bento Card 1 (Large 7-col) */}
-            <BentoCardLarge>
-              <div>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '4px 12px',
-                    background: 'rgba(61, 220, 132, 0.15)',
-                    borderRadius: '9999px',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#065f46',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <FiGitBranch size={14} />
-                  Tri-Model Parallel Pipeline
-                </div>
-                <h3 style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0 0 12px 0' }}>
-                  Parallel Multi-CNN Ingestion Engine
-                </h3>
-                <p style={{ color: '#64748b', lineHeight: 1.65, margin: '0 0 24px 0' }}>
-                  Raw dermoscopic photographs undergo simultaneous CLAHE contrast normalization before
-                  being routed into three distinct neural networks in parallel threads, extracting
-                  spatial, textural, and boundary features concurrently.
-                </p>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '12px',
-                  background: 'rgba(0,0,0,0.02)',
-                  padding: '16px',
-                  borderRadius: '20px',
-                }}
-              >
+          <ModelsGrid>
+            {/* Model 1: ResNet-101 */}
+            <ModelCard>
+              <ModelHeader>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Network A</div>
-                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0284c7' }}>ResNet-101</div>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 2px 0' }}>ResNet-101</h3>
+                  <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Residual Deep CNN</span>
                 </div>
-                <div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Network B</div>
-                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#6366f1' }}>DenseNet-121</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Network C</div>
-                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#16a34a' }}>
-                    EfficientNet-B3
-                  </div>
-                </div>
-              </div>
-            </BentoCardLarge>
+                <ModelBadge>44.5M Params</ModelBadge>
+              </ModelHeader>
 
-            {/* Bento Card 2 (Small 5-col) */}
-            <BentoCardSmall>
-              <div>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '4px 12px',
-                    background: 'rgba(99, 102, 241, 0.15)',
-                    borderRadius: '9999px',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#4338ca',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <FiZap size={14} />
-                  Latency Telemetry
-                </div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 8px 0' }}>
-                  &lt; 1.2s Real-Time Inference
-                </h3>
-                <p style={{ color: '#64748b', lineHeight: 1.6, fontSize: '0.925rem' }}>
-                  Optimized for rapid triage with asynchronous batch evaluation and GPU TensorRT execution.
-                </p>
-              </div>
+              <ModelSvgWrapper>
+                <svg viewBox="0 0 320 80" fill="none">
+                  {/* ResNet Residual Skip Representation */}
+                  <rect x="20" y="25" width="60" height="30" rx="6" fill="#dbeafe" stroke="#3b82f6" />
+                  <text x="50" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#1d4ed8">Conv Layer</text>
 
-              <div style={{ marginTop: '20px' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#073042' }}>64.7M</div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Total Parameters Evaluated</div>
-              </div>
-            </BentoCardSmall>
+                  <rect x="130" y="25" width="60" height="30" rx="6" fill="#dbeafe" stroke="#3b82f6" />
+                  <text x="160" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#1d4ed8">Conv Layer</text>
 
-            {/* Bento Card 3 (Small 5-col) */}
-            <BentoCardSmall>
-              <div>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '4px 12px',
-                    background: 'rgba(245, 158, 11, 0.15)',
-                    borderRadius: '9999px',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#92400e',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <FiBarChart2 size={14} />
-                  Clinical Benchmark
-                </div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 8px 0' }}>
-                  94.8% HAM10000 F1-Score
-                </h3>
-                <p style={{ color: '#64748b', lineHeight: 1.6, fontSize: '0.925rem' }}>
-                  Validated across 10,015 multi-source dermatoscopic images covering 7 distinct pathologies.
-                </p>
-              </div>
+                  <circle cx="250" cy="40" r="14" fill="#eff6ff" stroke="#2563eb" />
+                  <text x="250" y="45" textAnchor="middle" fontSize="14" fontWeight="700" fill="#2563eb">+</text>
 
-              <div style={{ marginTop: '20px' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#16a34a' }}>7 Classes</div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Full Histological Diversity</div>
-              </div>
-            </BentoCardSmall>
+                  {/* Main Flow */}
+                  <path d="M 80 40 L 130 40" stroke="#2563eb" strokeWidth="2" />
+                  <path d="M 190 40 L 236 40" stroke="#2563eb" strokeWidth="2" />
+                  <path d="M 264 40 L 300 40" stroke="#2563eb" strokeWidth="2" />
 
-            {/* Bento Card 4 (Large 7-col) */}
-            <BentoCardLarge>
-              <div>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '4px 12px',
-                    background: 'rgba(61, 220, 132, 0.15)',
-                    borderRadius: '9999px',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#065f46',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <FiCompass size={14} />
-                  Meta-Classification Stacking
-                </div>
-                <h3 style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0 0 12px 0' }}>
-                  Stacked Logistic Probability Fusion
-                </h3>
-                <p style={{ color: '#64748b', lineHeight: 1.65, margin: '0 0 20px 0' }}>
-                  Instead of naive majority voting, our second-tier meta-learner computes an optimized
-                  weighted consensus across all base logits, suppressing outliers and false positives.
-                </p>
-              </div>
+                  {/* Skip Connection Curve */}
+                  <path d="M 50 25 C 50 5, 250 5, 250 26" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3 3" fill="none" />
+                  <text x="150" y="12" textAnchor="middle" fontSize="9" fontWeight="600" fill="#d97706">Skip Highway (Identity Shortcut)</text>
+                </svg>
+              </ModelSvgWrapper>
 
-              <div
-                style={{
-                  background: 'rgba(7, 48, 66, 0.04)',
-                  padding: '14px 20px',
-                  borderRadius: '16px',
-                  fontFamily: 'monospace',
-                  fontSize: '0.85rem',
-                  color: '#073042',
-                  fontWeight: 600,
-                }}
-              >
-                P(Class | x) = σ( W_meta · [P_ResNet, P_DenseNet, P_EfficientNet] + b )
-              </div>
-            </BentoCardLarge>
-          </BentoGrid>
-        </Container>
-      </SectionWrapper>
-
-      {/* Section 3: Interactive Tabbed Architecture Showcase (Tonal Indigo) */}
-      <SectionWrapper id="models" $bg="indigo">
-        <Container>
-          <SectionHeader>
-            <SectionTag>
-              <FiCpu size={14} />
-              <span>Model Architecture Deep Dive</span>
-            </SectionTag>
-            <SectionTitle>Interactive Vision Topology</SectionTitle>
-            <SectionDescription>
-              Explore how each neural network in the tri-model ensemble contributes unique receptive
-              fields and feature representations.
-            </SectionDescription>
-          </SectionHeader>
-
-          {/* Android Dev Tab List */}
-          <TabList>
-            {MODEL_TABS.map((tab) => (
-              <TabButton
-                key={tab.id}
-                $active={activeModelTab.id === tab.id}
-                onClick={() => setActiveModelTab(tab)}
-              >
-                {tab.name}
-              </TabButton>
-            ))}
-          </TabList>
-
-          {/* Dynamic Tab Content Card */}
-          <TabContentCard>
-            <div>
-              <div
-                style={{
-                  display: 'inline-block',
-                  padding: '4px 12px',
-                  borderRadius: '9999px',
-                  background: 'rgba(99, 102, 241, 0.1)',
-                  color: '#4338ca',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  marginBottom: '12px',
-                }}
-              >
-                {activeModelTab.family}
-              </div>
-
-              <h3 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 12px 0' }}>
-                {activeModelTab.name}
-              </h3>
-
-              <p style={{ color: '#64748b', fontSize: '1.05rem', lineHeight: 1.65, margin: '0 0 20px 0' }}>
-                {activeModelTab.description}
+              <p style={{ color: '#64748b', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+                Uses identity shortcut connections to allow gradient signals to travel directly across 101 layers,
+                capturing intricate lesion boundaries without vanishing gradient issues.
               </p>
+            </ModelCard>
 
-              <div
-                style={{
-                  background: 'rgba(61, 220, 132, 0.1)',
-                  border: '1px solid rgba(61, 220, 132, 0.3)',
-                  padding: '12px 18px',
-                  borderRadius: '16px',
-                  fontSize: '0.9rem',
-                  color: '#065f46',
-                  fontWeight: 600,
-                }}
-              >
-                💡 <strong>Core Advantage:</strong> {activeModelTab.keyAdvantage}
-              </div>
+            {/* Model 2: DenseNet-121 */}
+            <ModelCard>
+              <ModelHeader>
+                <div>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 2px 0' }}>DenseNet-121</h3>
+                  <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Dense Feature Reuse</span>
+                </div>
+                <ModelBadge>8.0M Params</ModelBadge>
+              </ModelHeader>
+
+              <ModelSvgWrapper>
+                <svg viewBox="0 0 320 80" fill="none">
+                  {/* DenseNet Interconnection Representation */}
+                  <rect x="20" y="25" width="55" height="30" rx="6" fill="#e0e7ff" stroke="#6366f1" />
+                  <text x="47" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4338ca">Layer 1</text>
+
+                  <rect x="130" y="25" width="55" height="30" rx="6" fill="#e0e7ff" stroke="#6366f1" />
+                  <text x="157" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4338ca">Layer 2</text>
+
+                  <rect x="240" y="25" width="55" height="30" rx="6" fill="#e0e7ff" stroke="#6366f1" />
+                  <text x="267" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4338ca">Layer 3</text>
+
+                  {/* Dense Interconnections */}
+                  <path d="M 75 40 L 130 40" stroke="#6366f1" strokeWidth="2" />
+                  <path d="M 185 40 L 240 40" stroke="#6366f1" strokeWidth="2" />
+                  <path d="M 47 25 C 47 5, 267 5, 267 25" stroke="#ec4899" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
+                  <text x="157" y="12" textAnchor="middle" fontSize="9" fontWeight="600" fill="#db2777">Dense Cross-Layer Concatenation</text>
+                </svg>
+              </ModelSvgWrapper>
+
+              <p style={{ color: '#64748b', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+                Directly connects all layers to each subsequent layer. Reuses low-level edge features
+                alongside high-level texture patterns with a compact parameter count.
+              </p>
+            </ModelCard>
+
+            {/* Model 3: EfficientNet-B3 */}
+            <ModelCard>
+              <ModelHeader>
+                <div>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 2px 0' }}>EfficientNet-B3</h3>
+                  <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Compound Scaling CNN</span>
+                </div>
+                <ModelBadge>12.2M Params</ModelBadge>
+              </ModelHeader>
+
+              <ModelSvgWrapper>
+                <svg viewBox="0 0 320 80" fill="none">
+                  {/* EfficientNet Compound Scaling */}
+                  <rect x="30" y="30" width="40" height="20" rx="4" fill="#dcfce7" stroke="#22c55e" />
+                  <text x="50" y="43" textAnchor="middle" fontSize="8" fontWeight="700" fill="#15803d">Width</text>
+
+                  <rect x="130" y="20" width="50" height="40" rx="4" fill="#dcfce7" stroke="#22c55e" />
+                  <text x="155" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="#15803d">Depth</text>
+
+                  <rect x="230" y="10" width="60" height="60" rx="6" fill="#dcfce7" stroke="#22c55e" />
+                  <text x="260" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Resolution</text>
+
+                  <path d="M 70 40 L 130 40" stroke="#16a34a" strokeWidth="2" />
+                  <path d="M 180 40 L 230 40" stroke="#16a34a" strokeWidth="2" />
+                </svg>
+              </ModelSvgWrapper>
+
+              <p style={{ color: '#64748b', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+                Scales network depth, width, and resolution simultaneously using a compound coefficient,
+                delivering high representational accuracy at minimal computational cost.
+              </p>
+            </ModelCard>
+
+            {/* Model 4: Stacking Meta-Classifier */}
+            <ModelCard>
+              <ModelHeader>
+                <div>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 2px 0' }}>Meta-Classifier</h3>
+                  <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Logistic Stacking Layer</span>
+                </div>
+                <ModelBadge>Probability Fusion</ModelBadge>
+              </ModelHeader>
+
+              <ModelSvgWrapper>
+                <svg viewBox="0 0 320 80" fill="none">
+                  {/* Softmax Stacking */}
+                  <rect x="20" y="10" width="70" height="18" rx="4" fill="#f1f5f9" stroke="#94a3b8" />
+                  <text x="55" y="22" textAnchor="middle" fontSize="9" fill="#475569">P(ResNet)</text>
+
+                  <rect x="20" y="32" width="70" height="18" rx="4" fill="#f1f5f9" stroke="#94a3b8" />
+                  <text x="55" y="44" textAnchor="middle" fontSize="9" fill="#475569">P(DenseNet)</text>
+
+                  <rect x="20" y="54" width="70" height="18" rx="4" fill="#f1f5f9" stroke="#94a3b8" />
+                  <text x="55" y="66" textAnchor="middle" fontSize="9" fill="#475569">P(EfficientNet)</text>
+
+                  <path d="M 90 19 L 140 40" stroke="#2563eb" strokeWidth="1.5" />
+                  <path d="M 90 41 L 140 40" stroke="#2563eb" strokeWidth="1.5" />
+                  <path d="M 90 63 L 140 40" stroke="#2563eb" strokeWidth="1.5" />
+
+                  <rect x="140" y="20" width="90" height="40" rx="8" fill="#2563eb" />
+                  <text x="185" y="38" textAnchor="middle" fontSize="10" fontWeight="700" fill="#ffffff">Meta-Learner</text>
+                  <text x="185" y="50" textAnchor="middle" fontSize="8" fill="#bfdbfe">Weighted Voting</text>
+
+                  <path d="M 230 40 L 260 40" stroke="#16a34a" strokeWidth="2" />
+                  <rect x="260" y="25" width="50" height="30" rx="6" fill="#dcfce7" stroke="#22c55e" />
+                  <text x="285" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Class %</text>
+                </svg>
+              </ModelSvgWrapper>
+
+              <p style={{ color: '#64748b', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+                Combines output logits from all three neural networks using a second-stage meta-classifier,
+                averaging out individual model biases for robust consensus.
+              </p>
+            </ModelCard>
+          </ModelsGrid>
+
+          {/* Ensemble Summary Card */}
+          <EnsembleBanner>
+            <div>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 6px 0' }}>
+                Balanced Decision Stacking
+              </h3>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                When an image is evaluated, the backend executes inference across all three architectures
+                in parallel threads and applies weighted calibration to produce the final diagnostic ranking.
+              </p>
             </div>
-
-            {/* Spec Cards Column */}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                background: 'rgba(0, 0, 0, 0.02)',
-                padding: '24px',
-                borderRadius: '24px',
-              }}
-            >
-              <div>
-                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Parameter Footprint</div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#111827' }}>
-                  {activeModelTab.parameters}
-                </div>
-              </div>
-
-              <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '12px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Network Depth</div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#111827' }}>
-                  {activeModelTab.depth}
-                </div>
-              </div>
-
-              <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '12px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Receptive Field Architecture</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0284c7' }}>
-                  {activeModelTab.receptiveField}
-                </div>
-              </div>
+            <div style={{ textAlign: 'right' }}>
+              <Button asChild variant="brand" size="md">
+                <Link to={ctaRoute}>
+                  Launch Detection Tool
+                  <FiArrowRight size={14} />
+                </Link>
+              </Button>
             </div>
-          </TabContentCard>
+          </EnsembleBanner>
         </Container>
       </SectionWrapper>
 
-      {/* Section 4: Clinical Pathology Atlas (Tonal Sand) */}
-      <SectionWrapper id="conditions" $bg="sand">
+      {/* Section 4: Supported Skin Conditions (7 Classes) */}
+      <SectionWrapper id="conditions" $alt>
         <Container>
           <SectionHeader>
             <SectionTag>
               <FiCheckCircle size={14} />
-              <span>Pathology Atlas</span>
+              <span>Diagnostic Scope</span>
             </SectionTag>
-            <SectionTitle>7 Supported Clinical Categories</SectionTitle>
+            <SectionTitle>7 Supported Skin Conditions</SectionTitle>
             <SectionDescription>
-              Comprehensive diagnostic coverage mapped to the HAM10000 international dermatology benchmark.
+              The model is trained to recognize and differentiate between these 7 specific dermatological
+              categories from the HAM10000 dataset.
             </SectionDescription>
           </SectionHeader>
 
-          <AtlasGrid>
-            {PATHOLOGY_CONDITIONS.map((condition) => (
-              <AtlasCard key={condition.code}>
+          <ConditionsGrid>
+            {CONDITIONS_LIST.map((cond) => (
+              <ConditionCard key={cond.code}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <RiskBadge $type={condition.type}>{condition.category}</RiskBadge>
-                  <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 700 }}>
-                    {condition.code.toUpperCase()}
+                  <ConditionPill $type={cond.type}>{cond.tag}</ConditionPill>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>
+                    {cond.code.toUpperCase()}
                   </span>
                 </div>
 
-                <h4 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '6px 0 0 0' }}>
-                  {condition.name}
-                </h4>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '4px 0 0 0' }}>
+                  {cond.name}
+                </h3>
 
-                <div style={{ fontSize: '0.8rem', color: '#073042', fontWeight: 700 }}>
-                  {condition.incidence}
-                </div>
-
-                <p style={{ fontSize: '0.875rem', color: '#4b5563', lineHeight: 1.5, margin: 0 }}>
-                  <strong>Key Hallmarks:</strong> {condition.features}
+                <p style={{ fontSize: '0.9rem', color: '#64748b', lineHeight: 1.55, margin: 0 }}>
+                  {cond.description}
                 </p>
-
-                <div
-                  style={{
-                    marginTop: 'auto',
-                    paddingTop: '12px',
-                    borderTop: '1px solid rgba(0,0,0,0.06)',
-                    fontSize: '0.8rem',
-                    color: '#6b7280',
-                  }}
-                >
-                  📋 {condition.guidance}
-                </div>
-              </AtlasCard>
+              </ConditionCard>
             ))}
-          </AtlasGrid>
+          </ConditionsGrid>
         </Container>
       </SectionWrapper>
 
-      {/* Section 5: Clinician-in-the-Loop Workflow (Tonal Ice) */}
-      <SectionWrapper id="workflow" $bg="ice">
+      {/* Section 5: Project Scope & Limitations */}
+      <SectionWrapper id="disclaimer">
         <Container>
           <SectionHeader>
             <SectionTag>
               <FiShield size={14} />
-              <span>Clinical Responsibility</span>
+              <span>Project Transparency</span>
             </SectionTag>
-            <SectionTitle>3-Stage Clinician Decision Pipeline</SectionTitle>
+            <SectionTitle>Project Scope & AI Limitations</SectionTitle>
             <SectionDescription>
-              Designed as an assistive pre-screening tool that complements professional medical review.
+              Important considerations regarding how this deep learning tool was developed and how its
+              outputs should be interpreted.
             </SectionDescription>
           </SectionHeader>
 
-          <WorkflowGrid>
-            <WorkflowStep>
-              <StepIndexPill>01</StepIndexPill>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '8px 0 0 0' }}>
-                High-Res Dermoscopy Ingestion
-              </h3>
-              <p style={{ fontSize: '0.925rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                High-resolution epiluminescence photographs are captured under polarized light,
-                normalized for lighting variations, and uploaded directly to the platform.
+          <DisclaimerCard>
+            <DisclaimerItem>
+              <div style={{ color: '#2563eb', marginBottom: '4px' }}>
+                <FiInfo size={22} />
+              </div>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
+                Academic Project Scope
+              </h4>
+              <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
+                This tool is an engineering project created to study ensemble deep learning on dermatoscopic images.
+                It is not a commercial medical diagnostic system.
               </p>
-            </WorkflowStep>
+            </DisclaimerItem>
 
-            <WorkflowStep>
-              <StepIndexPill>02</StepIndexPill>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '8px 0 0 0' }}>
-                Tri-Model Ensemble Inference
-              </h3>
-              <p style={{ fontSize: '0.925rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                ResNet-101, DenseNet-121, and EfficientNet-B3 independently extract feature representations
-                and generate cross-calibrated probability distributions in under 1.2 seconds.
+            <DisclaimerItem>
+              <div style={{ color: '#f59e0b', marginBottom: '4px' }}>
+                <FiShield size={22} />
+              </div>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
+                AI Model Limitations
+              </h4>
+              <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
+                Deep learning models can make errors, especially on blurry photos, non-standard lighting,
+                or skin lesions outside the HAM10000 dataset distribution.
               </p>
-            </WorkflowStep>
+            </DisclaimerItem>
 
-            <WorkflowStep>
-              <StepIndexPill>03</StepIndexPill>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '8px 0 0 0' }}>
-                Physician Review & Histology
-              </h3>
-              <p style={{ fontSize: '0.925rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
-                The board-certified clinician evaluates the AI consensus report, incorporates patient history,
-                and determines next clinical steps or confirmatory surgical excision.
+            <DisclaimerItem>
+              <div style={{ color: '#16a34a', marginBottom: '4px' }}>
+                <FiCheckCircle size={22} />
+              </div>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
+                Consult Qualified Doctors
+              </h4>
+              <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
+                Always consult a certified dermatologist for actual clinical evaluation, dermoscopy,
+                or biopsy confirmation of any concerning skin spot.
               </p>
-            </WorkflowStep>
-          </WorkflowGrid>
+            </DisclaimerItem>
+          </DisclaimerCard>
         </Container>
       </SectionWrapper>
 
-      {/* Section 6: Dark Pine & Android Green CTA */}
-      <DarkCtaSection>
-        <DarkCtaCard>
-          <div
-            style={{
-              padding: '6px 16px',
-              borderRadius: '9999px',
-              background: 'rgba(61, 220, 132, 0.15)',
-              color: '#3ddc84',
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              marginBottom: '16px',
-            }}
-          >
-            ⚡ Open Access Dermoscopy AI
-          </div>
-
-          <h2 style={{ fontSize: '2.75rem', fontWeight: 800, margin: '0 0 16px 0', letterSpacing: '-0.03em' }}>
-            Ready to explore clinical-grade lesion detection?
-          </h2>
-
-          <p style={{ fontSize: '1.15rem', opacity: 0.85, maxWidth: '640px', margin: '0 0 32px 0', lineHeight: 1.65 }}>
-            Upload any dermoscopic photograph and obtain instantaneous tri-model consensus confidence
-            breakdowns across 7 disease classifications.
-          </p>
-
-          <Button asChild variant="android" size="lg">
-            <Link to={ctaRoute}>
-              {ctaText}
-              <FiArrowRight size={16} />
-            </Link>
-          </Button>
-        </DarkCtaCard>
-      </DarkCtaSection>
+      {/* Section 6: Bottom Call to Action */}
+      <SectionWrapper>
+        <Container>
+          <CtaCard>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 12px 0', letterSpacing: '-0.02em' }}>
+              Ready to test the Ensemble Model?
+            </h2>
+            <p style={{ fontSize: '1.1rem', opacity: 0.9, maxWidth: '600px', margin: '0 0 28px 0', lineHeight: 1.6 }}>
+              Upload any skin lesion photo to view the predicted condition and probability breakdown across all 7 categories.
+            </p>
+            <Button asChild variant="primary" size="lg">
+              <Link to={ctaRoute}>
+                {ctaText}
+                <FiArrowRight size={16} />
+              </Link>
+            </Button>
+          </CtaCard>
+        </Container>
+      </SectionWrapper>
 
       {/* Minimalist Footer */}
       <FooterWrapper>
         <FooterContainer>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#073042' }}>
-              SkinAI Diagnostics Pipeline
+            <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#0f172a' }}>
+              Skin Disease Classification Project
             </div>
             <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
-              Tri-Model Deep Convolutional Ensemble for Dermoscopic Lesion Classification.
+              Deep Learning Ensemble (ResNet-101 + DenseNet-121 + EfficientNet-B3) on HAM10000.
             </div>
           </div>
 
-          <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-            © {new Date().getFullYear()} Skin AI Research. Assistive Clinical AI Tool.
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.85rem', color: '#64748b' }}>
+            <span>Educational ML Project</span>
+            <span>•</span>
+            <a
+              href="https://github.com/Purvesh-PJ/skin_disease_detection"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#2563eb' }}
+            >
+              GitHub Repository
+              <FiExternalLink size={12} />
+            </a>
           </div>
         </FooterContainer>
       </FooterWrapper>

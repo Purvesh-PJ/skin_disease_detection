@@ -3,40 +3,6 @@ import styled, { css } from 'styled-components';
 import { Slot } from '@radix-ui/react-slot';
 
 const variants = {
-  android: css`
-    background-color: ${({ theme }) => theme.colors.button.android.bg};
-    color: ${({ theme }) => theme.colors.button.android.text};
-    border: 1px solid transparent;
-    font-weight: 700;
-    box-shadow: 0 4px 14px rgba(61, 220, 132, 0.3);
-
-    &:hover:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.button.android.bgHover};
-      box-shadow: 0 6px 20px rgba(61, 220, 132, 0.45);
-      transform: translateY(-1px);
-    }
-
-    &:active:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.button.android.bgActive};
-      transform: translateY(0);
-    }
-  `,
-  pine: css`
-    background-color: ${({ theme }) => theme.colors.button.pine.bg};
-    color: ${({ theme }) => theme.colors.button.pine.text};
-    border: 1px solid transparent;
-    box-shadow: 0 4px 14px rgba(7, 48, 66, 0.25);
-
-    &:hover:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.button.pine.bgHover};
-      transform: translateY(-1px);
-    }
-
-    &:active:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.button.pine.bgActive};
-      transform: translateY(0);
-    }
-  `,
   primary: css`
     background-color: ${({ theme }) => theme.colors.button.primary.bg};
     color: ${({ theme }) => theme.colors.button.primary.text};
@@ -54,6 +20,23 @@ const variants = {
       transform: translateY(0);
     }
   `,
+  brand: css`
+    background-color: ${({ theme }) => theme.colors.button.brand.bg};
+    color: ${({ theme }) => theme.colors.button.brand.text};
+    border: 1px solid transparent;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.25);
+
+    &:hover:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.brand.bgHover};
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.brand.bgActive};
+      transform: translateY(0);
+    }
+  `,
   secondary: css`
     background-color: ${({ theme }) => theme.colors.button.secondary.bg};
     color: ${({ theme }) => theme.colors.button.secondary.text};
@@ -67,24 +50,6 @@ const variants = {
 
     &:active:not(:disabled) {
       background-color: ${({ theme }) => theme.colors.button.secondary.bgActive};
-      transform: translateY(0);
-    }
-  `,
-  accent: css`
-    background-color: ${({ theme }) => theme.colors.emerald.android};
-    color: #073042;
-    border: 1px solid transparent;
-    font-weight: 700;
-    box-shadow: 0 4px 16px rgba(61, 220, 132, 0.35);
-
-    &:hover:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.emerald[400]};
-      box-shadow: 0 6px 24px rgba(61, 220, 132, 0.45);
-      transform: translateY(-1px);
-    }
-
-    &:active:not(:disabled) {
-      background-color: ${({ theme }) => theme.colors.emerald[500]};
       transform: translateY(0);
     }
   `,
@@ -118,6 +83,38 @@ const variants = {
       background-color: ${({ theme }) => theme.colors.interactive.active};
     }
   `,
+  android: css`
+    background-color: ${({ theme }) => theme.colors.button.brand.bg};
+    color: ${({ theme }) => theme.colors.button.brand.text};
+    border: 1px solid transparent;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.25);
+
+    &:hover:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.brand.bgHover};
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.brand.bgActive};
+      transform: translateY(0);
+    }
+  `,
+  accent: css`
+    background-color: ${({ theme }) => theme.colors.button.brand.bg};
+    color: ${({ theme }) => theme.colors.button.brand.text};
+    border: 1px solid transparent;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.25);
+
+    &:hover:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.brand.bgHover};
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.button.brand.bgActive};
+      transform: translateY(0);
+    }
+  `,
 };
 
 const sizes = {
@@ -132,9 +129,9 @@ const sizes = {
     gap: ${({ theme }) => theme.spacing[2]};
   `,
   lg: css`
-    padding: ${({ theme }) => `${theme.spacing[3.5] || '14px'} ${theme.spacing[7] || '28px'}`};
-    font-size: 1.05rem;
-    gap: ${({ theme }) => theme.spacing[2.5] || '10px'};
+    padding: ${({ theme }) => `${theme.spacing[3.5] || '14px'} ${theme.spacing[6] || '24px'}`};
+    font-size: 1rem;
+    gap: ${({ theme }) => theme.spacing[2]};
   `,
 };
 
@@ -162,7 +159,7 @@ const StyledButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.emerald.android};
+    outline: 2px solid ${({ theme }) => theme.colors.primary[500]};
     outline-offset: 2px;
   }
 `;
