@@ -14,7 +14,7 @@ const NavHeader = styled.header`
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   background-color: ${({ theme }) =>
-    theme.mode === 'dark' ? 'rgba(15, 23, 42, 0.9)' : 'rgba(255, 255, 255, 0.9)'};
+    theme.mode === 'dark' ? 'rgba(18, 18, 18, 0.92)' : 'rgba(255, 255, 255, 0.92)'};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
   transition: all ${({ theme }) => theme.transitions.normal};
 `;

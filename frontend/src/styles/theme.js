@@ -1,4 +1,4 @@
-// Design tokens - Medical Green & Clean White (Light) / Dark Gray & Medical Green (Dark)
+// Design tokens - Medical Green & Clean White (Light) / True Dark Gray & Medical Green (Dark)
 
 const colors = {
   // Medical Green & Emerald
@@ -14,19 +14,19 @@ const colors = {
     800: '#166534',
     900: '#14532d',
   },
-  // Neutral slate & Dark Gray
+  // Neutral Clean Slate (Light Mode) & Pure Dark Gray (Dark Mode)
   neutral: {
-    50: '#f9fafb',
-    100: '#f3f4f6',
-    200: '#e5e7eb',
-    300: '#d1d5db',
-    400: '#9ca3af',
-    500: '#6b7280',
-    600: '#4b5563',
-    700: '#374151',
-    800: '#1f2937',
-    900: '#111827',
-    950: '#0b0f19',
+    50: '#fafafa',
+    100: '#f5f5f5',
+    200: '#e5e5e5',
+    300: '#d4d4d4',
+    400: '#a3a3a3',
+    500: '#737373',
+    600: '#525252',
+    700: '#404040',
+    800: '#262626',
+    900: '#171717',
+    950: '#0a0a0a',
   },
   // Accent success
   success: {
@@ -158,22 +158,22 @@ export const lightTheme = {
     ...colors,
     background: {
       primary: '#ffffff',
-      secondary: '#f9fafb',
-      tertiary: '#f3f4f6',
+      secondary: '#fafafa',
+      tertiary: '#f5f5f5',
       paper: '#ffffff',
       card: '#ffffff',
       elevated: '#ffffff',
     },
     text: {
-      primary: '#111827',
-      secondary: '#4b5563',
-      tertiary: '#9ca3af',
+      primary: '#171717',
+      secondary: '#525252',
+      tertiary: '#a3a3a3',
       inverse: '#ffffff',
     },
     border: {
-      light: '#f3f4f6',
-      default: '#e5e7eb',
-      dark: '#d1d5db',
+      light: '#f5f5f5',
+      default: '#e5e5e5',
+      dark: '#d4d4d4',
       brand: '#bbf7d0',
     },
     status: {
@@ -203,24 +203,24 @@ export const lightTheme = {
       },
     },
     interactive: {
-      hover: '#f3f4f6',
-      active: '#e5e7eb',
+      hover: '#f5f5f5',
+      active: '#e5e5e5',
       selected: '#f0fdf4',
       selectedHover: '#dcfce7',
     },
     button: {
       primary: {
-        bg: '#111827',
-        bgHover: '#1f2937',
-        bgActive: '#030712',
+        bg: '#171717',
+        bgHover: '#262626',
+        bgActive: '#0a0a0a',
         text: '#ffffff',
       },
       secondary: {
-        bg: '#f3f4f6',
-        bgHover: '#e5e7eb',
-        bgActive: '#d1d5db',
-        text: '#111827',
-        border: '#e5e7eb',
+        bg: '#f5f5f5',
+        bgHover: '#e5e5e5',
+        bgActive: '#d4d4d4',
+        text: '#171717',
+        border: '#e5e5e5',
       },
       brand: {
         bg: '#16a34a',
@@ -231,11 +231,11 @@ export const lightTheme = {
     },
   },
   gradients: {
-    heroGlow: 'radial-gradient(circle at 50% 0%, rgba(22, 163, 74, 0.08) 0%, rgba(249, 250, 251, 0) 70%)',
+    heroGlow: 'radial-gradient(circle at 50% 0%, rgba(22, 163, 74, 0.08) 0%, rgba(250, 250, 250, 0) 70%)',
     heroBadge: 'linear-gradient(135deg, rgba(22, 163, 74, 0.08) 0%, rgba(34, 197, 94, 0.12) 100%)',
-    authBg: 'radial-gradient(circle at 50% 0%, #f0fdf4 0%, #f9fafb 100%)',
+    authBg: 'radial-gradient(circle at 50% 0%, #f0fdf4 0%, #fafafa 100%)',
     authCardBg: 'rgba(255, 255, 255, 0.98)',
-    authCardBorder: 'rgba(229, 231, 235, 0.9)',
+    authCardBorder: 'rgba(229, 229, 229, 0.9)',
     brandIcon: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
     progressBar: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)',
   },
@@ -246,30 +246,30 @@ export const lightTheme = {
   transitions,
 };
 
-// Dark Theme (Dark Gray & Medical Green)
+// Dark Theme (True Dark Gray / Charcoal - Zero Blue Tint)
 export const darkTheme = {
   mode: 'dark',
   colors: {
     ...colors,
     background: {
-      primary: '#111827',
-      secondary: '#0b0f19',
-      tertiary: '#1f2937',
-      paper: '#1f2937',
-      card: '#1f2937',
-      elevated: '#374151',
+      primary: '#121212',
+      secondary: '#0a0a0a',
+      tertiary: '#1c1c1c',
+      paper: '#181818',
+      card: '#181818',
+      elevated: '#242424',
     },
     text: {
-      primary: '#f9fafb',
-      secondary: '#cbd5e1',
-      tertiary: '#94a3b8',
-      inverse: '#111827',
+      primary: '#f5f5f5',
+      secondary: '#a3a3a3',
+      tertiary: '#737373',
+      inverse: '#0a0a0a',
     },
     border: {
-      light: '#1f2937',
-      default: '#374151',
-      dark: '#4b5563',
-      brand: 'rgba(34, 197, 94, 0.35)',
+      light: '#1f1f1f',
+      default: '#2a2a2a',
+      dark: '#3a3a3a',
+      brand: 'rgba(34, 197, 94, 0.4)',
     },
     status: {
       success: {
@@ -298,24 +298,24 @@ export const darkTheme = {
       },
     },
     interactive: {
-      hover: '#1f2937',
-      active: '#374151',
+      hover: '#1e1e1e',
+      active: '#282828',
       selected: 'rgba(34, 197, 94, 0.15)',
       selectedHover: 'rgba(34, 197, 94, 0.25)',
     },
     button: {
       primary: {
-        bg: '#f9fafb',
-        bgHover: '#e5e7eb',
-        bgActive: '#d1d5db',
-        text: '#111827',
+        bg: '#f5f5f5',
+        bgHover: '#e5e5e5',
+        bgActive: '#d4d4d4',
+        text: '#0a0a0a',
       },
       secondary: {
-        bg: '#1f2937',
-        bgHover: '#374151',
-        bgActive: '#4b5563',
-        text: '#f9fafb',
-        border: '#374151',
+        bg: '#1e1e1e',
+        bgHover: '#282828',
+        bgActive: '#333333',
+        text: '#f5f5f5',
+        border: '#2a2a2a',
       },
       brand: {
         bg: '#16a34a',
@@ -326,11 +326,11 @@ export const darkTheme = {
     },
   },
   gradients: {
-    heroGlow: 'radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.15) 0%, rgba(11, 15, 25, 0) 70%)',
-    heroBadge: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.15) 100%)',
-    authBg: 'radial-gradient(circle at 50% 0%, #111827 0%, #0b0f19 100%)',
-    authCardBg: 'rgba(31, 41, 55, 0.95)',
-    authCardBorder: 'rgba(255, 255, 255, 0.1)',
+    heroGlow: 'radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.12) 0%, rgba(10, 10, 10, 0) 70%)',
+    heroBadge: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(22, 163, 74, 0.12) 100%)',
+    authBg: 'radial-gradient(circle at 50% 0%, #1a1a1a 0%, #0a0a0a 100%)',
+    authCardBg: 'rgba(24, 24, 24, 0.96)',
+    authCardBorder: 'rgba(255, 255, 255, 0.08)',
     brandIcon: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
     progressBar: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)',
   },

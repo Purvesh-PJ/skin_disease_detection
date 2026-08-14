@@ -406,7 +406,7 @@ export const DisclaimerItem = styled.div`
 
 // CTA Section
 export const CtaCard = styled.div`
-  background: linear-gradient(135deg, ${({ theme }) => theme.colors.neutral[900]} 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #181818 0%, #064e3b 100%);
   border-radius: ${({ theme }) => theme.borderRadius.container};
   padding: ${({ theme }) => `${theme.spacing[16]} ${theme.spacing[8]}`};
   color: white;
