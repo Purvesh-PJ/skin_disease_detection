@@ -19,7 +19,7 @@ export const HeroSection = styled.section`
   text-align: center;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    padding: ${({ theme }) => `${theme.spacing[10]} ${theme.spacing[4]} ${theme.spacing[12]}`};
+    padding: ${({ theme }) => `${theme.spacing[10]} ${theme.spacing[4]} ${theme.spacing[10]}`};
   }
 `;
 
@@ -29,7 +29,7 @@ export const HeroGlow = styled.div`
   left: 50%;
   transform: translateX(-50%);
   width: 100vw;
-  height: 500px;
+  height: 480px;
   background: ${({ theme }) => theme.gradients.heroGlow};
   pointer-events: none;
   z-index: 0;
@@ -40,10 +40,10 @@ export const HeroBadge = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing[2]};
   padding: 6px 16px;
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.brand};
+  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(24, 24, 24, 0.8)' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : '#bbf7d0')};
   border-radius: ${({ theme }) => theme.borderRadius.pill};
-  color: ${({ theme }) => theme.colors.primary[600]};
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#15803d')};
   font-size: 0.8125rem;
   font-weight: 600;
   margin-bottom: ${({ theme }) => theme.spacing[6]};
@@ -65,20 +65,20 @@ export const HeroTitle = styled.h1`
   z-index: 1;
 
   span.highlight {
-    color: ${({ theme }) => theme.colors.primary[600]};
+    color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    font-size: 2.6rem;
+    font-size: 2.5rem;
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
-    font-size: 2rem;
+    font-size: 1.95rem;
   }
 `;
 
 export const HeroSubtitle = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   line-height: 1.65;
   color: ${({ theme }) => theme.colors.text.secondary};
   max-width: 720px;
@@ -96,7 +96,7 @@ export const HeroCtaRow = styled.div`
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing[4]};
-  margin-bottom: ${({ theme }) => theme.spacing[12]};
+  margin-bottom: ${({ theme }) => theme.spacing[10]};
   position: relative;
   z-index: 1;
 
@@ -110,21 +110,23 @@ export const HeroCtaRow = styled.div`
   }
 `;
 
-// Large SVG Neural Pipeline Container
+// Large Outlined Architecture Pipeline Container
 export const PipelineSvgContainer = styled.div`
   width: 100%;
-  max-width: 1100px;
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  max-width: 1140px;
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.container};
-  box-shadow: ${({ theme }) => theme.shadows.floating};
-  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[8]}`};
+  box-shadow: ${({ theme }) => theme.shadows.paper};
+  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[6]}`};
   position: relative;
   z-index: 1;
-  overflow: hidden;
+  overflow-x: auto;
+  transition: border-color ${({ theme }) => theme.transitions.normal};
 
   svg {
     width: 100%;
+    min-width: 900px;
     height: auto;
     display: block;
   }
@@ -134,12 +136,11 @@ export const PipelineSvgContainer = styled.div`
   }
 `;
 
-// Common Section Styles
+// Common Section Styles (Smooth Natural Flow)
 export const SectionWrapper = styled.section`
-  padding: ${({ theme }) => `${theme.spacing[20]} ${theme.spacing[6]}`};
+  padding: ${({ theme }) => `${theme.spacing[16]} ${theme.spacing[6]}`};
   background-color: ${({ theme, $alt }) =>
-    $alt ? theme.colors.background.primary : 'transparent'};
-  border-top: 1px solid ${({ theme }) => theme.colors.border.default};
+    $alt ? (theme.mode === 'dark' ? '#121212' : '#ffffff') : 'transparent'};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     padding: ${({ theme }) => `${theme.spacing[12]} ${theme.spacing[4]}`};
@@ -147,14 +148,14 @@ export const SectionWrapper = styled.section`
 `;
 
 export const Container = styled.div`
-  max-width: 1280px;
+  max-width: 1240px;
   margin: 0 auto;
 `;
 
 export const SectionHeader = styled.div`
   text-align: center;
   max-width: 760px;
-  margin: 0 auto ${({ theme }) => theme.spacing[12]};
+  margin: 0 auto ${({ theme }) => theme.spacing[10]};
 `;
 
 export const SectionTag = styled.div`
@@ -162,8 +163,8 @@ export const SectionTag = styled.div`
   align-items: center;
   gap: 6px;
   padding: 4px 14px;
-  background: ${({ theme }) => theme.colors.background.tertiary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : '#f5f5f5')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.pill};
   color: ${({ theme }) => theme.colors.text.secondary};
   font-size: 0.8125rem;
@@ -172,19 +173,19 @@ export const SectionTag = styled.div`
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   color: ${({ theme }) => theme.colors.text.primary};
   margin-bottom: ${({ theme }) => theme.spacing[3]};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    font-size: 2rem;
+    font-size: 1.85rem;
   }
 `;
 
 export const SectionDescription = styled.p`
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: ${({ theme }) => theme.colors.text.secondary};
   line-height: 1.6;
 `;
@@ -193,8 +194,8 @@ export const SectionDescription = styled.p`
 export const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: ${({ theme }) => theme.spacing[6]};
-  margin-bottom: ${({ theme }) => theme.spacing[12]};
+  gap: ${({ theme }) => theme.spacing[5]};
+  margin-bottom: ${({ theme }) => theme.spacing[10]};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: repeat(2, 1fr);
@@ -206,24 +207,29 @@ export const StatsGrid = styled.div`
 `;
 
 export const StatCard = styled.div`
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.card};
-  padding: ${({ theme }) => theme.spacing[6]};
+  padding: ${({ theme }) => `${theme.spacing[6]} ${theme.spacing[4]}`};
   text-align: center;
-  box-shadow: ${({ theme }) => theme.shadows.paper};
+  transition: transform ${({ theme }) => theme.transitions.fast}, border-color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => (theme.mode === 'dark' ? '#404040' : '#d4d4d4')};
+    transform: translateY(-2px);
+  }
 `;
 
 export const StatValue = styled.div`
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: ${({ theme }) => theme.colors.primary[600]};
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
   letter-spacing: -0.02em;
   margin-bottom: 4px;
 `;
 
 export const StatLabel = styled.div`
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   color: ${({ theme }) => theme.colors.text.secondary};
   font-weight: 500;
 `;
@@ -240,27 +246,33 @@ export const DatasetProcessGrid = styled.div`
 `;
 
 export const ProcessCard = styled.div`
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.card};
-  padding: ${({ theme }) => theme.spacing[8]};
-  box-shadow: ${({ theme }) => theme.shadows.paper};
+  padding: ${({ theme }) => theme.spacing[7]};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[3]};
+  transition: transform ${({ theme }) => theme.transitions.fast}, border-color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => (theme.mode === 'dark' ? '#404040' : '#d4d4d4')};
+    transform: translateY(-2px);
+  }
 `;
 
 export const ProcessIcon = styled.div`
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: ${({ theme }) => theme.borderRadius.md};
-  background: ${({ theme }) => theme.colors.primary[50]};
-  color: ${({ theme }) => theme.colors.primary[600]};
+  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.12)' : '#f0fdf4')};
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.25)' : '#bbf7d0')};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
+  font-size: 1.15rem;
+  margin-bottom: ${({ theme }) => theme.spacing[1]};
 `;
 
 // Models Architecture Grid
@@ -276,14 +288,19 @@ export const ModelsGrid = styled.div`
 `;
 
 export const ModelCard = styled.div`
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.card};
-  padding: ${({ theme }) => theme.spacing[8]};
-  box-shadow: ${({ theme }) => theme.shadows.paper};
+  padding: ${({ theme }) => theme.spacing[7]};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[4]};
+  transition: transform ${({ theme }) => theme.transitions.fast}, border-color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => (theme.mode === 'dark' ? '#404040' : '#d4d4d4')};
+    transform: translateY(-2px);
+  }
 `;
 
 export const ModelHeader = styled.div`
@@ -295,8 +312,9 @@ export const ModelHeader = styled.div`
 export const ModelBadge = styled.span`
   display: inline-block;
   padding: 4px 12px;
-  background: ${({ theme }) => theme.colors.primary[50]};
-  color: ${({ theme }) => theme.colors.primary[700]};
+  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.12)' : '#f0fdf4')};
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#15803d')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.25)' : '#bbf7d0')};
   border-radius: ${({ theme }) => theme.borderRadius.pill};
   font-size: 0.75rem;
   font-weight: 700;
@@ -304,9 +322,9 @@ export const ModelBadge = styled.span`
 
 export const ModelSvgWrapper = styled.div`
   width: 100%;
-  background: ${({ theme }) => theme.colors.background.tertiary};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#121212' : '#f9fafb')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
   padding: ${({ theme }) => theme.spacing[4]};
   display: flex;
   align-items: center;
@@ -314,20 +332,21 @@ export const ModelSvgWrapper = styled.div`
 
   svg {
     width: 100%;
-    max-height: 140px;
+    max-height: 120px;
+    display: block;
   }
 `;
 
 // Ensemble Highlight Banner
 export const EnsembleBanner = styled.div`
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.brand};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : '#bbf7d0')};
   border-radius: ${({ theme }) => theme.borderRadius.container};
-  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[10]}`};
-  box-shadow: ${({ theme }) => theme.shadows.paper};
+  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[8]}`};
+  box-shadow: ${({ theme }) => theme.shadows.sm};
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: ${({ theme }) => theme.spacing[8]};
+  grid-template-columns: 1.3fr 1fr;
+  gap: ${({ theme }) => theme.spacing[6]};
   align-items: center;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
@@ -339,25 +358,23 @@ export const EnsembleBanner = styled.div`
 // Conditions Grid
 export const ConditionsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: ${({ theme }) => theme.spacing[6]};
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: ${({ theme }) => theme.spacing[5]};
 `;
 
 export const ConditionCard = styled.div`
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.card};
   padding: ${({ theme }) => theme.spacing[6]};
-  box-shadow: ${({ theme }) => theme.shadows.paper};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[3]};
   transition: all ${({ theme }) => theme.transitions.fast};
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.primary[300]};
+    border-color: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.4)' : '#86efac')};
     transform: translateY(-2px);
-    box-shadow: ${({ theme }) => theme.shadows.hover};
   }
 `;
 
@@ -374,19 +391,23 @@ export const ConditionPill = styled.span`
     if ($type === 'warning') return theme.colors.status.warning.text;
     return theme.colors.status.success.text;
   }};
+  border: 1px solid ${({ theme, $type }) => {
+    if ($type === 'danger') return theme.colors.status.error.border;
+    if ($type === 'warning') return theme.colors.status.warning.border;
+    return theme.colors.status.success.border;
+  }};
   border-radius: ${({ theme }) => theme.borderRadius.pill};
   font-size: 0.75rem;
   font-weight: 700;
   width: fit-content;
 `;
 
-// Limitations / Disclaimer Box
+// Disclaimer Section
 export const DisclaimerCard = styled.div`
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
   border-radius: ${({ theme }) => theme.borderRadius.container};
-  padding: ${({ theme }) => `${theme.spacing[8]} ${theme.spacing[10]}`};
-  box-shadow: ${({ theme }) => theme.shadows.paper};
+  padding: ${({ theme }) => theme.spacing[8]};
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing[8]};
@@ -406,26 +427,27 @@ export const DisclaimerItem = styled.div`
 
 // CTA Section
 export const CtaCard = styled.div`
-  background: linear-gradient(135deg, #181818 0%, #064e3b 100%);
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#181818' : '#171717')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : '#262626')};
   border-radius: ${({ theme }) => theme.borderRadius.container};
-  padding: ${({ theme }) => `${theme.spacing[16]} ${theme.spacing[8]}`};
+  padding: ${({ theme }) => `${theme.spacing[14]} ${theme.spacing[8]}`};
   color: white;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: ${({ theme }) => theme.shadows.floating};
+  box-shadow: ${({ theme }) => theme.shadows.paper};
 `;
 
 // Footer
 export const FooterWrapper = styled.footer`
-  border-top: 1px solid ${({ theme }) => theme.colors.border.default};
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  padding: ${({ theme }) => `${theme.spacing[12]} ${theme.spacing[6]} ${theme.spacing[8]}`};
+  border-top: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#1f1f1f' : '#e5e5e5')};
+  background-color: ${({ theme }) => (theme.mode === 'dark' ? '#121212' : '#ffffff')};
+  padding: ${({ theme }) => `${theme.spacing[10]} ${theme.spacing[6]} ${theme.spacing[8]}`};
 `;
 
 export const FooterContainer = styled.div`
-  max-width: 1280px;
+  max-width: 1240px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;

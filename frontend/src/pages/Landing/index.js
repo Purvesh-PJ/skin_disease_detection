@@ -59,42 +59,42 @@ const CONDITIONS_LIST = [
     name: 'Melanoma',
     type: 'danger',
     tag: 'Malignant',
-    description: 'A serious type of skin cancer that begins in melanocytes. Early identification is critical.',
+    description: 'A serious type of skin cancer originating in pigment-producing melanocytes. Early detection is crucial.',
   },
   {
     code: 'nv',
     name: 'Melanocytic Nevi',
     type: 'success',
     tag: 'Benign (Harmless)',
-    description: 'Common moles or birthmarks formed by clusters of pigment cells. Typically harmless.',
+    description: 'Common moles or birthmarks formed by clusters of melanocyte cells. Typically non-cancerous.',
   },
   {
     code: 'bcc',
     name: 'Basal Cell Carcinoma',
     type: 'danger',
     tag: 'Malignant',
-    description: 'The most common form of skin cancer. Usually slow-growing and treatable when detected early.',
+    description: 'The most common form of skin cancer. Usually slow-growing and treatable when identified early.',
   },
   {
     code: 'akiec',
     name: 'Actinic Keratoses',
     type: 'warning',
     tag: 'Pre-Cancerous',
-    description: 'Rough, dry, scaly patches on skin caused by long-term sun exposure. Can progress if untreated.',
+    description: 'Rough, dry, scaly patches on skin caused by long-term UV sun exposure. Can progress if untreated.',
   },
   {
     code: 'bkl',
     name: 'Benign Keratosis',
     type: 'success',
     tag: 'Benign (Harmless)',
-    description: 'Non-cancerous skin growths like seborrheic keratosis, commonly appearing with aging.',
+    description: 'Non-cancerous skin growths like seborrheic keratosis, commonly developing with age.',
   },
   {
     code: 'df',
     name: 'Dermatofibroma',
     type: 'success',
     tag: 'Benign (Harmless)',
-    description: 'Small, firm, non-cancerous skin nodules often found on the lower legs.',
+    description: 'Small, firm, non-cancerous fibrous nodules commonly found on the arms and legs.',
   },
   {
     code: 'vasc',
@@ -120,16 +120,16 @@ const Landing = ({ isAuthenticated }) => {
 
         <HeroBadge>
           <FiCpu size={14} />
-          <span>Deep Learning Project • Ensemble Multi-Model Architecture</span>
+          <span>Deep Learning Architecture • HAM10000 Dataset</span>
         </HeroBadge>
 
         <HeroTitle>
-          Skin Disease Classification Using <span className="highlight">Ensemble Deep Learning</span>
+          Skin Disease Detection via <span className="highlight">Ensemble Deep Learning</span>
         </HeroTitle>
 
         <HeroSubtitle>
-          An engineering project trained on Kaggle's HAM10000 dataset. We combine ResNet-101,
-          DenseNet-121, and EfficientNet-B3 into a stacked ensemble to detect and classify 7 common skin conditions.
+          An academic engineering project trained on 10,015 dermatoscopic images. We combine ResNet-101,
+          DenseNet-121, and EfficientNet-B3 with stacked meta-learning to classify 7 skin conditions.
         </HeroSubtitle>
 
         <HeroCtaRow>
@@ -140,103 +140,110 @@ const Landing = ({ isAuthenticated }) => {
             </Link>
           </Button>
           <Button asChild variant="secondary" size="lg">
-            <a href="#pipeline">Explore AI Pipeline</a>
+            <a href="#pipeline">View System Architecture</a>
           </Button>
         </HeroCtaRow>
 
-        {/* Large Visual Neural Network Pipeline SVG Diagram */}
+        {/* Clean Outlined Sequential Pipeline Diagram (Blueprint Style) */}
         <PipelineSvgContainer id="pipeline">
-          <svg viewBox="0 0 1000 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#22c55e" />
-                <stop offset="100%" stopColor="#15803d" />
-              </linearGradient>
-              <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="100%" stopColor="#f9fafb" />
-              </linearGradient>
-              <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
-                <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.06" />
-              </filter>
-            </defs>
+          <svg viewBox="0 0 1020 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Step Track Line */}
+            <path d="M 130 160 L 900 160" stroke="#2a2a2a" strokeWidth="1.5" strokeDasharray="4 4" />
 
-            {/* Connecting Flow Lines */}
-            <path d="M 170 180 L 260 180" stroke="#94a3b8" strokeWidth="2.5" strokeDasharray="5 5" />
-            <path d="M 400 180 L 480 90" stroke="#16a34a" strokeWidth="2.5" />
-            <path d="M 400 180 L 480 180" stroke="#16a34a" strokeWidth="2.5" />
-            <path d="M 400 180 L 480 270" stroke="#16a34a" strokeWidth="2.5" />
-            <path d="M 660 90 L 730 180" stroke="#16a34a" strokeWidth="2.5" />
-            <path d="M 660 180 L 730 180" stroke="#16a34a" strokeWidth="2.5" />
-            <path d="M 660 270 L 730 180" stroke="#16a34a" strokeWidth="2.5" />
-            <path d="M 870 180 L 910 180" stroke="#16a34a" strokeWidth="3" />
+            {/* Connecting Directed Arrows */}
+            <path d="M 170 160 L 220 160" stroke="#16a34a" strokeWidth="1.5" markerEnd="url(#arrow)" />
+            <path d="M 370 160 L 420 160" stroke="#16a34a" strokeWidth="1.5" />
+            <path d="M 420 160 L 460 90" stroke="#16a34a" strokeWidth="1.5" />
+            <path d="M 420 160 L 460 160" stroke="#16a34a" strokeWidth="1.5" />
+            <path d="M 420 160 L 460 230" stroke="#16a34a" strokeWidth="1.5" />
 
-            {/* Stage 1: Raw Image Ingest */}
-            <g transform="translate(30, 110)">
-              <rect width="140" height="140" rx="16" fill="url(#cardGrad)" stroke="#cbd5e1" strokeWidth="1.5" filter="url(#shadow)" />
-              <rect x="20" y="20" width="100" height="70" rx="8" fill="#e5e7eb" />
-              <circle cx="70" cy="55" r="16" fill="#9ca3af" />
-              <text x="70" y="112" textAnchor="middle" fill="#111827" fontSize="13" fontWeight="700">Skin Photo</text>
-              <text x="70" y="128" textAnchor="middle" fill="#6b7280" fontSize="11">Raw Input</text>
+            <path d="M 640 90 L 680 160" stroke="#16a34a" strokeWidth="1.5" />
+            <path d="M 640 160 L 680 160" stroke="#16a34a" strokeWidth="1.5" />
+            <path d="M 640 230 L 680 160" stroke="#16a34a" strokeWidth="1.5" />
+            <path d="M 820 160 L 860 160" stroke="#16a34a" strokeWidth="1.5" />
+
+            {/* STAGE 01: IMAGE INPUT */}
+            <g transform="translate(30, 90)">
+              <rect width="140" height="140" rx="16" fill="rgba(255,255,255,0.02)" stroke="#16a34a" strokeWidth="1.5" />
+              <rect x="12" y="12" width="40" height="18" rx="9" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" strokeWidth="1" />
+              <text x="32" y="24" textAnchor="middle" fill="#4ade80" fontSize="9" fontWeight="800">01</text>
+              
+              {/* Outlined Camera Icon */}
+              <circle cx="70" cy="65" r="22" stroke="#16a34a" strokeWidth="1.5" strokeDasharray="3 3" />
+              <circle cx="70" cy="65" r="10" stroke="#4ade80" strokeWidth="1.5" />
+              
+              <text x="70" y="108" textAnchor="middle" fill="currentColor" fontSize="12" fontWeight="700">Dermoscopic Image</text>
+              <text x="70" y="124" textAnchor="middle" fill="#888888" fontSize="10">Raw RGB Photo</text>
             </g>
 
-            {/* Stage 2: Preprocessing */}
-            <g transform="translate(260, 110)">
-              <rect width="140" height="140" rx="16" fill="url(#cardGrad)" stroke="#cbd5e1" strokeWidth="1.5" filter="url(#shadow)" />
-              <rect x="20" y="20" width="100" height="70" rx="8" fill="#f0fdf4" stroke="#bbf7d0" />
-              <text x="70" y="50" textAnchor="middle" fill="#16a34a" fontSize="12" fontWeight="700">224 x 224</text>
-              <text x="70" y="68" textAnchor="middle" fill="#6b7280" fontSize="11">CLAHE Resize</text>
-              <text x="70" y="112" textAnchor="middle" fill="#111827" fontSize="13" fontWeight="700">Preprocessing</text>
-              <text x="70" y="128" textAnchor="middle" fill="#6b7280" fontSize="11">RGB Normalization</text>
+            {/* STAGE 02: PREPROCESSING */}
+            <g transform="translate(230, 90)">
+              <rect width="140" height="140" rx="16" fill="rgba(255,255,255,0.02)" stroke="#16a34a" strokeWidth="1.5" />
+              <rect x="12" y="12" width="40" height="18" rx="9" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" strokeWidth="1" />
+              <text x="32" y="24" textAnchor="middle" fill="#4ade80" fontSize="9" fontWeight="800">02</text>
+
+              {/* Outlined Matrix Icon */}
+              <rect x="50" y="45" width="40" height="40" rx="6" stroke="#4ade80" strokeWidth="1.5" />
+              <path d="M 50 65 L 90 65" stroke="#16a34a" strokeWidth="1" strokeDasharray="2 2" />
+              <path d="M 70 45 L 70 85" stroke="#16a34a" strokeWidth="1" strokeDasharray="2 2" />
+
+              <text x="70" y="108" textAnchor="middle" fill="currentColor" fontSize="12" fontWeight="700">CLAHE & Scaling</text>
+              <text x="70" y="124" textAnchor="middle" fill="#888888" fontSize="10">224 × 224 Normalization</text>
             </g>
 
-            {/* Stage 3: Three Parallel Models */}
+            {/* STAGE 03: TRI-MODEL ENSEMBLE BACKBONE */}
             {/* Model A: ResNet-101 */}
-            <g transform="translate(480, 45)">
-              <rect width="180" height="90" rx="14" fill="#ffffff" stroke="#16a34a" strokeWidth="1.5" filter="url(#shadow)" />
-              <circle cx="30" cy="45" r="14" fill="#f0fdf4" />
-              <text x="30" y="50" textAnchor="middle" fill="#16a34a" fontSize="11" fontWeight="800">R</text>
-              <text x="56" y="38" fill="#111827" fontSize="14" fontWeight="700">ResNet-101</text>
-              <text x="56" y="56" fill="#6b7280" fontSize="11">Residual Skip Layers</text>
-              <text x="56" y="72" fill="#16a34a" fontSize="11" fontWeight="600">44.5M Parameters</text>
+            <g transform="translate(460, 55)">
+              <rect width="180" height="68" rx="12" fill="rgba(255,255,255,0.02)" stroke="#16a34a" strokeWidth="1.5" />
+              <text x="16" y="28" fill="currentColor" fontSize="13" fontWeight="700">ResNet-101</text>
+              <text x="16" y="44" fill="#888888" fontSize="10">Residual Skip Connections</text>
+              <rect x="16" y="50" width="70" height="12" rx="6" fill="rgba(34,197,94,0.1)" />
+              <text x="51" y="59" textAnchor="middle" fill="#4ade80" fontSize="8" fontWeight="700">44.5M PARAMS</text>
             </g>
 
             {/* Model B: DenseNet-121 */}
-            <g transform="translate(480, 140)">
-              <rect width="180" height="80" rx="14" fill="#ffffff" stroke="#16a34a" strokeWidth="1.5" filter="url(#shadow)" />
-              <circle cx="30" cy="40" r="14" fill="#f0fdf4" />
-              <text x="30" y="45" textAnchor="middle" fill="#16a34a" fontSize="11" fontWeight="800">D</text>
-              <text x="56" y="34" fill="#111827" fontSize="14" fontWeight="700">DenseNet-121</text>
-              <text x="56" y="52" fill="#6b7280" fontSize="11">Dense Feature Reuse</text>
-              <text x="56" y="68" fill="#16a34a" fontSize="11" fontWeight="600">8.0M Parameters</text>
+            <g transform="translate(460, 130)">
+              <rect width="180" height="68" rx="12" fill="rgba(255,255,255,0.02)" stroke="#16a34a" strokeWidth="1.5" />
+              <text x="16" y="28" fill="currentColor" fontSize="13" fontWeight="700">DenseNet-121</text>
+              <text x="16" y="44" fill="#888888" fontSize="10">Dense Feature Concatenation</text>
+              <rect x="16" y="50" width="65" height="12" rx="6" fill="rgba(34,197,94,0.1)" />
+              <text x="48" y="59" textAnchor="middle" fill="#4ade80" fontSize="8" fontWeight="700">8.0M PARAMS</text>
             </g>
 
             {/* Model C: EfficientNet-B3 */}
-            <g transform="translate(480, 230)">
-              <rect width="180" height="85" rx="14" fill="#ffffff" stroke="#16a34a" strokeWidth="1.5" filter="url(#shadow)" />
-              <circle cx="30" cy="42" r="14" fill="#f0fdf4" />
-              <text x="30" y="47" textAnchor="middle" fill="#16a34a" fontSize="11" fontWeight="800">E</text>
-              <text x="56" y="34" fill="#111827" fontSize="14" fontWeight="700">EfficientNet-B3</text>
-              <text x="56" y="52" fill="#6b7280" fontSize="11">Compound Scaling</text>
-              <text x="56" y="68" fill="#16a34a" fontSize="11" fontWeight="600">12.2M Parameters</text>
+            <g transform="translate(460, 205)">
+              <rect width="180" height="68" rx="12" fill="rgba(255,255,255,0.02)" stroke="#16a34a" strokeWidth="1.5" />
+              <text x="16" y="28" fill="currentColor" fontSize="13" fontWeight="700">EfficientNet-B3</text>
+              <text x="16" y="44" fill="#888888" fontSize="10">Compound Scaling Depth/Width</text>
+              <rect x="16" y="50" width="70" height="12" rx="6" fill="rgba(34,197,94,0.1)" />
+              <text x="51" y="59" textAnchor="middle" fill="#4ade80" fontSize="8" fontWeight="700">12.2M PARAMS</text>
             </g>
 
-            {/* Stage 4: Ensemble Meta-Classifier */}
-            <g transform="translate(730, 110)">
-              <rect width="140" height="140" rx="16" fill="url(#greenGrad)" filter="url(#shadow)" />
-              <text x="70" y="50" textAnchor="middle" fill="#ffffff" fontSize="13" fontWeight="800">Ensemble</text>
-              <text x="70" y="70" textAnchor="middle" fill="#dcfce7" fontSize="11">Stacking Layer</text>
-              <rect x="25" y="90" width="90" height="30" rx="6" fill="rgba(255,255,255,0.2)" />
-              <text x="70" y="110" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="700">Softmax Fusion</text>
+            {/* STAGE 04: META-CLASSIFIER STACKING */}
+            <g transform="translate(680, 90)">
+              <rect width="140" height="140" rx="16" fill="rgba(255,255,255,0.02)" stroke="#16a34a" strokeWidth="1.5" />
+              <rect x="12" y="12" width="40" height="18" rx="9" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" strokeWidth="1" />
+              <text x="32" y="24" textAnchor="middle" fill="#4ade80" fontSize="9" fontWeight="800">04</text>
+
+              {/* Stacking Node Icon */}
+              <circle cx="70" cy="65" r="18" stroke="#4ade80" strokeWidth="1.5" />
+              <text x="70" y="70" textAnchor="middle" fill="#4ade80" fontSize="14" fontWeight="800">∑</text>
+
+              <text x="70" y="108" textAnchor="middle" fill="currentColor" fontSize="12" fontWeight="700">Meta-Classifier</text>
+              <text x="70" y="124" textAnchor="middle" fill="#888888" fontSize="10">Softmax Fusion</text>
             </g>
 
-            {/* Stage 5: Prediction Output */}
-            <g transform="translate(910, 110)">
-              <rect width="70" height="140" rx="16" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.5" filter="url(#shadow)" />
-              <circle cx="35" cy="45" r="16" fill="#dcfce7" />
-              <text x="35" y="50" textAnchor="middle" fill="#16a34a" fontSize="14">✓</text>
-              <text x="35" y="90" textAnchor="middle" fill="#166534" fontSize="11" fontWeight="800">Output</text>
-              <text x="35" y="110" textAnchor="middle" fill="#15803d" fontSize="10">Class & %</text>
+            {/* STAGE 05: DIAGNOSIS OUTPUT */}
+            <g transform="translate(860, 90)">
+              <rect width="130" height="140" rx="16" fill="rgba(34,197,94,0.06)" stroke="#16a34a" strokeWidth="1.5" />
+              <rect x="12" y="12" width="40" height="18" rx="9" fill="rgba(34,197,94,0.15)" stroke="rgba(34,197,94,0.4)" strokeWidth="1" />
+              <text x="32" y="24" textAnchor="middle" fill="#4ade80" fontSize="9" fontWeight="800">05</text>
+
+              <circle cx="65" cy="65" r="16" fill="rgba(34,197,94,0.2)" stroke="#16a34a" strokeWidth="1.5" />
+              <text x="65" y="70" textAnchor="middle" fill="#4ade80" fontSize="13">✓</text>
+
+              <text x="65" y="108" textAnchor="middle" fill="currentColor" fontSize="12" fontWeight="700">Classification</text>
+              <text x="65" y="124" textAnchor="middle" fill="#4ade80" fontSize="10" fontWeight="600">7 Classes + Prob %</text>
             </g>
           </svg>
         </PipelineSvgContainer>
@@ -248,16 +255,16 @@ const Landing = ({ isAuthenticated }) => {
           <SectionHeader>
             <SectionTag>
               <FiDatabase size={14} />
-              <span>Dataset & Training</span>
+              <span>Dataset & Ingestion</span>
             </SectionTag>
             <SectionTitle>Trained on Kaggle's HAM10000 Dataset</SectionTitle>
             <SectionDescription>
-              HAM10000 ("Human Against Machine with 10,000 training images") is a benchmark dermatoscopic
-              dataset collected from multiple clinical institutions to train dermatological deep learning models.
+              HAM10000 ("Human Against Machine with 10,000 training images") is an established academic benchmark
+              dataset collected across multiple dermatological clinics for skin lesion evaluation.
             </SectionDescription>
           </SectionHeader>
 
-          {/* Dataset Key Metrics */}
+          {/* Key Metrics */}
           <StatsGrid>
             <StatCard>
               <StatValue>10,015</StatValue>
@@ -265,30 +272,30 @@ const Landing = ({ isAuthenticated }) => {
             </StatCard>
             <StatCard>
               <StatValue>7</StatValue>
-              <StatLabel>Disease Classes</StatLabel>
+              <StatLabel>Skin Disease Classes</StatLabel>
             </StatCard>
             <StatCard>
-              <StatValue>224 x 224</StatValue>
+              <StatValue>224 × 224</StatValue>
               <StatLabel>Input Matrix Resolution</StatLabel>
             </StatCard>
             <StatCard>
               <StatValue>CLAHE</StatValue>
-              <StatLabel>Contrast Enhancement</StatLabel>
+              <StatLabel>Contrast Equalization</StatLabel>
             </StatCard>
           </StatsGrid>
 
-          {/* Preprocessing Steps */}
+          {/* 3-Step Data Preparation Pipeline */}
           <DatasetProcessGrid>
             <ProcessCard>
               <ProcessIcon>
                 <FiDatabase />
               </ProcessIcon>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 6px 0' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 4px 0' }}>
                 1. Data Cleaning & Splitting
               </h3>
-              <p style={{ color: '#6b7280', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
-                Images are partitioned into standard training, validation, and test subsets to evaluate
-                real-world generalization across diverse skin types.
+              <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+                Images are partitioned into train, validation, and test subsets with patient-level isolation
+                to ensure reliable real-world evaluation.
               </p>
             </ProcessCard>
 
@@ -296,12 +303,12 @@ const Landing = ({ isAuthenticated }) => {
               <ProcessIcon>
                 <FiSliders />
               </ProcessIcon>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 6px 0' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 4px 0' }}>
                 2. Data Augmentation
               </h3>
-              <p style={{ color: '#6b7280', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
-                Random rotations, horizontal and vertical flips, and zoom scaling are applied during training
-                to address class imbalance in rarer skin conditions.
+              <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+                Random rotations, horizontal and vertical flips, and zoom crops address class imbalance
+                among rarer malignant conditions like Dermatofibroma and Vascular lesions.
               </p>
             </ProcessCard>
 
@@ -309,19 +316,19 @@ const Landing = ({ isAuthenticated }) => {
               <ProcessIcon>
                 <FiCheckCircle />
               </ProcessIcon>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 6px 0' }}>
-                3. Image Normalization
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 4px 0' }}>
+                3. RGB Normalization
               </h3>
-              <p style={{ color: '#6b7280', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
-                Pixels are scaled to standard [0, 1] tensor distributions and standardized across RGB channels
-                to accelerate network convergence.
+              <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+                Pixel intensities are mapped to standard [0, 1] tensor distributions and standardized
+                across color channels to maximize backpropagation stability.
               </p>
             </ProcessCard>
           </DatasetProcessGrid>
         </Container>
       </SectionWrapper>
 
-      {/* Section 3: Ensemble AI Strategy & Architectures */}
+      {/* Section 3: Ensemble AI Strategy & Model Architectures */}
       <SectionWrapper id="models">
         <Container>
           <SectionHeader>
@@ -329,10 +336,10 @@ const Landing = ({ isAuthenticated }) => {
               <FiLayers size={14} />
               <span>Model Architectures</span>
             </SectionTag>
-            <SectionTitle>Why Ensemble Deep Learning?</SectionTitle>
+            <SectionTitle>Tri-Model Ensemble Backbone</SectionTitle>
             <SectionDescription>
-              A single convolutional neural network can have architectural blind spots. By combining three
-              diverse models with different strengths, our ensemble achieves more reliable predictions.
+              Combining three distinct neural network topologies allows the ensemble to capture complementary
+              spatial features while minimizing individual model blind spots.
             </SectionDescription>
           </SectionHeader>
 
@@ -341,37 +348,46 @@ const Landing = ({ isAuthenticated }) => {
             <ModelCard>
               <ModelHeader>
                 <div>
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 2px 0' }}>ResNet-101</h3>
-                  <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>Residual Deep CNN</span>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 2px 0' }}>ResNet-101</h3>
+                  <span style={{ fontSize: '0.825rem', color: '#888888' }}>Residual Deep CNN</span>
                 </div>
                 <ModelBadge>44.5M Params</ModelBadge>
               </ModelHeader>
 
+              {/* Clean Outlined ResNet Diagram */}
               <ModelSvgWrapper>
                 <svg viewBox="0 0 320 80" fill="none">
-                  <rect x="20" y="25" width="60" height="30" rx="6" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="50" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Conv Layer</text>
+                  {/* Conv Layer 1 */}
+                  <rect x="25" y="25" width="60" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="55" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Conv Layer</text>
 
-                  <rect x="130" y="25" width="60" height="30" rx="6" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="160" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Conv Layer</text>
+                  {/* Flow Arrow */}
+                  <path d="M 85 40 L 125 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  <circle cx="250" cy="40" r="14" fill="#f0fdf4" stroke="#16a34a" />
-                  <text x="250" y="45" textAnchor="middle" fontSize="14" fontWeight="700" fill="#16a34a">+</text>
+                  {/* Conv Layer 2 */}
+                  <rect x="125" y="25" width="60" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="155" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Conv Layer</text>
 
-                  {/* Main Flow */}
-                  <path d="M 80 40 L 130 40" stroke="#16a34a" strokeWidth="2" />
-                  <path d="M 190 40 L 236 40" stroke="#16a34a" strokeWidth="2" />
-                  <path d="M 264 40 L 300 40" stroke="#16a34a" strokeWidth="2" />
+                  {/* Flow Arrow */}
+                  <path d="M 185 40 L 225 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  {/* Skip Connection Curve */}
-                  <path d="M 50 25 C 50 5, 250 5, 250 26" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3 3" fill="none" />
-                  <text x="150" y="12" textAnchor="middle" fontSize="9" fontWeight="600" fill="#d97706">Skip Highway (Identity Shortcut)</text>
+                  {/* Addition Node */}
+                  <circle cx="240" cy="40" r="14" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="240" y="45" textAnchor="middle" fontSize="14" fontWeight="700" fill="#4ade80">+</text>
+
+                  {/* Output Flow */}
+                  <path d="M 254 40 L 295 40" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="295" y="44" fontSize="10" fontWeight="700" fill="#4ade80">F(x)+x</text>
+
+                  {/* Residual Skip Connection */}
+                  <path d="M 55 25 C 55 8, 240 8, 240 26" stroke="#4ade80" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
+                  <text x="145" y="14" textAnchor="middle" fontSize="8" fontWeight="600" fill="#4ade80">Residual Skip Highway</text>
                 </svg>
               </ModelSvgWrapper>
 
-              <p style={{ color: '#6b7280', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
-                Uses identity shortcut connections to allow gradient signals to travel directly across 101 layers,
-                capturing intricate lesion boundaries without vanishing gradient issues.
+              <p style={{ color: '#888888', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                Identity shortcuts allow gradient signals to travel directly across 101 layers without attenuation,
+                capturing fine-grained lesion borders and subtle pigment networks.
               </p>
             </ModelCard>
 
@@ -379,34 +395,40 @@ const Landing = ({ isAuthenticated }) => {
             <ModelCard>
               <ModelHeader>
                 <div>
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 2px 0' }}>DenseNet-121</h3>
-                  <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>Dense Feature Reuse</span>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 2px 0' }}>DenseNet-121</h3>
+                  <span style={{ fontSize: '0.825rem', color: '#888888' }}>Dense Feature Reuse</span>
                 </div>
                 <ModelBadge>8.0M Params</ModelBadge>
               </ModelHeader>
 
+              {/* Clean Outlined DenseNet Diagram */}
               <ModelSvgWrapper>
                 <svg viewBox="0 0 320 80" fill="none">
-                  <rect x="20" y="25" width="55" height="30" rx="6" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="47" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Layer 1</text>
+                  {/* Layer 1 */}
+                  <rect x="25" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="52" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 1</text>
 
-                  <rect x="130" y="25" width="55" height="30" rx="6" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="157" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Layer 2</text>
+                  {/* Layer 2 */}
+                  <rect x="130" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="157" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 2</text>
 
-                  <rect x="240" y="25" width="55" height="30" rx="6" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="267" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Layer 3</text>
+                  {/* Layer 3 */}
+                  <rect x="235" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="262" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 3</text>
 
-                  {/* Dense Interconnections */}
-                  <path d="M 75 40 L 130 40" stroke="#16a34a" strokeWidth="2" />
-                  <path d="M 185 40 L 240 40" stroke="#16a34a" strokeWidth="2" />
-                  <path d="M 47 25 C 47 5, 267 5, 267 25" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
-                  <text x="157" y="12" textAnchor="middle" fontSize="9" fontWeight="600" fill="#047857">Dense Cross-Layer Concatenation</text>
+                  {/* Interconnections */}
+                  <path d="M 80 40 L 130 40" stroke="#16a34a" strokeWidth="1.5" />
+                  <path d="M 185 40 L 235 40" stroke="#16a34a" strokeWidth="1.5" />
+
+                  {/* Dense Curved Connectors */}
+                  <path d="M 52 25 C 52 8, 262 8, 262 25" stroke="#4ade80" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
+                  <text x="157" y="14" textAnchor="middle" fontSize="8" fontWeight="600" fill="#4ade80">Dense Cross-Layer Concatenation</text>
                 </svg>
               </ModelSvgWrapper>
 
-              <p style={{ color: '#6b7280', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
-                Directly connects all layers to each subsequent layer. Reuses low-level edge features
-                alongside high-level texture patterns with a compact parameter count.
+              <p style={{ color: '#888888', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                Every layer receives direct inputs from all preceding layers. Encourages extensive feature reuse
+                and provides strong gradient flow with a compact parameter footprint.
               </p>
             </ModelCard>
 
@@ -414,31 +436,36 @@ const Landing = ({ isAuthenticated }) => {
             <ModelCard>
               <ModelHeader>
                 <div>
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 2px 0' }}>EfficientNet-B3</h3>
-                  <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>Compound Scaling CNN</span>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 2px 0' }}>EfficientNet-B3</h3>
+                  <span style={{ fontSize: '0.825rem', color: '#888888' }}>Compound Scaling CNN</span>
                 </div>
                 <ModelBadge>12.2M Params</ModelBadge>
               </ModelHeader>
 
+              {/* Clean Outlined EfficientNet Diagram */}
               <ModelSvgWrapper>
                 <svg viewBox="0 0 320 80" fill="none">
-                  <rect x="30" y="30" width="40" height="20" rx="4" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="50" y="43" textAnchor="middle" fontSize="8" fontWeight="700" fill="#15803d">Width</text>
+                  {/* Depth */}
+                  <rect x="35" y="25" width="45" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="57" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Depth (d)</text>
 
-                  <rect x="130" y="20" width="50" height="40" rx="4" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="155" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="#15803d">Depth</text>
+                  <path d="M 80 40 L 120 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  <rect x="230" y="10" width="60" height="60" rx="6" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="260" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Resolution</text>
+                  {/* Width */}
+                  <rect x="120" y="18" width="60" height="44" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="150" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Width (w)</text>
 
-                  <path d="M 70 40 L 130 40" stroke="#16a34a" strokeWidth="2" />
-                  <path d="M 180 40 L 230 40" stroke="#16a34a" strokeWidth="2" />
+                  <path d="M 180 40 L 220 40" stroke="#16a34a" strokeWidth="1.5" />
+
+                  {/* Resolution */}
+                  <rect x="220" y="12" width="70" height="56" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="255" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Res (r)</text>
                 </svg>
               </ModelSvgWrapper>
 
-              <p style={{ color: '#6b7280', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
-                Scales network depth, width, and resolution simultaneously using a compound coefficient,
-                delivering high representational accuracy at minimal computational cost.
+              <p style={{ color: '#888888', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                Scales network depth, channel width, and resolution simultaneously using a compound coefficient,
+                achieving high diagnostic accuracy without excessive computational overhead.
               </p>
             </ModelCard>
 
@@ -446,53 +473,58 @@ const Landing = ({ isAuthenticated }) => {
             <ModelCard>
               <ModelHeader>
                 <div>
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 2px 0' }}>Meta-Classifier</h3>
-                  <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>Logistic Stacking Layer</span>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 2px 0' }}>Meta-Classifier</h3>
+                  <span style={{ fontSize: '0.825rem', color: '#888888' }}>Logistic Stacking Layer</span>
                 </div>
                 <ModelBadge>Probability Fusion</ModelBadge>
               </ModelHeader>
 
+              {/* Clean Outlined Meta-Classifier Diagram */}
               <ModelSvgWrapper>
                 <svg viewBox="0 0 320 80" fill="none">
-                  <rect x="20" y="10" width="70" height="18" rx="4" fill="#f3f4f6" stroke="#9ca3af" />
-                  <text x="55" y="22" textAnchor="middle" fontSize="9" fill="#4b5563">P(ResNet)</text>
+                  {/* Inputs */}
+                  <rect x="20" y="10" width="70" height="18" rx="4" fill="none" stroke="#525252" strokeWidth="1" />
+                  <text x="55" y="22" textAnchor="middle" fontSize="8" fill="currentColor">P(ResNet)</text>
 
-                  <rect x="20" y="32" width="70" height="18" rx="4" fill="#f3f4f6" stroke="#9ca3af" />
-                  <text x="55" y="44" textAnchor="middle" fontSize="9" fill="#4b5563">P(DenseNet)</text>
+                  <rect x="20" y="31" width="70" height="18" rx="4" fill="none" stroke="#525252" strokeWidth="1" />
+                  <text x="55" y="43" textAnchor="middle" fontSize="8" fill="currentColor">P(DenseNet)</text>
 
-                  <rect x="20" y="54" width="70" height="18" rx="4" fill="#f3f4f6" stroke="#9ca3af" />
-                  <text x="55" y="66" textAnchor="middle" fontSize="9" fill="#4b5563">P(EfficientNet)</text>
+                  <rect x="20" y="52" width="70" height="18" rx="4" fill="none" stroke="#525252" strokeWidth="1" />
+                  <text x="55" y="64" textAnchor="middle" fontSize="8" fill="currentColor">P(EfficientNet)</text>
 
+                  {/* Convergence Lines */}
                   <path d="M 90 19 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
-                  <path d="M 90 41 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
-                  <path d="M 90 63 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
+                  <path d="M 90 40 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
+                  <path d="M 90 61 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
 
-                  <rect x="140" y="20" width="90" height="40" rx="8" fill="#16a34a" />
-                  <text x="185" y="38" textAnchor="middle" fontSize="10" fontWeight="700" fill="#ffffff">Meta-Learner</text>
-                  <text x="185" y="50" textAnchor="middle" fontSize="8" fill="#dcfce7">Weighted Voting</text>
+                  {/* Stacking Node */}
+                  <rect x="140" y="20" width="90" height="40" rx="8" fill="rgba(34,197,94,0.1)" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="185" y="38" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4ade80">Meta-Learner</text>
+                  <text x="185" y="50" textAnchor="middle" fontSize="8" fill="#888888">Weighted Voting</text>
 
-                  <path d="M 230 40 L 260 40" stroke="#16a34a" strokeWidth="2" />
-                  <rect x="260" y="25" width="50" height="30" rx="6" fill="#dcfce7" stroke="#16a34a" />
-                  <text x="285" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#15803d">Class %</text>
+                  {/* Output */}
+                  <path d="M 230 40 L 260 40" stroke="#16a34a" strokeWidth="1.5" />
+                  <rect x="260" y="25" width="50" height="30" rx="6" fill="rgba(34,197,94,0.15)" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="285" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4ade80">Class %</text>
                 </svg>
               </ModelSvgWrapper>
 
-              <p style={{ color: '#6b7280', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
-                Combines output logits from all three neural networks using a second-stage meta-classifier,
-                averaging out individual model biases for robust consensus.
+              <p style={{ color: '#888888', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                Aggregates output prediction logits from all three neural networks using a second-stage meta-classifier,
+                averaging out individual model variance for calibrated confidence rankings.
               </p>
             </ModelCard>
           </ModelsGrid>
 
-          {/* Ensemble Summary Card */}
+          {/* Balanced Decision Stacking Banner */}
           <EnsembleBanner>
             <div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 6px 0' }}>
-                Balanced Decision Stacking
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 4px 0' }}>
+                Parallel Inference & Stacking Execution
               </h3>
-              <p style={{ color: '#6b7280', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
-                When an image is evaluated, the backend executes inference across all three architectures
-                in parallel threads and applies weighted calibration to produce the final diagnostic ranking.
+              <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+                When an image is submitted, the Flask backend executes inference across all 3 architectures
+                simultaneously and calculates the weighted softmax consensus.
               </p>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -513,12 +545,11 @@ const Landing = ({ isAuthenticated }) => {
           <SectionHeader>
             <SectionTag>
               <FiCheckCircle size={14} />
-              <span>Diagnostic Scope</span>
+              <span>Diagnostic Classes</span>
             </SectionTag>
             <SectionTitle>7 Supported Skin Conditions</SectionTitle>
             <SectionDescription>
-              The model is trained to recognize and differentiate between these 7 specific dermatological
-              categories from the HAM10000 dataset.
+              The model classifies dermatoscopic photos into 7 distinct categories present in the HAM10000 dataset.
             </SectionDescription>
           </SectionHeader>
 
@@ -527,16 +558,16 @@ const Landing = ({ isAuthenticated }) => {
               <ConditionCard key={cond.code}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <ConditionPill $type={cond.type}>{cond.tag}</ConditionPill>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9ca3af' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#888888' }}>
                     {cond.code.toUpperCase()}
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '4px 0 0 0' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '4px 0 0 0' }}>
                   {cond.name}
                 </h3>
 
-                <p style={{ fontSize: '0.9rem', color: '#6b7280', lineHeight: 1.55, margin: 0 }}>
+                <p style={{ fontSize: '0.875rem', color: '#888888', lineHeight: 1.55, margin: 0 }}>
                   {cond.description}
                 </p>
               </ConditionCard>
@@ -555,8 +586,7 @@ const Landing = ({ isAuthenticated }) => {
             </SectionTag>
             <SectionTitle>Project Scope & AI Limitations</SectionTitle>
             <SectionDescription>
-              Important considerations regarding how this deep learning tool was developed and how its
-              outputs should be interpreted.
+              Technical considerations regarding how this deep learning tool was engineered and how results should be evaluated.
             </SectionDescription>
           </SectionHeader>
 
@@ -568,8 +598,8 @@ const Landing = ({ isAuthenticated }) => {
               <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
                 Academic Project Scope
               </h4>
-              <p style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.6, margin: 0 }}>
-                This tool is an engineering project created to study ensemble deep learning on dermatoscopic images.
+              <p style={{ fontSize: '0.875rem', color: '#888888', lineHeight: 1.6, margin: 0 }}>
+                This tool is an engineering project developed to evaluate ensemble deep learning on dermatoscopic images.
                 It is not a commercial medical diagnostic system.
               </p>
             </DisclaimerItem>
@@ -581,7 +611,7 @@ const Landing = ({ isAuthenticated }) => {
               <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
                 AI Model Limitations
               </h4>
-              <p style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.6, margin: 0 }}>
+              <p style={{ fontSize: '0.875rem', color: '#888888', lineHeight: 1.6, margin: 0 }}>
                 Deep learning models can make errors, especially on blurry photos, non-standard lighting,
                 or skin lesions outside the HAM10000 dataset distribution.
               </p>
@@ -594,7 +624,7 @@ const Landing = ({ isAuthenticated }) => {
               <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
                 Consult Qualified Doctors
               </h4>
-              <p style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.6, margin: 0 }}>
+              <p style={{ fontSize: '0.875rem', color: '#888888', lineHeight: 1.6, margin: 0 }}>
                 Always consult a certified dermatologist for actual clinical evaluation, dermoscopy,
                 or biopsy confirmation of any concerning skin spot.
               </p>
@@ -606,11 +636,11 @@ const Landing = ({ isAuthenticated }) => {
       {/* Section 6: Bottom Call to Action */}
       <SectionWrapper>
         <Container>
-          <CtaCard style={{ background: 'linear-gradient(135deg, #111827 0%, #064e3b 100%)' }}>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 12px 0', letterSpacing: '-0.02em' }}>
+          <CtaCard>
+            <h2 style={{ fontSize: '2.25rem', fontWeight: 800, margin: '0 0 10px 0', letterSpacing: '-0.02em' }}>
               Ready to test the Ensemble Model?
             </h2>
-            <p style={{ fontSize: '1.1rem', opacity: 0.9, maxWidth: '600px', margin: '0 0 28px 0', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '1.05rem', color: '#a3a3a3', maxWidth: '600px', margin: '0 0 24px 0', lineHeight: 1.6 }}>
               Upload any skin lesion photo to view the predicted condition and probability breakdown across all 7 categories.
             </p>
             <Button asChild variant="brand" size="lg">
@@ -623,26 +653,26 @@ const Landing = ({ isAuthenticated }) => {
         </Container>
       </SectionWrapper>
 
-      {/* Minimalist Footer */}
+      {/* Minimalist Clean Footer */}
       <FooterWrapper>
         <FooterContainer>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#111827' }}>
+            <div style={{ fontWeight: 700, fontSize: '1rem', color: 'currentColor' }}>
               Skin Disease Classification Project
             </div>
-            <div style={{ fontSize: '0.85rem', color: '#6b7280', marginTop: '4px' }}>
+            <div style={{ fontSize: '0.825rem', color: '#888888', marginTop: '4px' }}>
               Deep Learning Ensemble (ResNet-101 + DenseNet-121 + EfficientNet-B3) on HAM10000.
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.85rem', color: '#6b7280' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.825rem', color: '#888888' }}>
             <span>Educational ML Project</span>
             <span>•</span>
             <a
               href="https://github.com/Purvesh-PJ/skin_disease_detection"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#16a34a', fontWeight: 600 }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#16a34a', fontWeight: 600, textDecoration: 'none' }}
             >
               GitHub Repository
               <FiExternalLink size={12} />
