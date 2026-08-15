@@ -49,14 +49,20 @@ import {
   ModelTitleRow,
   ModelBadge,
   ModelSvgPanel,
-  StatsStrip,
-  StatItem,
-  StatValue,
-  StatLabel,
-  ConditionCategory,
-  ConditionsMatrix,
-  ConditionRow,
-  ConditionPill,
+  DatasetLayout,
+  DatasetInfographicCard,
+  DatasetMetricsGrid,
+  MetricBadge,
+  ClassDistributionBar,
+  DataStagesContainer,
+  DataStageCard,
+  StageBadge,
+  StageContent,
+  RiskSpectrumBanner,
+  RiskColumnsGrid,
+  RiskTierColumn,
+  RiskTierHeader,
+  DiseaseCompactCard,
   NoticeStrip,
   NoticeItem,
   CtaCard,
@@ -750,64 +756,122 @@ const Landing = ({ isAuthenticated }) => {
           <SectionHeader>
             <SectionTag>
               <FiDatabase size={14} />
-              <span>Training Corpus</span>
+              <span>Training Corpus & Preprocessing</span>
             </SectionTag>
             <SectionTitle>Trained on Kaggle's HAM10000 Dataset</SectionTitle>
             <SectionDescription>
-              HAM10000 ("Human Against Machine with 10,000 training images") is an academic benchmark
-              dataset collected across multiple international dermatological clinics.
+              A benchmark corpus of 10,015 dermatoscopic images collected across international dermatological clinics,
+              curated for dermatological deep learning research.
             </SectionDescription>
           </SectionHeader>
 
-          {/* Borderless Metric Strip */}
-          <StatsStrip>
-            <StatItem>
-              <StatValue>10,015</StatValue>
-              <StatLabel>Dermatoscopic Images</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>7</StatValue>
-              <StatLabel>Disease Categories</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>224 × 224</StatValue>
-              <StatLabel>Input Matrix Resolution</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>CLAHE</StatValue>
-              <StatLabel>Contrast Equalization</StatLabel>
-            </StatItem>
-          </StatsStrip>
+          <DatasetLayout>
+            {/* Left: Dataset Infographic & Class Distribution */}
+            <DatasetInfographicCard>
+              <DatasetMetricsGrid>
+                <MetricBadge>
+                  <strong>10,015</strong>
+                  <span>Verified Images</span>
+                </MetricBadge>
+                <MetricBadge>
+                  <strong>7 Classes</strong>
+                  <span>Skin Conditions</span>
+                </MetricBadge>
+                <MetricBadge>
+                  <strong>224 × 224</strong>
+                  <span>RGB Tensor Size</span>
+                </MetricBadge>
+                <MetricBadge>
+                  <strong>CLAHE</strong>
+                  <span>Contrast Tuned</span>
+                </MetricBadge>
+              </DatasetMetricsGrid>
 
-          {/* 3-Step Data Engineering Pipeline */}
-          <ProcessFlow>
-            <ProcessStep>
-              <StepNumber>STAGE 01</StepNumber>
-              <StepTitle>Patient-Isolated Splitting</StepTitle>
-              <StepDesc>
-                Images are partitioned into train, validation, and test subsets with patient-level isolation
-                to ensure the model generalizes across unseen patients rather than memorizing lesions.
-              </StepDesc>
-            </ProcessStep>
+              {/* Graphical Stacked Distribution */}
+              <ClassDistributionBar>
+                <div className="bar-header">
+                  <span>Class Distribution & Imbalance</span>
+                  <span>10,015 Total Scans</span>
+                </div>
+                <div className="stacked-bar">
+                  <div style={{ width: '67%', background: '#22c55e' }} title="NV: 6,705 (67%)" />
+                  <div style={{ width: '11%', background: '#ef4444' }} title="MEL: 1,113 (11%)" />
+                  <div style={{ width: '11%', background: '#10b981' }} title="BKL: 1,099 (11%)" />
+                  <div style={{ width: '5%', background: '#dc2626' }} title="BCC: 514 (5%)" />
+                  <div style={{ width: '3%', background: '#f59e0b' }} title="AKIEC: 327 (3%)" />
+                  <div style={{ width: '1.5%', background: '#3b82f6' }} title="VASC: 142 (1.5%)" />
+                  <div style={{ width: '1.5%', background: '#8b5cf6' }} title="DF: 115 (1.5%)" />
+                </div>
+                <div className="bar-legend">
+                  <div className="legend-item">
+                    <span className="dot" style={{ background: '#22c55e' }} />
+                    <span>NV: 67% (Nevi)</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="dot" style={{ background: '#ef4444' }} />
+                    <span>MEL: 11% (Melanoma)</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="dot" style={{ background: '#10b981' }} />
+                    <span>BKL: 11% (Keratosis)</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="dot" style={{ background: '#dc2626' }} />
+                    <span>BCC: 5% (Carcinoma)</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="dot" style={{ background: '#f59e0b' }} />
+                    <span>AKIEC: 3% (Actinic)</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="dot" style={{ background: '#3b82f6' }} />
+                    <span>VASC/DF: 3%</span>
+                  </div>
+                </div>
+              </ClassDistributionBar>
 
-            <ProcessStep>
-              <StepNumber>STAGE 02</StepNumber>
-              <StepTitle>Augmentation & Balancing</StepTitle>
-              <StepDesc>
-                Rotations, horizontal/vertical flips, and zoom scaling are applied dynamically alongside class weights
-                to prevent majority bias toward common moles (NV).
-              </StepDesc>
-            </ProcessStep>
+              <p style={{ fontSize: '0.8rem', color: '#888888', lineHeight: 1.55, margin: 0 }}>
+                💡 <em>Imbalance Mitigation:</em> To prevent model bias toward dominant benign moles (NV),
+                we apply dynamic class weighting and multi-axis data augmentation during backpropagation.
+              </p>
+            </DatasetInfographicCard>
 
-            <ProcessStep>
-              <StepNumber>STAGE 03</StepNumber>
-              <StepTitle>RGB Tensor Normalization</StepTitle>
-              <StepDesc>
-                Pixel intensities are scaled to standard [0, 1] distributions and normalized across RGB color channels
-                for stable neural network backpropagation.
-              </StepDesc>
-            </ProcessStep>
-          </ProcessFlow>
+            {/* Right: 3-Stage Data Engineering Flow */}
+            <DataStagesContainer>
+              <DataStageCard>
+                <StageBadge>STAGE 01</StageBadge>
+                <StageContent>
+                  <h4>Patient-Isolated Splitting (70/15/15)</h4>
+                  <p>
+                    Images are partitioned by unique patient IDs. Multiple lesions from the same patient never overlap
+                    between train and test sets, strictly preventing artificial accuracy inflation.
+                  </p>
+                </StageContent>
+              </DataStageCard>
+
+              <DataStageCard>
+                <StageBadge>STAGE 02</StageBadge>
+                <StageContent>
+                  <h4>Dynamic Augmentation & Rebalancing</h4>
+                  <p>
+                    Rotations (0°–360°), horizontal/vertical flips, and zoom crops are dynamically generated on-the-fly,
+                    multiplying the effective variety of rare malignant classes like Melanoma and BCC.
+                  </p>
+                </StageContent>
+              </DataStageCard>
+
+              <DataStageCard>
+                <StageBadge>STAGE 03</StageBadge>
+                <StageContent>
+                  <h4>CLAHE Contrast & RGB Tensor Normalization</h4>
+                  <p>
+                    Contrast-Limited Adaptive Histogram Equalization sharpens subtle lesion boundaries, followed by
+                    channel-wise RGB scaling to [0, 1] for smooth, stable gradient descent.
+                  </p>
+                </StageContent>
+              </DataStageCard>
+            </DataStagesContainer>
+          </DatasetLayout>
         </Container>
       </SectionWrapper>
 
@@ -821,88 +885,88 @@ const Landing = ({ isAuthenticated }) => {
             </SectionTag>
             <SectionTitle>7 Supported Skin Disease Conditions</SectionTitle>
             <SectionDescription>
-              The ensemble model is trained to classify dermatoscopic lesions into 7 distinct categories
-              spanning malignant cancers, pre-cancerous growths, and benign lesions.
+              The ensemble model classifies skin lesions across 3 distinct clinical risk tiers,
+              spanning high-priority malignant cancers to harmless benign growths.
             </SectionDescription>
           </SectionHeader>
 
-          {/* Group 1: Malignant (High Risk) */}
-          <ConditionCategory>
-            <h3>
-              <span style={{ color: '#ef4444' }}>●</span>
-              Malignant Skin Cancers (High Priority)
-            </h3>
-            <ConditionsMatrix>
+          {/* Visual Risk Spectrum Meter */}
+          <RiskSpectrumBanner>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#16a34a' }}>●</span>
+              <span>Clinical Risk Spectrum:</span>
+            </div>
+            <div className="spectrum-bar">
+              <span style={{ color: '#22c55e' }}>🟢 Low Risk (Benign)</span>
+              <span>→</span>
+              <span style={{ color: '#f59e0b' }}>🟡 Medium Risk (Pre-Cancer)</span>
+              <span>→</span>
+              <span style={{ color: '#ef4444' }}>🔴 High Priority (Malignant)</span>
+            </div>
+          </RiskSpectrumBanner>
+
+          {/* 3 Risk Columns */}
+          <RiskColumnsGrid>
+            {/* Column 1: Malignant (High Risk) */}
+            <RiskTierColumn>
+              <RiskTierHeader $color="#ef4444">
+                <h3>
+                  <span>🔴</span> Malignant Cancers
+                </h3>
+                <span className="count">2 Diseases</span>
+              </RiskTierHeader>
+
               {MALIGNANT_CONDITIONS.map((cond) => (
-                <ConditionRow key={cond.code}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>{cond.name}</h4>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#888888' }}>
-                        ({cond.code.toUpperCase()})
-                      </span>
-                    </div>
-                    <ConditionPill $type={cond.type}>{cond.tag}</ConditionPill>
+                <DiseaseCompactCard key={cond.code} $color="#ef4444">
+                  <div className="card-top">
+                    <h4>{cond.name}</h4>
+                    <span className="code-badge">{cond.code.toUpperCase()}</span>
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: '#888888', lineHeight: 1.55, margin: 0 }}>
-                    {cond.description}
-                  </p>
-                </ConditionRow>
+                  <p>{cond.description}</p>
+                </DiseaseCompactCard>
               ))}
-            </ConditionsMatrix>
-          </ConditionCategory>
+            </RiskTierColumn>
 
-          {/* Group 2: Pre-Cancerous (Medium Risk) */}
-          <ConditionCategory>
-            <h3>
-              <span style={{ color: '#f59e0b' }}>●</span>
-              Pre-Cancerous Lesions
-            </h3>
-            <ConditionsMatrix>
+            {/* Column 2: Pre-Cancerous (Medium Risk) */}
+            <RiskTierColumn>
+              <RiskTierHeader $color="#f59e0b">
+                <h3>
+                  <span>🟡</span> Pre-Cancerous
+                </h3>
+                <span className="count">1 Disease</span>
+              </RiskTierHeader>
+
               {PRECANCER_CONDITIONS.map((cond) => (
-                <ConditionRow key={cond.code}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>{cond.name}</h4>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#888888' }}>
-                        ({cond.code.toUpperCase()})
-                      </span>
-                    </div>
-                    <ConditionPill $type={cond.type}>{cond.tag}</ConditionPill>
+                <DiseaseCompactCard key={cond.code} $color="#f59e0b">
+                  <div className="card-top">
+                    <h4>{cond.name}</h4>
+                    <span className="code-badge">{cond.code.toUpperCase()}</span>
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: '#888888', lineHeight: 1.55, margin: 0 }}>
-                    {cond.description}
-                  </p>
-                </ConditionRow>
+                  <p>{cond.description}</p>
+                </DiseaseCompactCard>
               ))}
-            </ConditionsMatrix>
-          </ConditionCategory>
+            </RiskTierColumn>
 
-          {/* Group 3: Benign / Non-Cancerous (Low Risk) */}
-          <ConditionCategory>
-            <h3>
-              <span style={{ color: '#22c55e' }}>●</span>
-              Benign Non-Cancerous Conditions
-            </h3>
-            <ConditionsMatrix>
+            {/* Column 3: Benign (Low Risk) */}
+            <RiskTierColumn>
+              <RiskTierHeader $color="#22c55e">
+                <h3>
+                  <span>🟢</span> Benign Conditions
+                </h3>
+                <span className="count">4 Diseases</span>
+              </RiskTierHeader>
+
               {BENIGN_CONDITIONS.map((cond) => (
-                <ConditionRow key={cond.code}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>{cond.name}</h4>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#888888' }}>
-                        ({cond.code.toUpperCase()})
-                      </span>
-                    </div>
-                    <ConditionPill $type={cond.type}>{cond.tag}</ConditionPill>
+                <DiseaseCompactCard key={cond.code} $color="#22c55e">
+                  <div className="card-top">
+                    <h4>{cond.name}</h4>
+                    <span className="code-badge">{cond.code.toUpperCase()}</span>
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: '#888888', lineHeight: 1.55, margin: 0 }}>
-                    {cond.description}
-                  </p>
-                </ConditionRow>
+                  <p>{cond.description}</p>
+                </DiseaseCompactCard>
               ))}
-            </ConditionsMatrix>
-          </ConditionCategory>
+            </RiskTierColumn>
+          </RiskColumnsGrid>
         </Container>
       </SectionWrapper>
 

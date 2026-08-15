@@ -441,114 +441,264 @@ export const ModelSvgPanel = styled.div`
   }
 `;
 
-// Borderless Key Metrics Strip
-export const StatsStrip = styled.div`
+// SECTION 4: DATASET & DATA ENGINEERING
+export const DatasetLayout = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  padding: ${({ theme }) => `${theme.spacing[6]} 0`};
-  margin-bottom: ${({ theme }) => theme.spacing[10]};
-  border-top: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-bottom: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: ${({ theme }) => theme.spacing[6]};
+  align-items: stretch;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: ${({ theme }) => theme.spacing[6]};
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
     grid-template-columns: 1fr;
+    gap: ${({ theme }) => theme.spacing[6]};
   }
 `;
 
-export const StatItem = styled.div`
-  text-align: center;
-  padding: 0 ${({ theme }) => theme.spacing[4]};
+export const DatasetInfographicCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing[4]};
+  padding: ${({ theme }) => theme.spacing[5]};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+`;
 
-  &:not(:last-child) {
-    border-right: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+export const DatasetMetricsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: ${({ theme }) => theme.spacing[3]};
+`;
+
+export const MetricBadge = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: ${({ theme }) => `${theme.spacing[2.5]} ${theme.spacing[3]}`};
+  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.06)' : '#f0fdf4')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.18)' : '#dcfce7')};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+
+  strong {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    &:not(:last-child) {
-      border-right: none;
+  span {
+    font-size: 0.75rem;
+    color: ${({ theme }) => theme.colors.text.secondary};
+    font-weight: 600;
+  }
+`;
+
+export const ClassDistributionBar = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: ${({ theme }) => theme.spacing[1]};
+
+  .bar-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.775rem;
+    font-weight: 600;
+    color: ${({ theme }) => theme.colors.text.secondary};
+  }
+
+  .stacked-bar {
+    display: flex;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  }
+
+  .bar-legend {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    font-size: 0.725rem;
+    color: ${({ theme }) => theme.colors.text.secondary};
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
   }
 `;
 
-export const StatValue = styled.div`
-  font-size: 2.25rem;
-  font-weight: 800;
-  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
-  letter-spacing: -0.02em;
-  margin-bottom: 2px;
-`;
-
-export const StatLabel = styled.div`
-  font-size: 0.875rem;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  font-weight: 500;
-`;
-
-// Conditions Matrix (Categorized by Risk)
-export const ConditionCategory = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing[8]};
-
-  h3 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin-bottom: ${({ theme }) => theme.spacing[4]};
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-`;
-
-export const ConditionsMatrix = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: ${({ theme }) => theme.spacing[4]};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-export const ConditionRow = styled.div`
+export const DataStagesContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[2]};
-  padding: ${({ theme }) => theme.spacing[4.5]};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  gap: ${({ theme }) => theme.spacing[3]};
+`;
+
+export const DataStageCard = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing[3]};
+  padding: ${({ theme }) => `${theme.spacing[3.5]} ${theme.spacing[4]}`};
   background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
-  transition: border-color ${({ theme }) => theme.transitions.fast};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  border-left: 3px solid ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  transition: all ${({ theme }) => theme.transitions.fast};
 
   &:hover {
     border-color: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.4)' : '#86efac')};
+    border-left-color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
   }
 `;
 
-export const ConditionPill = styled.span`
-  display: inline-block;
-  padding: 2px 8px;
-  background: ${({ theme, $type }) => {
-    if ($type === 'danger') return theme.colors.status.error.bg;
-    if ($type === 'warning') return theme.colors.status.warning.bg;
-    return theme.colors.status.success.bg;
-  }};
-  color: ${({ theme, $type }) => {
-    if ($type === 'danger') return theme.colors.status.error.text;
-    if ($type === 'warning') return theme.colors.status.warning.text;
-    return theme.colors.status.success.text;
-  }};
-  border: 1px solid ${({ theme, $type }) => {
-    if ($type === 'danger') return theme.colors.status.error.border;
-    if ($type === 'warning') return theme.colors.status.warning.border;
-    return theme.colors.status.success.border;
-  }};
-  border-radius: ${({ theme }) => theme.borderRadius.pill};
+export const StageBadge = styled.div`
   font-size: 0.725rem;
-  font-weight: 700;
+  font-weight: 800;
+  color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
+  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.12)' : '#f0fdf4')};
+  padding: 3px 7px;
+  border-radius: 5px;
+  height: fit-content;
+  white-space: nowrap;
+`;
+
+export const StageContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  h4 {
+    font-size: 0.925rem;
+    font-weight: 700;
+    margin: 0;
+    color: ${({ theme }) => theme.colors.text.primary};
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: ${({ theme }) => theme.colors.text.secondary};
+    line-height: 1.5;
+    margin: 0;
+  }
+`;
+
+// SECTION 5: 7 SUPPORTED SKIN DISEASES (GRAPHICAL RISK TIERS)
+export const RiskSpectrumBanner = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[5]}`};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  margin-bottom: ${({ theme }) => theme.spacing[6]};
+  font-size: 0.8125rem;
+  font-weight: 600;
+
+  .spectrum-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+`;
+
+export const RiskColumnsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr;
+  gap: ${({ theme }) => theme.spacing[5]};
+  align-items: start;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    grid-template-columns: 1fr;
+    gap: ${({ theme }) => theme.spacing[5]};
+  }
+`;
+
+export const RiskTierColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing[3]};
+`;
+
+export const RiskTierHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: ${({ theme }) => theme.spacing[2]};
+  border-bottom: 2px solid ${({ $color }) => $color};
+
+  h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    color: ${({ theme }) => theme.colors.text.primary};
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  span.count {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: ${({ $color }) => $color};
+  }
+`;
+
+export const DiseaseCompactCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[3.5]}`};
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
+  border-left: 3px solid ${({ $color }) => $color};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ $color }) => $color};
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+    color: ${({ theme }) => theme.colors.text.primary};
+  }
+
+  .code-badge {
+    font-size: 0.675rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: ${({ $color }) => `${$color}20`};
+    color: ${({ $color }) => $color};
+  }
+
+  p {
+    font-size: 0.775rem;
+    color: ${({ theme }) => theme.colors.text.secondary};
+    line-height: 1.45;
+    margin: 0;
+  }
 `;
 
 // Notice Strip
