@@ -358,23 +358,42 @@ export const StepDesc = styled.p`
 export const ModelSpecsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[8]};
+  gap: ${({ theme }) => theme.spacing[10]};
 `;
 
 export const ModelSpecRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: ${({ theme }) => theme.spacing[8]};
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: ${({ theme }) => theme.spacing[10]};
   align-items: center;
-  padding-bottom: ${({ theme }) => theme.spacing[8]};
+  padding-bottom: ${({ theme }) => theme.spacing[10]};
+
+  ${({ $reverse }) =>
+    $reverse &&
+    `
+    grid-template-columns: 0.85fr 1.15fr;
+    & > :first-child {
+      order: 2;
+    }
+    & > :last-child {
+      order: 1;
+    }
+  `}
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#222222' : '#eeeeee')};
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: 1fr;
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    grid-template-columns: 1fr !important;
     gap: ${({ theme }) => theme.spacing[6]};
+
+    & > :first-child {
+      order: 1 !important;
+    }
+    & > :last-child {
+      order: 2 !important;
+    }
   }
 `;
 
@@ -387,6 +406,7 @@ export const ModelInfo = styled.div`
 export const ModelTitleRow = styled.div`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing[3]};
 `;
 
@@ -403,17 +423,20 @@ export const ModelBadge = styled.span`
 
 export const ModelSvgPanel = styled.div`
   width: 100%;
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#fafafa')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  padding: ${({ theme }) => theme.spacing[5]};
+  max-width: 440px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
 
   svg {
     width: 100%;
-    max-height: 120px;
+    height: auto;
+    max-height: 140px;
     display: block;
   }
 `;

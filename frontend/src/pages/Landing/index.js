@@ -503,146 +503,240 @@ const Landing = ({ isAuthenticated }) => {
           </SectionHeader>
 
           <ModelSpecsContainer>
-            {/* Model 1: ResNet-101 */}
+            {/* Model 1: ResNet-101 (Left Content | Right SVG) */}
             <ModelSpecRow>
               <ModelInfo>
                 <ModelTitleRow>
                   <h3 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0 }}>ResNet-101</h3>
-                  <ModelBadge>44.5M Parameters</ModelBadge>
+                  <ModelBadge>44.5M Params • Structural Specialist</ModelBadge>
                 </ModelTitleRow>
-                <span style={{ fontSize: '0.85rem', color: '#888888' }}>Deep Residual Network with Skip Connections</span>
-                <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
-                  Uses identity shortcuts (<code>F(x) + x</code>) to pass gradients directly across 101 layers,
-                  preventing vanishing gradient degradation and capturing complex structural lesion borders.
+                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#4ade80' }}>
+                  Identity Skip Highways for Lesion Borders & Asymmetry
+                </span>
+                <p style={{ color: '#a3a3a3', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
+                  <strong>How it works:</strong> Standard deep networks suffer from signal loss as layers get deeper.
+                  ResNet-101 solves this with <em>shortcut connections</em> (<code>F(x) + x</code>) that let gradients
+                  travel directly across 101 layers without vanishing.
+                </p>
+                <p style={{ color: '#888888', fontSize: '0.875rem', lineHeight: 1.6, margin: 0 }}>
+                  <strong>Clinical Role:</strong> Melanoma and malignant tumors often have jagged, asymmetrical borders.
+                  ResNet’s ultra-deep receptive field is specifically tuned to detect these macro-structural contour anomalies.
                 </p>
               </ModelInfo>
 
               <ModelSvgPanel>
-                <svg viewBox="0 0 320 80" fill="none">
-                  <rect x="25" y="25" width="60" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="55" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Conv Layer</text>
+                <svg viewBox="0 0 360 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Skip Highway Arc */}
+                  <path d="M 42 40 C 42 12, 277 12, 277 43" stroke="#4ade80" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
+                  <rect x="110" y="4" width="100" height="16" rx="8" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" strokeWidth="1" />
+                  <text x="160" y="15" textAnchor="middle" fill="#4ade80" fontSize="7.5" fontWeight="700">Residual Skip Highway</text>
 
-                  <path d="M 85 40 L 125 40" stroke="#16a34a" strokeWidth="1.5" />
+                  {/* Nodes & Conv Layers */}
+                  <rect x="15" y="40" width="55" height="30" rx="6" fill="rgba(34,197,94,0.08)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="42" y="58" textAnchor="middle" fill="currentColor" fontSize="9" fontWeight="700">Input X</text>
 
-                  <rect x="125" y="25" width="60" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="155" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Conv Layer</text>
+                  <path d="M 70 55 L 95 55" stroke="#16a34a" strokeWidth="1.2" />
 
-                  <path d="M 185 40 L 225 40" stroke="#16a34a" strokeWidth="1.5" />
+                  <rect x="95" y="40" width="60" height="30" rx="6" fill="rgba(255,255,255,0.02)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="125" y="58" textAnchor="middle" fill="currentColor" fontSize="9" fontWeight="700">Conv 1</text>
 
-                  <circle cx="240" cy="40" r="14" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="240" y="45" textAnchor="middle" fontSize="14" fontWeight="700" fill="#4ade80">+</text>
+                  <path d="M 155 55 L 180 55" stroke="#16a34a" strokeWidth="1.2" />
 
-                  <path d="M 254 40 L 295 40" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="295" y="44" fontSize="10" fontWeight="700" fill="#4ade80">F(x)+x</text>
+                  <rect x="180" y="40" width="60" height="30" rx="6" fill="rgba(255,255,255,0.02)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="210" y="58" textAnchor="middle" fill="currentColor" fontSize="9" fontWeight="700">Conv 2</text>
 
-                  <path d="M 55 25 C 55 8, 240 8, 240 26" stroke="#4ade80" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
-                  <text x="145" y="14" textAnchor="middle" fontSize="8" fontWeight="600" fill="#4ade80">Residual Skip Highway</text>
+                  <path d="M 240 55 L 265 55" stroke="#16a34a" strokeWidth="1.2" />
+
+                  <circle cx="277" cy="55" r="12" fill="rgba(34,197,94,0.15)" stroke="#22c55e" strokeWidth="1.5" />
+                  <text x="277" y="60" textAnchor="middle" fill="#4ade80" fontSize="13" fontWeight="800">+</text>
+
+                  <path d="M 289 55 L 310 55" stroke="#16a34a" strokeWidth="1.2" />
+
+                  <rect x="310" y="40" width="40" height="30" rx="6" fill="rgba(34,197,94,0.12)" stroke="#22c55e" strokeWidth="1.2" />
+                  <text x="330" y="58" textAnchor="middle" fill="#4ade80" fontSize="8" fontWeight="800">F(x)+x</text>
+
+                  <text x="180" y="98" textAnchor="middle" fill="#888888" fontSize="8.5">
+                    101 layers • Zero degradation signal propagation
+                  </text>
                 </svg>
               </ModelSvgPanel>
             </ModelSpecRow>
 
-            {/* Model 2: DenseNet-121 */}
-            <ModelSpecRow>
+            {/* Model 2: DenseNet-121 (Left SVG | Right Content) */}
+            <ModelSpecRow $reverse>
               <ModelInfo>
                 <ModelTitleRow>
                   <h3 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0 }}>DenseNet-121</h3>
-                  <ModelBadge>8.0M Parameters</ModelBadge>
+                  <ModelBadge>8.0M Params • Texture Specialist</ModelBadge>
                 </ModelTitleRow>
-                <span style={{ fontSize: '0.85rem', color: '#888888' }}>Densely Connected Convolutional Network</span>
-                <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
-                  Connects every layer to all subsequent layers in a feed-forward fashion, encouraging maximum
-                  feature reuse and high-gradient flow with a very compact parameter footprint.
+                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#4ade80' }}>
+                  Cross-Layer Concatenation for Micro-Pigment Patterns
+                </span>
+                <p style={{ color: '#a3a3a3', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
+                  <strong>How it works:</strong> Instead of summing outputs, every layer in DenseNet directly connects to
+                  <em>all subsequent layers</em> in the network. This maximizes gradient reuse and ensures no subtle details
+                  get lost in transit.
+                </p>
+                <p style={{ color: '#888888', fontSize: '0.875rem', lineHeight: 1.6, margin: 0 }}>
+                  <strong>Clinical Role:</strong> Benign keratoses and subtle vascular spots are differentiated by tiny cellular
+                  pigment granules. DenseNet excels at recognizing these fine dermatoscopic texture patterns.
                 </p>
               </ModelInfo>
 
               <ModelSvgPanel>
-                <svg viewBox="0 0 320 80" fill="none">
-                  <rect x="25" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="52" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 1</text>
+                <svg viewBox="0 0 360 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Dense Links */}
+                  <path d="M 47 40 C 47 14, 247 14, 247 40" stroke="#4ade80" strokeWidth="1.2" strokeDasharray="3 3" fill="none" />
+                  <path d="M 47 70 C 47 92, 330 92, 330 72" stroke="#16a34a" strokeWidth="1.2" strokeDasharray="3 3" fill="none" />
+                  <path d="M 147 40 C 147 22, 330 22, 330 38" stroke="#22c55e" strokeWidth="1.2" strokeDasharray="2 2" fill="none" />
+                  <text x="147" y="11" textAnchor="middle" fill="#4ade80" fontSize="7.5" fontWeight="700">Dense Cross-Layer Feature Reuse</text>
 
-                  <rect x="130" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="157" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 2</text>
+                  {/* Layers */}
+                  <rect x="20" y="40" width="55" height="30" rx="6" fill="rgba(34,197,94,0.08)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="47" y="58" textAnchor="middle" fill="currentColor" fontSize="9" fontWeight="700">Layer 1</text>
 
-                  <rect x="235" y="25" width="55" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="262" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">Layer 3</text>
+                  <path d="M 75 55 L 120 55" stroke="#16a34a" strokeWidth="1.2" />
 
-                  <path d="M 80 40 L 130 40" stroke="#16a34a" strokeWidth="1.5" />
-                  <path d="M 185 40 L 235 40" stroke="#16a34a" strokeWidth="1.5" />
+                  <rect x="120" y="40" width="55" height="30" rx="6" fill="rgba(34,197,94,0.08)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="147" y="58" textAnchor="middle" fill="currentColor" fontSize="9" fontWeight="700">Layer 2</text>
 
-                  <path d="M 52 25 C 52 8, 262 8, 262 25" stroke="#4ade80" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
-                  <text x="157" y="14" textAnchor="middle" fontSize="8" fontWeight="600" fill="#4ade80">Dense Cross-Layer Concatenation</text>
+                  <path d="M 175 55 L 220 55" stroke="#16a34a" strokeWidth="1.2" />
+
+                  <rect x="220" y="40" width="55" height="30" rx="6" fill="rgba(34,197,94,0.08)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="247" y="58" textAnchor="middle" fill="currentColor" fontSize="9" fontWeight="700">Layer 3</text>
+
+                  <path d="M 275 55 L 310 55" stroke="#16a34a" strokeWidth="1.2" />
+
+                  <rect x="310" y="38" width="40" height="34" rx="6" fill="rgba(34,197,94,0.15)" stroke="#22c55e" strokeWidth="1.2" />
+                  <text x="330" y="53" textAnchor="middle" fill="#4ade80" fontSize="8" fontWeight="800">[x0..x2]</text>
+                  <text x="330" y="64" textAnchor="middle" fill="#888888" fontSize="7">Concat</text>
+
+                  <text x="180" y="104" textAnchor="middle" fill="#888888" fontSize="8.5">
+                    High parameter efficiency with direct cross-layer gradient flow
+                  </text>
                 </svg>
               </ModelSvgPanel>
             </ModelSpecRow>
 
-            {/* Model 3: EfficientNet-B3 */}
+            {/* Model 3: EfficientNet-B3 (Left Content | Right SVG) */}
             <ModelSpecRow>
               <ModelInfo>
                 <ModelTitleRow>
                   <h3 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0 }}>EfficientNet-B3</h3>
-                  <ModelBadge>12.2M Parameters</ModelBadge>
+                  <ModelBadge>12.2M Params • Scale Specialist</ModelBadge>
                 </ModelTitleRow>
-                <span style={{ fontSize: '0.85rem', color: '#888888' }}>Compound Scaling Convolutional Architecture</span>
-                <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
-                  Balances network depth (<code>d</code>), width (<code>w</code>), and input resolution (<code>r</code>)
-                  simultaneously using a fixed compound coefficient for optimal feature efficiency.
+                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#4ade80' }}>
+                  Compound Scaling across Depth, Width & Image Resolution
+                </span>
+                <p style={{ color: '#a3a3a3', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
+                  <strong>How it works:</strong> Rather than arbitrarily making the network deeper or wider, EfficientNet scales
+                  <em>Depth (d)</em>, <em>Width (w)</em>, and <em>Resolution (r)</em> simultaneously using a mathematically principled
+                  compound scaling coefficient.
+                </p>
+                <p style={{ color: '#888888', fontSize: '0.875rem', lineHeight: 1.6, margin: 0 }}>
+                  <strong>Clinical Role:</strong> Dermatological images vary widely in zoom and lesion size. EfficientNet balances
+                  both macro lesion overview and micro zoom details with supreme computational speed.
                 </p>
               </ModelInfo>
 
               <ModelSvgPanel>
-                <svg viewBox="0 0 320 80" fill="none">
-                  <rect x="35" y="25" width="45" height="30" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="57" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Depth (d)</text>
+                <svg viewBox="0 0 360 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <text x="180" y="10" textAnchor="middle" fill="#4ade80" fontSize="7.5" fontWeight="700">
+                    Compound Coefficient Principle: α · β² · γ² ≈ 2
+                  </text>
 
-                  <path d="M 80 40 L 120 40" stroke="#16a34a" strokeWidth="1.5" />
+                  {/* Depth */}
+                  <rect x="25" y="30" width="48" height="42" rx="6" fill="rgba(34,197,94,0.08)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="49" y="49" textAnchor="middle" fill="currentColor" fontSize="8.5" fontWeight="700">Depth</text>
+                  <text x="49" y="61" textAnchor="middle" fill="#4ade80" fontSize="7.5" fontWeight="700">d = αᵠ</text>
 
-                  <rect x="120" y="18" width="60" height="44" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="150" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Width (w)</text>
+                  <path d="M 73 51 L 110 51" stroke="#16a34a" strokeWidth="1.2" />
 
-                  <path d="M 180 40 L 220 40" stroke="#16a34a" strokeWidth="1.5" />
+                  {/* Width */}
+                  <rect x="110" y="24" width="60" height="54" rx="6" fill="rgba(34,197,94,0.08)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="140" y="48" textAnchor="middle" fill="currentColor" fontSize="8.5" fontWeight="700">Width</text>
+                  <text x="140" y="60" textAnchor="middle" fill="#4ade80" fontSize="7.5" fontWeight="700">w = βᵠ</text>
 
-                  <rect x="220" y="12" width="70" height="56" rx="6" fill="none" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="255" y="44" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">Res (r)</text>
+                  <path d="M 170 51 L 205 51" stroke="#16a34a" strokeWidth="1.2" />
+
+                  {/* Resolution */}
+                  <rect x="205" y="18" width="70" height="66" rx="6" fill="rgba(34,197,94,0.08)" stroke="#16a34a" strokeWidth="1.2" />
+                  <text x="240" y="48" textAnchor="middle" fill="currentColor" fontSize="8.5" fontWeight="700">Resolution</text>
+                  <text x="240" y="60" textAnchor="middle" fill="#4ade80" fontSize="7.5" fontWeight="700">r = γᵠ (224px)</text>
+
+                  <path d="M 275 51 L 305 51" stroke="#16a34a" strokeWidth="1.2" />
+
+                  {/* Optimal Output */}
+                  <rect x="305" y="30" width="45" height="42" rx="6" fill="rgba(34,197,94,0.15)" stroke="#22c55e" strokeWidth="1.2" />
+                  <text x="327" y="49" textAnchor="middle" fill="#4ade80" fontSize="8" fontWeight="800">Optimal</text>
+                  <text x="327" y="60" textAnchor="middle" fill="currentColor" fontSize="7.5" fontWeight="600">FLOPs</text>
+
+                  <text x="180" y="104" textAnchor="middle" fill="#888888" fontSize="8.5">
+                    Unified multi-dimension scaling yields maximum feature efficiency
+                  </text>
                 </svg>
               </ModelSvgPanel>
             </ModelSpecRow>
 
-            {/* Model 4: Meta-Classifier */}
-            <ModelSpecRow>
+            {/* Model 4: Meta-Classifier (Left SVG | Right Content) */}
+            <ModelSpecRow $reverse>
               <ModelInfo>
                 <ModelTitleRow>
                   <h3 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0 }}>Logistic Meta-Learner</h3>
-                  <ModelBadge>Stacking Layer</ModelBadge>
+                  <ModelBadge>Stacking Arbiter • Softmax Consensus</ModelBadge>
                 </ModelTitleRow>
-                <span style={{ fontSize: '0.85rem', color: '#888888' }}>Second-Stage Softmax Consensus Model</span>
-                <p style={{ color: '#888888', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
-                  Instead of a simple majority vote, the meta-classifier learns the individual reliability weights
-                  of each model on validation data, yielding calibrated final probabilities.
+                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#4ade80' }}>
+                  Learned Probability Weighting for Calibrated Diagnoses
+                </span>
+                <p style={{ color: '#a3a3a3', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
+                  <strong>How it works:</strong> Rather than taking a simple unweighted average, a second-stage Logistic Regression
+                  meta-model learns the individual reliability and accuracy weights ($w_1, w_2, w_3$) of each CNN on validation data.
+                </p>
+                <p style={{ color: '#888888', fontSize: '0.875rem', lineHeight: 1.6, margin: 0 }}>
+                  <strong>Clinical Role:</strong> In healthcare, confidence calibration is essential. The meta-learner ensures that
+                  when a high risk prediction like Melanoma is flagged, it is backed by calibrated multi-model consensus.
                 </p>
               </ModelInfo>
 
               <ModelSvgPanel>
-                <svg viewBox="0 0 320 80" fill="none">
-                  <rect x="20" y="10" width="70" height="18" rx="4" fill="none" stroke="#525252" strokeWidth="1" />
-                  <text x="55" y="22" textAnchor="middle" fontSize="8" fill="currentColor">P(ResNet)</text>
+                <svg viewBox="0 0 360 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <text x="190" y="14" textAnchor="middle" fill="#4ade80" fontSize="7.5" fontWeight="700">
+                    Supervised 2nd-Stage Logistic Consensus
+                  </text>
 
-                  <rect x="20" y="31" width="70" height="18" rx="4" fill="none" stroke="#525252" strokeWidth="1" />
-                  <text x="55" y="43" textAnchor="middle" fontSize="8" fill="currentColor">P(DenseNet)</text>
+                  {/* 3 CNN Inputs */}
+                  <rect x="15" y="16" width="76" height="20" rx="4" fill="rgba(255,255,255,0.02)" stroke="#525252" strokeWidth="1" />
+                  <text x="53" y="29" textAnchor="middle" fill="currentColor" fontSize="7.5">P(ResNet-101)</text>
 
-                  <rect x="20" y="52" width="70" height="18" rx="4" fill="none" stroke="#525252" strokeWidth="1" />
-                  <text x="55" y="64" textAnchor="middle" fontSize="8" fill="currentColor">P(EfficientNet)</text>
+                  <rect x="15" y="45" width="76" height="20" rx="4" fill="rgba(255,255,255,0.02)" stroke="#525252" strokeWidth="1" />
+                  <text x="53" y="58" textAnchor="middle" fill="currentColor" fontSize="7.5">P(DenseNet-121)</text>
 
-                  <path d="M 90 19 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
-                  <path d="M 90 40 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
-                  <path d="M 90 61 L 140 40" stroke="#16a34a" strokeWidth="1.5" />
+                  <rect x="15" y="74" width="76" height="20" rx="4" fill="rgba(255,255,255,0.02)" stroke="#525252" strokeWidth="1" />
+                  <text x="53" y="87" textAnchor="middle" fill="currentColor" fontSize="7.5">P(EfficientNet)</text>
 
-                  <rect x="140" y="20" width="90" height="40" rx="8" fill="rgba(34,197,94,0.1)" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="185" y="38" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4ade80">Meta-Learner</text>
-                  <text x="185" y="50" textAnchor="middle" fontSize="8" fill="#888888">Weighted Voting</text>
+                  {/* Weighted Synapse Arcs */}
+                  <path d="M 91 26 L 140 55" stroke="#16a34a" strokeWidth="1.5" />
+                  <path d="M 91 55 L 140 55" stroke="#16a34a" strokeWidth="1.5" />
+                  <path d="M 91 84 L 140 55" stroke="#16a34a" strokeWidth="1.5" />
+                  <text x="110" y="34" fill="#4ade80" fontSize="7" fontWeight="700">w₁</text>
+                  <text x="115" y="50" fill="#4ade80" fontSize="7" fontWeight="700">w₂</text>
+                  <text x="110" y="78" fill="#4ade80" fontSize="7" fontWeight="700">w₃</text>
 
-                  <path d="M 230 40 L 260 40" stroke="#16a34a" strokeWidth="1.5" />
-                  <rect x="260" y="25" width="50" height="30" rx="6" fill="rgba(34,197,94,0.15)" stroke="#16a34a" strokeWidth="1.5" />
-                  <text x="285" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#4ade80">Class %</text>
+                  {/* Meta-Learner Hub */}
+                  <rect x="140" y="30" width="105" height="50" rx="10" fill="rgba(34,197,94,0.12)" stroke="#22c55e" strokeWidth="1.5" />
+                  <text x="192" y="52" textAnchor="middle" fill="#4ade80" fontSize="9.5" fontWeight="800">Meta-Learner</text>
+                  <text x="192" y="65" textAnchor="middle" fill="#888888" fontSize="7.5">Learned Softmax Fusion</text>
+
+                  {/* Output */}
+                  <path d="M 245 55 L 280 55" stroke="#22c55e" strokeWidth="1.5" />
+
+                  <rect x="280" y="35" width="65" height="40" rx="8" fill="rgba(34,197,94,0.18)" stroke="#22c55e" strokeWidth="1.2" />
+                  <text x="312" y="52" textAnchor="middle" fill="#4ade80" fontSize="9" fontWeight="800">7 Classes</text>
+                  <text x="312" y="64" textAnchor="middle" fill="currentColor" fontSize="7.5" fontWeight="600">Calibrated %</text>
+
+                  <text x="180" y="104" textAnchor="middle" fill="#888888" fontSize="8.5">
+                    Weighs individual model reliability per class for verified consensus
+                  </text>
                 </svg>
               </ModelSvgPanel>
             </ModelSpecRow>
