@@ -75,17 +75,13 @@ export const HeroVisual = styled.div`
 
 export const VisualCard = styled.div`
   width: 100%;
-  max-width: 490px;
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.25)' : 'rgba(22, 163, 74, 0.2)')};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  padding: ${({ theme }) => theme.spacing[4]};
-  box-shadow: ${({ theme }) =>
-    theme.mode === 'dark'
-      ? '0 16px 36px rgba(0, 0, 0, 0.5), 0 0 24px rgba(34, 197, 94, 0.08)'
-      : '0 16px 36px rgba(0, 0, 0, 0.06), 0 0 24px rgba(22, 163, 74, 0.06)'};
+  max-width: 500px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
   position: relative;
-  overflow: hidden;
 
   svg {
     width: 100%;
