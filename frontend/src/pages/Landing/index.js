@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants';
 import { Button } from '../../components/common/ui';
@@ -49,20 +49,15 @@ import {
   ModelTitleRow,
   ModelBadge,
   ModelSvgPanel,
-  DatasetLayout,
-  DatasetInfographicCard,
-  DatasetMetricsGrid,
-  MetricBadge,
-  ClassDistributionBar,
-  DataStagesContainer,
-  DataStageCard,
-  StageBadge,
-  StageContent,
-  RiskSpectrumBanner,
-  RiskColumnsGrid,
-  RiskTierColumn,
-  RiskTierHeader,
-  DiseaseCompactCard,
+  DatasetStatsRow,
+  StatBlock,
+  DistributionContainer,
+  PipelineStagesRow,
+  PipelineStageItem,
+  FilterTabsContainer,
+  FilterTabButton,
+  ConditionsList,
+  ConditionListRow,
   NoticeStrip,
   NoticeItem,
   CtaCard,
@@ -70,68 +65,75 @@ import {
   FooterContainer,
 } from './styles';
 
-// 7 Supported Skin Diseases Grouped by Clinical Risk
-const MALIGNANT_CONDITIONS = [
+// 7 Supported Skin Diseases with Clinical Details
+const ALL_CONDITIONS = [
   {
     code: 'mel',
     name: 'Melanoma',
-    type: 'danger',
-    tag: 'Malignant (High Risk)',
-    description: 'A serious form of skin cancer originating in pigment-producing melanocytes. Early identification is vital for successful treatment.',
+    category: 'malignant',
+    riskText: 'Malignant (High Priority)',
+    riskColor: '#ef4444',
+    description: 'A serious malignancy arising from pigment-producing melanocytes. Often presents with asymmetrical contours, irregular borders, and color variations.',
   },
   {
     code: 'bcc',
     name: 'Basal Cell Carcinoma',
-    type: 'danger',
-    tag: 'Malignant (High Risk)',
-    description: 'The most common form of skin cancer. Arises in basal cells and typically grows slowly without spreading to distant sites.',
+    category: 'malignant',
+    riskText: 'Malignant (Common)',
+    riskColor: '#ef4444',
+    description: 'The most frequent form of skin cancer. Typically appears as pearly translucent papules with telangiectasia; rarely metastasizes but causes local tissue invasion.',
   },
-];
-
-const PRECANCER_CONDITIONS = [
   {
     code: 'akiec',
-    name: 'Actinic Keratoses',
-    type: 'warning',
-    tag: 'Pre-Cancerous (Medium Risk)',
-    description: 'Rough, dry, scaly patches on sun-exposed skin caused by UV damage. Can occasionally progress to squamous cell carcinoma if left untreated.',
+    name: 'Actinic Keratoses / Bowen\'s Disease',
+    category: 'precancer',
+    riskText: 'Pre-Cancerous',
+    riskColor: '#f59e0b',
+    description: 'Rough, dry, scaly patches on chronically sun-exposed areas caused by cumulative UV damage. Carries potential for progression to invasive squamous cell carcinoma.',
   },
-];
-
-const BENIGN_CONDITIONS = [
   {
     code: 'nv',
     name: 'Melanocytic Nevi',
-    type: 'success',
-    tag: 'Benign (Harmless)',
-    description: 'Common moles or birthmarks formed by clusters of melanocytes. Common in adults and typically non-cancerous.',
+    category: 'benign',
+    riskText: 'Benign (Harmless)',
+    riskColor: '#22c55e',
+    description: 'Common benign moles and birthmarks formed by ordered nests of melanocytes with uniform pigment distribution and symmetrical borders.',
   },
   {
     code: 'bkl',
     name: 'Benign Keratosis',
-    type: 'success',
-    tag: 'Benign (Harmless)',
-    description: 'Non-cancerous skin growths including seborrheic keratoses and solar lentigines that commonly develop with aging.',
+    category: 'benign',
+    riskText: 'Benign (Harmless)',
+    riskColor: '#22c55e',
+    description: 'Non-malignant epidermal growths, including seborrheic keratoses, solar lentigines, and lichen-planus-like keratoses common in adults.',
   },
   {
     code: 'df',
     name: 'Dermatofibroma',
-    type: 'success',
-    tag: 'Benign (Harmless)',
-    description: 'Small, firm, non-cancerous fibrous skin nodules, most commonly found on the arms and lower legs.',
+    category: 'benign',
+    riskText: 'Benign (Harmless)',
+    riskColor: '#22c55e',
+    description: 'Firm, slowly developing non-cancerous fibrous cutaneous nodules, most frequently observed on the lower extremities and shoulder girdle.',
   },
   {
     code: 'vasc',
     name: 'Vascular Lesions',
-    type: 'success',
-    tag: 'Benign (Harmless)',
-    description: 'Benign blood vessel spots including cherry angiomas, angiokeratomas, and vascular malformations.',
+    category: 'benign',
+    riskText: 'Benign (Harmless)',
+    riskColor: '#22c55e',
+    description: 'Benign vascular anomalies including cherry angiomas, pyogenic granulomas, angiokeratomas, and localized capillary malformations.',
   },
 ];
 
 const Landing = ({ isAuthenticated }) => {
+  const [selectedFilter, setSelectedFilter] = useState('all');
   const ctaRoute = ROUTES.DASHBOARD;
   const ctaText = 'Try Image Detection';
+
+  const filteredConditions =
+    selectedFilter === 'all'
+      ? ALL_CONDITIONS
+      : ALL_CONDITIONS.filter((c) => c.category === selectedFilter);
 
   return (
     <LandingPageWrapper id="overview">
@@ -760,122 +762,86 @@ const Landing = ({ isAuthenticated }) => {
             </SectionTag>
             <SectionTitle>Trained on Kaggle's HAM10000 Dataset</SectionTitle>
             <SectionDescription>
-              A benchmark corpus of 10,015 dermatoscopic images collected across international dermatological clinics,
-              curated for dermatological deep learning research.
+              10,015 multi-source dermatoscopic images processed through patient-isolated partitioning, dynamic balancing, and CLAHE normalization.
             </SectionDescription>
           </SectionHeader>
 
-          <DatasetLayout>
-            {/* Left: Dataset Infographic & Class Distribution */}
-            <DatasetInfographicCard>
-              <DatasetMetricsGrid>
-                <MetricBadge>
-                  <strong>10,015</strong>
-                  <span>Verified Images</span>
-                </MetricBadge>
-                <MetricBadge>
-                  <strong>7 Classes</strong>
-                  <span>Skin Conditions</span>
-                </MetricBadge>
-                <MetricBadge>
-                  <strong>224 × 224</strong>
-                  <span>RGB Tensor Size</span>
-                </MetricBadge>
-                <MetricBadge>
-                  <strong>CLAHE</strong>
-                  <span>Contrast Tuned</span>
-                </MetricBadge>
-              </DatasetMetricsGrid>
+          {/* Minimalist Floating Stats Strip */}
+          <DatasetStatsRow>
+            <StatBlock>
+              <div className="value">10,015</div>
+              <div className="label">Curated Dermoscopy Scans</div>
+            </StatBlock>
+            <StatBlock>
+              <div className="value">7 Classes</div>
+              <div className="label">Full Diagnostic Scope</div>
+            </StatBlock>
+            <StatBlock>
+              <div className="value">224 × 224</div>
+              <div className="label">Normalized RGB Matrix</div>
+            </StatBlock>
+            <StatBlock>
+              <div className="value">70 / 15 / 15</div>
+              <div className="label">Patient-Isolated Split</div>
+            </StatBlock>
+          </DatasetStatsRow>
 
-              {/* Graphical Stacked Distribution */}
-              <ClassDistributionBar>
-                <div className="bar-header">
-                  <span>Class Distribution & Imbalance</span>
-                  <span>10,015 Total Scans</span>
-                </div>
-                <div className="stacked-bar">
-                  <div style={{ width: '67%', background: '#22c55e' }} title="NV: 6,705 (67%)" />
-                  <div style={{ width: '11%', background: '#ef4444' }} title="MEL: 1,113 (11%)" />
-                  <div style={{ width: '11%', background: '#10b981' }} title="BKL: 1,099 (11%)" />
-                  <div style={{ width: '5%', background: '#dc2626' }} title="BCC: 514 (5%)" />
-                  <div style={{ width: '3%', background: '#f59e0b' }} title="AKIEC: 327 (3%)" />
-                  <div style={{ width: '1.5%', background: '#3b82f6' }} title="VASC: 142 (1.5%)" />
-                  <div style={{ width: '1.5%', background: '#8b5cf6' }} title="DF: 115 (1.5%)" />
-                </div>
-                <div className="bar-legend">
-                  <div className="legend-item">
-                    <span className="dot" style={{ background: '#22c55e' }} />
-                    <span>NV: 67% (Nevi)</span>
-                  </div>
-                  <div className="legend-item">
-                    <span className="dot" style={{ background: '#ef4444' }} />
-                    <span>MEL: 11% (Melanoma)</span>
-                  </div>
-                  <div className="legend-item">
-                    <span className="dot" style={{ background: '#10b981' }} />
-                    <span>BKL: 11% (Keratosis)</span>
-                  </div>
-                  <div className="legend-item">
-                    <span className="dot" style={{ background: '#dc2626' }} />
-                    <span>BCC: 5% (Carcinoma)</span>
-                  </div>
-                  <div className="legend-item">
-                    <span className="dot" style={{ background: '#f59e0b' }} />
-                    <span>AKIEC: 3% (Actinic)</span>
-                  </div>
-                  <div className="legend-item">
-                    <span className="dot" style={{ background: '#3b82f6' }} />
-                    <span>VASC/DF: 3%</span>
-                  </div>
-                </div>
-              </ClassDistributionBar>
+          {/* Minimalist Full-Width Class Distribution Spectrum */}
+          <DistributionContainer>
+            <div className="dist-header">
+              <span>Dataset Class Distribution (10,015 Images)</span>
+              <span>Balanced via Dynamic Class Weighting & Augmentation</span>
+            </div>
+            <div className="dist-track">
+              <div style={{ width: '67%', background: '#22c55e' }} title="NV: 6,705 (67%)" />
+              <div style={{ width: '11%', background: '#ef4444' }} title="MEL: 1,113 (11%)" />
+              <div style={{ width: '11%', background: '#10b981' }} title="BKL: 1,099 (11%)" />
+              <div style={{ width: '5%', background: '#dc2626' }} title="BCC: 514 (5%)" />
+              <div style={{ width: '3%', background: '#f59e0b' }} title="AKIEC: 327 (3%)" />
+              <div style={{ width: '1.5%', background: '#3b82f6' }} title="VASC: 142 (1.5%)" />
+              <div style={{ width: '1.5%', background: '#8b5cf6' }} title="DF: 115 (1.5%)" />
+            </div>
+            <div className="dist-pills">
+              <div className="dist-pill-item"><span className="dot" style={{ background: '#22c55e' }} /><span>NV: 67% (Nevi)</span></div>
+              <div className="dist-pill-item"><span className="dot" style={{ background: '#ef4444' }} /><span>MEL: 11% (Melanoma)</span></div>
+              <div className="dist-pill-item"><span className="dot" style={{ background: '#10b981' }} /><span>BKL: 11% (Keratosis)</span></div>
+              <div className="dist-pill-item"><span className="dot" style={{ background: '#dc2626' }} /><span>BCC: 5% (Carcinoma)</span></div>
+              <div className="dist-pill-item"><span className="dot" style={{ background: '#f59e0b' }} /><span>AKIEC: 3% (Actinic)</span></div>
+              <div className="dist-pill-item"><span className="dot" style={{ background: '#3b82f6' }} /><span>VASC: 1.5%</span></div>
+              <div className="dist-pill-item"><span className="dot" style={{ background: '#8b5cf6' }} /><span>DF: 1.5%</span></div>
+            </div>
+          </DistributionContainer>
 
-              <p style={{ fontSize: '0.8rem', color: '#888888', lineHeight: 1.55, margin: 0 }}>
-                💡 <em>Imbalance Mitigation:</em> To prevent model bias toward dominant benign moles (NV),
-                we apply dynamic class weighting and multi-axis data augmentation during backpropagation.
+          {/* Connected 3-Step Milestone Pipeline (No cards, pure typography) */}
+          <PipelineStagesRow>
+            <PipelineStageItem>
+              <div className="stage-num">01</div>
+              <h4>Patient-Isolated Partitioning</h4>
+              <p>
+                Images are split by patient ID so scans from the same individual never overlap across train and test folds, guaranteeing authentic generalization.
               </p>
-            </DatasetInfographicCard>
+            </PipelineStageItem>
 
-            {/* Right: 3-Stage Data Engineering Flow */}
-            <DataStagesContainer>
-              <DataStageCard>
-                <StageBadge>STAGE 01</StageBadge>
-                <StageContent>
-                  <h4>Patient-Isolated Splitting (70/15/15)</h4>
-                  <p>
-                    Images are partitioned by unique patient IDs. Multiple lesions from the same patient never overlap
-                    between train and test sets, strictly preventing artificial accuracy inflation.
-                  </p>
-                </StageContent>
-              </DataStageCard>
+            <PipelineStageItem>
+              <div className="stage-num">02</div>
+              <h4>Dynamic Rebalancing & Augmentation</h4>
+              <p>
+                On-the-fly random rotations (0°–360°), flips, and loss class-weighting prevent majority bias toward common benign moles.
+              </p>
+            </PipelineStageItem>
 
-              <DataStageCard>
-                <StageBadge>STAGE 02</StageBadge>
-                <StageContent>
-                  <h4>Dynamic Augmentation & Rebalancing</h4>
-                  <p>
-                    Rotations (0°–360°), horizontal/vertical flips, and zoom crops are dynamically generated on-the-fly,
-                    multiplying the effective variety of rare malignant classes like Melanoma and BCC.
-                  </p>
-                </StageContent>
-              </DataStageCard>
-
-              <DataStageCard>
-                <StageBadge>STAGE 03</StageBadge>
-                <StageContent>
-                  <h4>CLAHE Contrast & RGB Tensor Normalization</h4>
-                  <p>
-                    Contrast-Limited Adaptive Histogram Equalization sharpens subtle lesion boundaries, followed by
-                    channel-wise RGB scaling to [0, 1] for smooth, stable gradient descent.
-                  </p>
-                </StageContent>
-              </DataStageCard>
-            </DataStagesContainer>
-          </DatasetLayout>
+            <PipelineStageItem>
+              <div className="stage-num">03</div>
+              <h4>CLAHE Contrast & Normalization</h4>
+              <p>
+                Adaptive histogram equalization enhances subtle pigment network boundaries, followed by RGB tensor scaling to [0, 1] for stable gradient descent.
+              </p>
+            </PipelineStageItem>
+          </PipelineStagesRow>
         </Container>
       </SectionWrapper>
 
-      {/* SECTION 5: 7 SUPPORTED SKIN CONDITIONS GROUPED BY RISK */}
+      {/* SECTION 5: 7 SUPPORTED SKIN CONDITIONS (Interactive Minimalist Filter Stream) */}
       <SectionWrapper id="conditions">
         <Container>
           <SectionHeader>
@@ -885,88 +851,55 @@ const Landing = ({ isAuthenticated }) => {
             </SectionTag>
             <SectionTitle>7 Supported Skin Disease Conditions</SectionTitle>
             <SectionDescription>
-              The ensemble model classifies skin lesions across 3 distinct clinical risk tiers,
-              spanning high-priority malignant cancers to harmless benign growths.
+              Classified across 3 clinical risk tiers from high-priority malignant tumors to harmless benign growths.
             </SectionDescription>
           </SectionHeader>
 
-          {/* Visual Risk Spectrum Meter */}
-          <RiskSpectrumBanner>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ color: '#16a34a' }}>●</span>
-              <span>Clinical Risk Spectrum:</span>
-            </div>
-            <div className="spectrum-bar">
-              <span style={{ color: '#22c55e' }}>🟢 Low Risk (Benign)</span>
-              <span>→</span>
-              <span style={{ color: '#f59e0b' }}>🟡 Medium Risk (Pre-Cancer)</span>
-              <span>→</span>
-              <span style={{ color: '#ef4444' }}>🔴 High Priority (Malignant)</span>
-            </div>
-          </RiskSpectrumBanner>
+          {/* Minimalist Filter Tabs */}
+          <FilterTabsContainer>
+            <FilterTabButton
+              $active={selectedFilter === 'all'}
+              onClick={() => setSelectedFilter('all')}
+            >
+              All Conditions (7)
+            </FilterTabButton>
+            <FilterTabButton
+              $active={selectedFilter === 'malignant'}
+              onClick={() => setSelectedFilter('malignant')}
+            >
+              <span style={{ color: '#ef4444' }}>●</span> Malignant (2)
+            </FilterTabButton>
+            <FilterTabButton
+              $active={selectedFilter === 'precancer'}
+              onClick={() => setSelectedFilter('precancer')}
+            >
+              <span style={{ color: '#f59e0b' }}>●</span> Pre-Cancerous (1)
+            </FilterTabButton>
+            <FilterTabButton
+              $active={selectedFilter === 'benign'}
+              onClick={() => setSelectedFilter('benign')}
+            >
+              <span style={{ color: '#22c55e' }}>●</span> Benign (4)
+            </FilterTabButton>
+          </FilterTabsContainer>
 
-          {/* 3 Risk Columns */}
-          <RiskColumnsGrid>
-            {/* Column 1: Malignant (High Risk) */}
-            <RiskTierColumn>
-              <RiskTierHeader $color="#ef4444">
-                <h3>
-                  <span>🔴</span> Malignant Cancers
-                </h3>
-                <span className="count">2 Diseases</span>
-              </RiskTierHeader>
-
-              {MALIGNANT_CONDITIONS.map((cond) => (
-                <DiseaseCompactCard key={cond.code} $color="#ef4444">
-                  <div className="card-top">
-                    <h4>{cond.name}</h4>
-                    <span className="code-badge">{cond.code.toUpperCase()}</span>
-                  </div>
+          {/* Sleek Minimalist Condition Rows (Zero Cards!) */}
+          <ConditionsList>
+            {filteredConditions.map((cond) => (
+              <ConditionListRow key={cond.code} $color={cond.riskColor}>
+                <div className="code-col">
+                  <span className="code-pill">{cond.code}</span>
+                </div>
+                <div className="desc-col">
+                  <h4>{cond.name}</h4>
                   <p>{cond.description}</p>
-                </DiseaseCompactCard>
-              ))}
-            </RiskTierColumn>
-
-            {/* Column 2: Pre-Cancerous (Medium Risk) */}
-            <RiskTierColumn>
-              <RiskTierHeader $color="#f59e0b">
-                <h3>
-                  <span>🟡</span> Pre-Cancerous
-                </h3>
-                <span className="count">1 Disease</span>
-              </RiskTierHeader>
-
-              {PRECANCER_CONDITIONS.map((cond) => (
-                <DiseaseCompactCard key={cond.code} $color="#f59e0b">
-                  <div className="card-top">
-                    <h4>{cond.name}</h4>
-                    <span className="code-badge">{cond.code.toUpperCase()}</span>
-                  </div>
-                  <p>{cond.description}</p>
-                </DiseaseCompactCard>
-              ))}
-            </RiskTierColumn>
-
-            {/* Column 3: Benign (Low Risk) */}
-            <RiskTierColumn>
-              <RiskTierHeader $color="#22c55e">
-                <h3>
-                  <span>🟢</span> Benign Conditions
-                </h3>
-                <span className="count">4 Diseases</span>
-              </RiskTierHeader>
-
-              {BENIGN_CONDITIONS.map((cond) => (
-                <DiseaseCompactCard key={cond.code} $color="#22c55e">
-                  <div className="card-top">
-                    <h4>{cond.name}</h4>
-                    <span className="code-badge">{cond.code.toUpperCase()}</span>
-                  </div>
-                  <p>{cond.description}</p>
-                </DiseaseCompactCard>
-              ))}
-            </RiskTierColumn>
-          </RiskColumnsGrid>
+                </div>
+                <div className="risk-col">
+                  <span className="risk-tag">{cond.riskText}</span>
+                </div>
+              </ConditionListRow>
+            ))}
+          </ConditionsList>
         </Container>
       </SectionWrapper>
 
