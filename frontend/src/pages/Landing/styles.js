@@ -114,7 +114,7 @@ export const HeroCtaRow = styled.div`
 export const HeroPillarsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: ${({ theme }) => theme.spacing[4]};
+  gap: ${({ theme }) => theme.spacing[6]};
   width: 100%;
   max-width: 1040px;
   margin-top: ${({ theme }) => theme.spacing[4]};
@@ -123,6 +123,7 @@ export const HeroPillarsGrid = styled.div`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: repeat(2, 1fr);
+    gap: ${({ theme }) => theme.spacing[4]};
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
@@ -134,24 +135,20 @@ export const HeroPillar = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing[3]};
-  padding: ${({ theme }) => `${theme.spacing[3.5]} ${theme.spacing[4]}`};
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#161616' : '#ffffff')};
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#262626' : '#e5e5e5')};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: ${({ theme }) => `${theme.spacing[2]} 0`};
+  background: transparent;
+  border: none;
   text-align: left;
 `;
 
 export const PillarIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.12)' : '#f0fdf4')};
   color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#16a34a')};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 1.35rem;
   flex-shrink: 0;
+  background: transparent;
 `;
 
 export const PillarText = styled.div`

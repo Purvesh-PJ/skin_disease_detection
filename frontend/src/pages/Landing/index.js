@@ -138,7 +138,7 @@ const Landing = ({ isAuthenticated }) => {
         </HeroBadge>
 
         <HeroTitle>
-          Automated Skin Lesion Classification via <span className="highlight">Ensemble Deep Learning</span>
+          Skin Disease Classification via <span className="highlight">Ensemble Deep Learning</span>
         </HeroTitle>
 
         <HeroSubtitle>
