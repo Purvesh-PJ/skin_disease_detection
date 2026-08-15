@@ -151,9 +151,17 @@ const transitions = {
   slow: '300ms ease',
 };
 
+// Font families (Poppins primary)
+const fontFamily = {
+  heading: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  body: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+};
+
 // Light Theme (Clean White Paper & Medical Green)
 export const lightTheme = {
   mode: 'light',
+  fontFamily,
   colors: {
     ...colors,
     background: {
@@ -249,6 +257,7 @@ export const lightTheme = {
 // Dark Theme (True Dark Gray / Charcoal - Zero Blue Tint)
 export const darkTheme = {
   mode: 'dark',
+  fontFamily,
   colors: {
     ...colors,
     background: {
