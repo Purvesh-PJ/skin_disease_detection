@@ -35,6 +35,65 @@ export const HeroGlow = styled.div`
   z-index: 0;
 `;
 
+export const HeroSplitLayout = styled.div`
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: ${({ theme }) => theme.spacing[8]};
+  align-items: center;
+  width: 100%;
+  max-width: 1240px;
+  position: relative;
+  z-index: 1;
+  margin-bottom: ${({ theme }) => theme.spacing[8]};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: ${({ theme }) => theme.spacing[8]};
+  }
+`;
+
+export const HeroContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    align-items: center;
+    text-align: center;
+  }
+`;
+
+export const HeroVisual = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+`;
+
+export const VisualCard = styled.div`
+  width: 100%;
+  max-width: 490px;
+  background: ${({ theme }) => (theme.mode === 'dark' ? '#141414' : '#ffffff')};
+  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.25)' : 'rgba(22, 163, 74, 0.2)')};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  padding: ${({ theme }) => theme.spacing[4]};
+  box-shadow: ${({ theme }) =>
+    theme.mode === 'dark'
+      ? '0 16px 36px rgba(0, 0, 0, 0.5), 0 0 24px rgba(34, 197, 94, 0.08)'
+      : '0 16px 36px rgba(0, 0, 0, 0.06), 0 0 24px rgba(22, 163, 74, 0.06)'};
+  position: relative;
+  overflow: hidden;
+
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+`;
+
 export const HeroBadge = styled.div`
   display: inline-flex;
   align-items: center;
@@ -46,7 +105,7 @@ export const HeroBadge = styled.div`
   color: ${({ theme }) => (theme.mode === 'dark' ? '#4ade80' : '#15803d')};
   font-size: 0.8125rem;
   font-weight: 600;
-  margin-bottom: ${({ theme }) => theme.spacing[6]};
+  margin-bottom: ${({ theme }) => theme.spacing[5]};
   box-shadow: ${({ theme }) => theme.shadows.sm};
   position: relative;
   z-index: 1;
@@ -54,12 +113,12 @@ export const HeroBadge = styled.div`
 
 export const HeroTitle = styled.h1`
   font-family: ${({ theme }) => theme.fontFamily?.heading || 'inherit'};
-  font-size: 3.5rem;
+  font-size: 3.15rem;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.03em;
-  max-width: 920px;
-  margin: 0 auto ${({ theme }) => theme.spacing[6]};
+  max-width: 680px;
+  margin: 0 0 ${({ theme }) => theme.spacing[4]};
   color: ${({ theme }) => theme.colors.text.primary};
   position: relative;
   z-index: 1;
@@ -69,7 +128,7 @@ export const HeroTitle = styled.h1`
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    font-size: 2.5rem;
+    font-size: 2.35rem;
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
@@ -78,27 +137,30 @@ export const HeroTitle = styled.h1`
 `;
 
 export const HeroSubtitle = styled.p`
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   line-height: 1.65;
   color: ${({ theme }) => theme.colors.text.secondary};
-  max-width: 740px;
-  margin: 0 auto ${({ theme }) => theme.spacing[8]};
+  max-width: 620px;
+  margin: 0 0 ${({ theme }) => theme.spacing[6]};
   position: relative;
   z-index: 1;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 `;
 
 export const HeroCtaRow = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: ${({ theme }) => theme.spacing[4]};
-  margin-bottom: ${({ theme }) => theme.spacing[10]};
+  margin-bottom: 0;
   position: relative;
   z-index: 1;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    justify-content: center;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
     flex-direction: column;
