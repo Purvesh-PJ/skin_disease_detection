@@ -358,28 +358,57 @@ const ImageUploadCard = ({
     e.preventDefault();
   };
 
+  // Helper to convert any image asset to a binary File object reliably
+  const urlToFile = async (url, filename) => {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.type && blob.type.startsWith('image/')) {
+          return new File([blob], filename, { type: blob.type });
+        }
+      }
+    } catch (e) {
+      console.warn('Direct fetch failed, falling back to Canvas:', e);
+    }
+
+    // Fallback: Use browser Canvas to render image element to JPEG blob
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || 600;
+        canvas.height = img.naturalHeight || 450;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(new File([blob], filename, { type: 'image/jpeg' }));
+          } else {
+            reject(new Error('Canvas blob generation failed'));
+          }
+        }, 'image/jpeg', 0.95);
+      };
+      img.onerror = () => reject(new Error('Failed to load sample image'));
+      img.src = url;
+    });
+  };
+
   // Convert sample image URL into a File object for the API
   const handleSelectSample = async (sample) => {
     if (loading || loadingSample) return;
     setLoadingSample(true);
     setActiveSample(sample);
+    setSelectedImage(sample.imagePath);
     setError(null);
     setPredictionResult(null);
 
     try {
-      const response = await fetch(sample.imagePath);
-      if (!response.ok) throw new Error(`Could not load sample image: ${response.statusText}`);
-      
-      const blob = await response.blob();
-      const file = new File([blob], sample.fileName, { type: blob.type || 'image/jpeg' });
-      
-      setSelectedImage(sample.imagePath);
+      const file = await urlToFile(sample.imagePath, sample.fileName);
       setImageFile(file);
     } catch (err) {
-      console.error('Failed to load sample image file:', err);
-      // Fallback: set preview at least
-      setSelectedImage(sample.imagePath);
-      setError(err);
+      console.error('Failed to prepare sample image file:', err);
     } finally {
       setLoadingSample(false);
     }
@@ -406,11 +435,13 @@ const ImageUploadCard = ({
         setPredictionResult(response.data);
       }
     } catch (err) {
+      console.error('Prediction API Error:', err);
       setError(err);
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleClear = () => {
     setSelectedImage(null);

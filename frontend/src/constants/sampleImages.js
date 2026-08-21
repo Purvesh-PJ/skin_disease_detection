@@ -1,6 +1,14 @@
+import sampleMel from '../assets/samples/sample_mel.jpg';
+import sampleNv from '../assets/samples/sample_nv.jpg';
+import sampleBcc from '../assets/samples/sample_bcc.jpg';
+import sampleBkl from '../assets/samples/sample_bkl.jpg';
+import sampleAkiec from '../assets/samples/sample_akiec.jpg';
+import sampleDf from '../assets/samples/sample_df.jpg';
+import sampleVasc from '../assets/samples/sample_vasc.jpg';
+
 /**
  * Curated sample dermoscopy images representing all 7 ISIC/HAM10000 disease classes.
- * Located in /public/samples/ for fast client-side loading on deployed environments like Vercel.
+ * Imported directly so Webpack bundles them safely without relying on static URL rewrites.
  */
 export const SAMPLE_IMAGES = [
   {
@@ -13,7 +21,7 @@ export const SAMPLE_IMAGES = [
     riskLevel: 'High Risk',
     badgeVariant: 'danger',
     fileName: 'sample_mel.jpg',
-    imagePath: `${process.env.PUBLIC_URL || ''}/samples/sample_mel.jpg`,
+    imagePath: sampleMel,
     description: 'Aggressive malignant skin tumor with atypical pigment network.',
   },
   {
@@ -26,7 +34,7 @@ export const SAMPLE_IMAGES = [
     riskLevel: 'Low Risk',
     badgeVariant: 'success',
     fileName: 'sample_nv.jpg',
-    imagePath: `${process.env.PUBLIC_URL || ''}/samples/sample_nv.jpg`,
+    imagePath: sampleNv,
     description: 'Common benign melanocytic proliferation (ordinary mole).',
   },
   {
@@ -39,7 +47,7 @@ export const SAMPLE_IMAGES = [
     riskLevel: 'High Risk',
     badgeVariant: 'danger',
     fileName: 'sample_bcc.jpg',
-    imagePath: `${process.env.PUBLIC_URL || ''}/samples/sample_bcc.jpg`,
+    imagePath: sampleBcc,
     description: 'Most common non-melanoma skin cancer with telangiectasias.',
   },
   {
@@ -52,7 +60,7 @@ export const SAMPLE_IMAGES = [
     riskLevel: 'Low Risk',
     badgeVariant: 'success',
     fileName: 'sample_bkl.jpg',
-    imagePath: `${process.env.PUBLIC_URL || ''}/samples/sample_bkl.jpg`,
+    imagePath: sampleBkl,
     description: 'Seborrheic keratosis / solar lentigo with pseudonetwork.',
   },
   {
@@ -65,7 +73,7 @@ export const SAMPLE_IMAGES = [
     riskLevel: 'Medium Risk',
     badgeVariant: 'warning',
     fileName: 'sample_akiec.jpg',
-    imagePath: `${process.env.PUBLIC_URL || ''}/samples/sample_akiec.jpg`,
+    imagePath: sampleAkiec,
     description: 'Pre-malignant sun-induced intraepithelial carcinoma.',
   },
   {
@@ -78,7 +86,7 @@ export const SAMPLE_IMAGES = [
     riskLevel: 'Low Risk',
     badgeVariant: 'success',
     fileName: 'sample_df.jpg',
-    imagePath: `${process.env.PUBLIC_URL || ''}/samples/sample_df.jpg`,
+    imagePath: sampleDf,
     description: 'Benign cutaneous fibrous histiocytoma with central white patch.',
   },
   {
@@ -91,7 +99,8 @@ export const SAMPLE_IMAGES = [
     riskLevel: 'Low Risk',
     badgeVariant: 'success',
     fileName: 'sample_vasc.jpg',
-    imagePath: `${process.env.PUBLIC_URL || ''}/samples/sample_vasc.jpg`,
+    imagePath: sampleVasc,
     description: 'Benign vascular proliferation (cherry angioma / angiokeratoma).',
   },
 ];
+

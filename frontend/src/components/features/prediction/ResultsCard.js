@@ -277,8 +277,12 @@ const ResultsCard = ({ predictionResult, loading, error }) => {
           </StateIcon>
           <ErrorTitle>Analysis Failed</ErrorTitle>
           <ErrorSubText>
-            {error.response?.data?.message || 'Unable to process image. Please verify input and try again.'}
+            {error.response?.data?.error || 
+             error.response?.data?.message || 
+             error.message || 
+             'Unable to process image. Please verify backend connectivity and try again.'}
           </ErrorSubText>
+
         </EmptyState>
       </Card>
     );
