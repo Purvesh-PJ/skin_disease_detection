@@ -20,3 +20,6 @@ export const API_ENDPOINTS = {
   },
   PREDICT: '/predict',
 };
+
+export * from './sampleImages';
+
