@@ -28,9 +28,15 @@ def login():
         return jsonify({"error": "Email and password are required"}), 400
 
     email = data["email"].strip().lower()
+    password = data["password"]
+
+    # Auto-seed demo account if demo credentials are used
+    if email in ("demo@skindisease.ai", "recruiter.demo@skindisease.ai"):
+        seed_demo_user()
+
     user = find_user_by_email(email)
     
-    if user and bcrypt.check_password_hash(user["password"], data["password"]):
+    if user and bcrypt.check_password_hash(user["password"], password):
         access_token = create_access_token(identity=user["email"])
         return jsonify({
             "token": access_token,
@@ -39,6 +45,7 @@ def login():
         }), 200
 
     return jsonify({"error": "Invalid credentials. Please check your email/password."}), 401
+
 
 
 @auth_router.route('/demo-login', methods=['POST'])

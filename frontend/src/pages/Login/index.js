@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiZap, FiArrowRight } from 'react-icons/fi';
+import { FiZap, FiKey, FiCheck } from 'react-icons/fi';
 import { useAuth } from '../../hooks';
 import { ROUTES } from '../../constants';
 import { Button, Alert, Spinner } from '../../components/common/ui';
@@ -14,16 +14,20 @@ import {
   Divider,
   DemoCard,
   DemoHeader,
-  DemoDesc,
-  DemoButton,
+  CredentialRow,
+  AutoFillButton,
   OrDivider,
 } from './styles';
 
+const DEMO_EMAIL = 'demo@skindisease.ai';
+const DEMO_PASSWORD = 'DemoUser@123';
+
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [demoLoading, setDemoLoading] = useState(false);
-  const { login, demoLogin, loading, error, clearError } = useAuth();
+  // Pre-fill demo credentials by default for zero-friction evaluator experience
+  const [email, setEmail] = useState(DEMO_EMAIL);
+  const [password, setPassword] = useState(DEMO_PASSWORD);
+  const [filledNotice, setFilledNotice] = useState(false);
+  const { login, loading, error, clearError } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -41,17 +45,12 @@ const Login = () => {
     }
   };
 
-  const handleDemoSignIn = async () => {
-    setDemoLoading(true);
+  const handleAutoFill = () => {
+    setEmail(DEMO_EMAIL);
+    setPassword(DEMO_PASSWORD);
     if (error) clearError();
-    try {
-      await demoLogin();
-      navigate(ROUTES.DASHBOARD);
-    } catch (err) {
-      console.error("Demo login error:", err);
-    } finally {
-      setDemoLoading(false);
-    }
+    setFilledNotice(true);
+    setTimeout(() => setFilledNotice(false), 2000);
   };
 
   const handleInputChange = (setter) => (e) => {
@@ -62,42 +61,50 @@ const Login = () => {
   return (
     <AuthLayout>
       <FormHeader>
-        <H2>Welcome Back</H2>
+        <H2>Sign In to Predictor</H2>
         <Text variant="secondary" size="sm">
-          Sign in to analyze skin lesion diagnostics & persist records to MongoDB
+          Access dermoscopic AI diagnostics & MongoDB scan history
         </Text>
       </FormHeader>
 
-      {/* 1-Click Recruiter / Demo Access Box */}
+      {/* Pre-filled Test Account Card */}
       <DemoCard>
         <DemoHeader>
           <h4>
             <FiZap color="#16a34a" size={16} />
-            Recruiter / Evaluator Fast Access
+            Evaluator / Recruiter Test Account
           </h4>
-          <span className="badge">Instant</span>
+          <span className="badge">Pre-configured</span>
         </DemoHeader>
-        <DemoDesc>
-          No account creation needed. Click below to instantly log in as a verified evaluator with live MongoDB storage.
-        </DemoDesc>
-        <DemoButton
-          type="button"
-          onClick={handleDemoSignIn}
-          disabled={demoLoading || loading}
-        >
-          {demoLoading ? (
-            <Spinner size="sm" color="white" />
+
+        <CredentialRow>
+          <div className="item">
+            <span className="label">Demo Email:</span>
+            <code>{DEMO_EMAIL}</code>
+          </div>
+          <div className="item">
+            <span className="label">Password:</span>
+            <code>{DEMO_PASSWORD}</code>
+          </div>
+        </CredentialRow>
+
+        <AutoFillButton type="button" onClick={handleAutoFill}>
+          {filledNotice ? (
+            <>
+              <FiCheck size={14} color="#16a34a" />
+              <span>Credentials Loaded in Form!</span>
+            </>
           ) : (
             <>
-              <span>⚡ 1-Click Demo Sign In</span>
-              <FiArrowRight size={16} />
+              <FiKey size={14} />
+              <span>Auto-Fill Demo Credentials</span>
             </>
           )}
-        </DemoButton>
+        </AutoFillButton>
       </DemoCard>
 
       <OrDivider>
-        <span>Or Sign In With Email</span>
+        <span>Account Credentials</span>
       </OrDivider>
 
       <Form onSubmit={handleSubmit}>
@@ -120,14 +127,20 @@ const Login = () => {
 
         {error && <Alert variant="error">{error}</Alert>}
 
-        <Button type="submit" disabled={loading || demoLoading} fullWidth size="lg">
-          {loading ? <Spinner size="sm" color="white" /> : 'Sign In'}
+        <Button type="submit" disabled={loading} fullWidth size="lg">
+          {loading ? (
+            <Spinner size="sm" color="white" />
+          ) : email === DEMO_EMAIL ? (
+            'Sign In as Demo Evaluator'
+          ) : (
+            'Sign In'
+          )}
         </Button>
 
         <Divider />
 
         <LinkText>
-          Don't have an account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
+          Want to create a personal account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
         </LinkText>
       </Form>
     </AuthLayout>
@@ -135,4 +148,5 @@ const Login = () => {
 };
 
 export default Login;
+
 

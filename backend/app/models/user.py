@@ -93,21 +93,21 @@ def update_user_settings(email, new_settings):
     return find_user_by_email(email)
 
 def seed_demo_user():
-    """Ensures a pre-configured Recruiter Demo Account exists in MongoDB."""
-    demo_email = "recruiter.demo@skindisease.ai"
+    """Ensures a pre-configured Demo Account exists in MongoDB."""
+    demo_email = "demo@skindisease.ai"
     user = find_user_by_email(demo_email)
     
+    hashed_password = bcrypt.generate_password_hash("DemoUser@123").decode('utf-8')
     if not user:
-        hashed_password = bcrypt.generate_password_hash("DemoRecruiter@2026").decode('utf-8')
         demo_user = {
-            "username": "Recruiter Guest",
+            "username": "Demo Evaluator",
             "email": demo_email,
             "password": hashed_password,
             "roles": ["demo", "user"],
             "settings": {
-                "full_name": "Tech Recruiter (Demo)",
-                "role_title": "Senior AI/ML Technical Recruiter",
-                "specialization": "Clinical AI Project Evaluation",
+                "full_name": "Demo Evaluator (Recruiter)",
+                "role_title": "AI Clinical Evaluator / Recruiter",
+                "specialization": "Dermoscopy & Clinical AI",
                 "theme": "dark",
                 "email_notifications": True
             },
@@ -115,5 +115,12 @@ def seed_demo_user():
         }
         users_collection.insert_one(demo_user)
         return demo_user
-    return user
+    else:
+        # Ensure password hash is up to date
+        users_collection.update_one(
+            {"email": demo_email},
+            {"$set": {"password": hashed_password}}
+        )
+        return find_user_by_email(demo_email)
+
 

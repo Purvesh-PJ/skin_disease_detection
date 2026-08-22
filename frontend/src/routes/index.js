@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ROUTES } from '../constants';
+import ProtectedRoute from './ProtectedRoute';
 
 // Pages
 import { Landing, Login, Signup, Dashboard, NotFound } from '../pages';
@@ -21,11 +22,16 @@ const AppRoutes = ({ isAuthenticated }) => {
       />
       <Route 
         path={ROUTES.DASHBOARD} 
-        element={<Dashboard />} 
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } 
       />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
+
 
 export default AppRoutes;

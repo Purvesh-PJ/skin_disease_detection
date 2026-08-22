@@ -52,7 +52,7 @@ export const DemoCard = styled.div`
   padding: ${({ theme }) => theme.spacing[4]};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[2]};
+  gap: ${({ theme }) => theme.spacing[2.5]};
   box-shadow: 0 4px 16px rgba(22, 163, 74, 0.15);
   margin-bottom: ${({ theme }) => theme.spacing[2]};
 `;
@@ -82,6 +82,62 @@ export const DemoHeader = styled.div`
     color: #ffffff;
     padding: 2px 8px;
     border-radius: 9999px;
+  }
+`;
+
+export const CredentialRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: ${({ theme }) => 
+    theme.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.6)'};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.colors.text.secondary};
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    span.label {
+      font-weight: 600;
+      color: ${({ theme }) => theme.colors.text.tertiary};
+    }
+
+    code {
+      font-family: monospace;
+      font-weight: 700;
+      color: ${({ theme }) => theme.colors.text.primary};
+      background: ${({ theme }) => theme.colors.background.tertiary};
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+  }
+`;
+
+export const AutoFillButton = styled.button`
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border: 1px solid ${({ theme }) => theme.colors.primary[500]};
+  background: ${({ theme }) => theme.colors.background.primary};
+  color: ${({ theme }) => theme.colors.primary[600] || '#16a34a'};
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary[600]};
+    color: #ffffff;
   }
 `;
 
@@ -147,4 +203,3 @@ export const OrDivider = styled.div`
     padding: 0 ${({ theme }) => theme.spacing[3]};
   }
 `;
-
