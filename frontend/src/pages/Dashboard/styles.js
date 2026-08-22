@@ -4,8 +4,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: ${({ theme }) =>
-    theme.mode === 'dark' ? '#0d1117' : '#f8fafc'};
+  background-color: ${({ theme }) => theme.colors.background.primary};
   color: ${({ theme }) => theme.colors.text.primary};
   overflow: hidden;
 
@@ -14,6 +13,7 @@ export const Container = styled.div`
     overflow-y: auto;
   }
 `;
+
 
 export const Main = styled.main`
   flex: 1;

@@ -9,25 +9,28 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[3]};
+  gap: ${({ theme }) => theme.spacing[3.5]};
   height: 100%;
 `;
 
 const DropZone = styled.div`
   width: 100%;
-  height: 220px;
-  min-height: 200px;
-  max-height: 240px;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
+  min-height: 250px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1.5px dashed ${({ theme, $hasImage }) => 
-    $hasImage ? theme.colors.status.success.border : theme.colors.border.default};
+  border: 2px dashed ${({ theme, $hasImage }) => 
+    $hasImage ? theme.colors.primary[500] : theme.colors.border.default};
   border-radius: ${({ theme }) => theme.borderRadius.xl};
   background-color: ${({ theme, $hasImage }) => 
-    $hasImage ? theme.colors.status.success.bg : theme.colors.background.secondary};
-  padding: ${({ theme }) => theme.spacing[3]};
+    $hasImage
+      ? (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.08)' : 'rgba(240, 253, 244, 0.9)')
+      : theme.colors.background.secondary};
+  padding: ${({ theme }) => theme.spacing[4]};
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.normal};
   position: relative;
@@ -35,38 +38,41 @@ const DropZone = styled.div`
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary[500]};
+    background-color: ${({ theme, $hasImage }) => 
+      !$hasImage && (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.05)' : 'rgba(240, 253, 244, 0.5)')};
   }
 `;
 
 const ImagePreview = styled.img`
-  max-width: 100%;
-  max-height: 190px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
 `;
 
 const SampleBadge = styled.div`
   position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(0, 0, 0, 0.75);
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(6px);
   color: #ffffff;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 9999px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 `;
 
 const UploadPrompt = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   color: ${({ theme }) => theme.colors.text.secondary};
   text-align: center;
 
@@ -75,7 +81,7 @@ const UploadPrompt = styled.div`
   }
 
   p.primary-text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
     margin: 0;
     color: ${({ theme }) => theme.colors.text.primary};
@@ -86,7 +92,7 @@ const UploadPrompt = styled.div`
   }
 
   span.secondary-text {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     color: ${({ theme }) => theme.colors.text.tertiary};
   }
 `;
@@ -99,31 +105,34 @@ const SampleBar = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-width: 380px;
+  margin: 0 auto;
+  width: 100%;
 `;
 
 const SampleBarHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text.secondary};
 
   .label-group {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
   }
 `;
 
 const SampleScrollRow = styled.div`
   display: flex;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding: 4px 2px 8px 2px;
 
   &::-webkit-scrollbar {
-    height: 4px;
+    height: 5px;
   }
   &::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.colors.border.default};
@@ -133,41 +142,50 @@ const SampleScrollRow = styled.div`
 
 const SampleChip = styled.button`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
+  gap: 4px;
+  padding: 5px 6px;
+  min-width: 62px;
   border-radius: ${({ theme }) => theme.borderRadius.lg};
-  border: 1px solid ${({ $active, theme }) =>
-    $active ? theme.colors.primary[500] : theme.colors.border.light};
+  border: 1.5px solid ${({ $active, theme }) =>
+    $active ? theme.colors.primary[500] : theme.colors.border.default};
   background: ${({ $active, theme }) =>
-    $active ? theme.colors.status.success.bg : theme.colors.background.secondary};
+    $active
+      ? (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(220, 252, 231, 0.8)')
+      : theme.colors.background.secondary};
   color: ${({ theme }) => theme.colors.text.primary};
   cursor: pointer;
-  white-space: nowrap;
   flex-shrink: 0;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 
   img {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
     object-fit: cover;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   }
 
   span.code {
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     font-weight: 700;
   }
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary[400]};
+    transform: translateY(-2px);
   }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 8px;
+  max-width: 380px;
+  margin: 0 auto;
+  width: 100%;
 `;
+
 
 const ImageUploadCard = ({
   selectedImage,
