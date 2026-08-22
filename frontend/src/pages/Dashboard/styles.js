@@ -53,9 +53,46 @@ export const RightPanel = styled(Panel)`
 `;
 
 export const PanelHeader = styled.div`
-  padding: ${({ theme }) => `${theme.spacing[4]} ${theme.spacing[6]}`};
+  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[6]}`};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
   background-color: ${({ theme }) => theme.colors.background.primary};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
+export const TabGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: ${({ theme }) => theme.colors.background.tertiary};
+  padding: 4px;
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
+`;
+
+export const TabButton = styled.button`
+  background: ${({ $active, theme }) => 
+    $active ? theme.colors.background.primary : 'transparent'};
+  color: ${({ $active, theme }) => 
+    $active ? theme.colors.primary[600] || '#16a34a' : theme.colors.text.secondary};
+  border: none;
+  padding: 6px 12px;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: ${({ $active }) => ($active ? '0 1px 4px rgba(0,0,0,0.1)' : 'none')};
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.text.primary};
+  }
 `;
 
 export const PanelTitle = styled.div`
@@ -82,3 +119,4 @@ export const PanelContent = styled.div`
   display: flex;
   flex-direction: column;
 `;
+

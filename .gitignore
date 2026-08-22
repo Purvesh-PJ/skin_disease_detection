@@ -7,8 +7,11 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .env
+.env.*
+*.env
+env.*
 
 # Node
 node_modules/
 .npm
-*.log
+*.log

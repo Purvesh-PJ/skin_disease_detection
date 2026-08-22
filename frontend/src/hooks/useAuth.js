@@ -21,6 +21,22 @@ const useAuth = () => {
     }
   }, []);
 
+  const demoLogin = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await authService.demoLogin();
+      return response;
+    } catch (err) {
+      const message = err.response?.data?.error || 'Demo login failed';
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const register = useCallback(async (userData) => {
     setLoading(true);
     setError(null);
@@ -30,6 +46,21 @@ const useAuth = () => {
       return response;
     } catch (err) {
       const message = err.response?.data?.error || 'Registration failed';
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const updateProfile = useCallback(async (settingsData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await authService.updateProfile(settingsData);
+      return response;
+    } catch (err) {
+      const message = err.response?.data?.error || 'Failed to update profile settings';
       setError(message);
       throw new Error(message);
     } finally {
@@ -47,7 +78,9 @@ const useAuth = () => {
 
   return {
     login,
+    demoLogin,
     register,
+    updateProfile,
     logout,
     loading,
     error,
@@ -58,3 +91,4 @@ const useAuth = () => {
 };
 
 export default useAuth;
+

@@ -14,8 +14,26 @@ export const authService = {
     return response.data;
   },
 
+  async demoLogin() {
+    const response = await axiosInstance.post(API_ENDPOINTS.AUTH.DEMO_LOGIN);
+    
+    if (response.data?.token) {
+      localStorage.setItem(STORAGE_KEYS.TOKEN, response.data.token);
+      if (response.data.user) {
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+      }
+    }
+    return response.data;
+  },
+
   async register(userData) {
     const response = await axiosInstance.post(API_ENDPOINTS.AUTH.REGISTER, userData);
+    if (response.data?.token) {
+      localStorage.setItem(STORAGE_KEYS.TOKEN, response.data.token);
+      if (response.data.user) {
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+      }
+    }
     return response.data;
   },
 
@@ -24,6 +42,22 @@ export const authService = {
     if (!token) throw new Error('No token found');
 
     const response = await axiosInstance.get(API_ENDPOINTS.AUTH.VERIFY);
+    if (response.data?.user) {
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
+
+  async getProfile() {
+    const response = await axiosInstance.get(API_ENDPOINTS.AUTH.PROFILE);
+    if (response.data?.user) {
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+    }
+    return response.data?.user;
+  },
+
+  async updateProfile(settingsData) {
+    const response = await axiosInstance.put(API_ENDPOINTS.AUTH.PROFILE, settingsData);
     if (response.data?.user) {
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
     }
@@ -51,3 +85,4 @@ export const authService = {
 };
 
 export default authService;
+

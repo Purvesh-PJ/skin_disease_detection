@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { FiUploadCloud, FiActivity } from 'react-icons/fi';
+import { FiUploadCloud, FiActivity, FiDatabase } from 'react-icons/fi';
 import { Header } from '../../components/layout';
 import { ImageUploadCard, ResultsCard } from '../../components/features/prediction';
+import HistoryList from '../../components/features/history/HistoryList';
 import {
   Container,
   Main,
@@ -10,6 +11,8 @@ import {
   PanelHeader,
   PanelTitle,
   PanelContent,
+  TabGroup,
+  TabButton,
 } from './styles';
 
 const Dashboard = () => {
@@ -18,17 +21,30 @@ const Dashboard = () => {
   const [predictionResult, setPredictionResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('analysis');
+  const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
+  const [userUpdateKey, setUserUpdateKey] = useState(0);
+
+  const handlePredictionSuccess = (result) => {
+    setPredictionResult(result);
+    setActiveTab('analysis');
+    setHistoryRefreshKey((prev) => prev + 1);
+  };
+
+  const handleUserUpdated = () => {
+    setUserUpdateKey((prev) => prev + 1);
+  };
 
   return (
-    <Container>
-      <Header />
+    <Container key={userUpdateKey}>
+      <Header onUserUpdated={handleUserUpdated} />
 
       <Main>
         <LeftPanel>
           <PanelHeader>
             <PanelTitle>
               <FiUploadCloud size={18} />
-              <h3>Upload Image</h3>
+              <h3>Dermoscopy Image Input</h3>
             </PanelTitle>
           </PanelHeader>
           <PanelContent>
@@ -37,7 +53,7 @@ const Dashboard = () => {
               setSelectedImage={setSelectedImage}
               imageFile={imageFile}
               setImageFile={setImageFile}
-              setPredictionResult={setPredictionResult}
+              setPredictionResult={handlePredictionSuccess}
               loading={loading}
               setLoading={setLoading}
               setError={setError}
@@ -48,16 +64,48 @@ const Dashboard = () => {
         <RightPanel>
           <PanelHeader>
             <PanelTitle>
-              <FiActivity size={18} />
-              <h3>Analysis Results</h3>
+              {activeTab === 'analysis' ? (
+                <>
+                  <FiActivity size={18} />
+                  <h3>Diagnostic Analysis</h3>
+                </>
+              ) : (
+                <>
+                  <FiDatabase size={18} color="#16a34a" />
+                  <h3>MongoDB Saved Scans</h3>
+                </>
+              )}
             </PanelTitle>
+
+            <TabGroup>
+              <TabButton
+                $active={activeTab === 'analysis'}
+                onClick={() => setActiveTab('analysis')}
+                type="button"
+              >
+                <FiActivity size={14} />
+                Live Analysis
+              </TabButton>
+              <TabButton
+                $active={activeTab === 'history'}
+                onClick={() => setActiveTab('history')}
+                type="button"
+              >
+                <FiDatabase size={14} />
+                Scan History
+              </TabButton>
+            </TabGroup>
           </PanelHeader>
           <PanelContent>
-            <ResultsCard
-              predictionResult={predictionResult}
-              loading={loading}
-              error={error}
-            />
+            {activeTab === 'analysis' ? (
+              <ResultsCard
+                predictionResult={predictionResult}
+                loading={loading}
+                error={error}
+              />
+            ) : (
+              <HistoryList refreshTrigger={historyRefreshKey} />
+            )}
           </PanelContent>
         </RightPanel>
       </Main>
@@ -66,3 +114,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

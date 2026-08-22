@@ -169,10 +169,18 @@ const Landing = ({ isAuthenticated }) => {
                   <FiArrowRight size={16} />
                 </Link>
               </Button>
-              <Button asChild variant="secondary" size="lg">
+              {!isAuthenticated && (
+                <Button asChild variant="secondary" size="lg">
+                  <Link to={ROUTES.LOGIN}>
+                    ⚡ 1-Click Demo Login
+                  </Link>
+                </Button>
+              )}
+              <Button asChild variant="ghost" size="lg">
                 <a href="#how-it-works">How It Works</a>
               </Button>
             </HeroCtaRow>
+
           </HeroContent>
 
           {/* Right Column: Disease + AI Dermoscopy Scanner Visual SVG */}

@@ -15,11 +15,19 @@ export const STORAGE_KEYS = {
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
+    DEMO_LOGIN: '/auth/demo-login',
     REGISTER: '/auth/register',
     VERIFY: '/auth/verify-token',
+    PROFILE: '/auth/profile',
   },
   PREDICT: '/predict',
+  HISTORY: {
+    GET_ALL: '/history',
+    DELETE: '/history',
+    CLEAR: '/history/clear',
+  },
 };
 
 export * from './sampleImages';
+
 
