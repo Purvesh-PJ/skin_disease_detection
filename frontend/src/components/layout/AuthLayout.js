@@ -3,34 +3,24 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { ThemeToggle } from '../common/ui';
 import { ROUTES } from '../../constants';
-import { FiActivity, FiLayers, FiDatabase, FiShield, FiCheckCircle } from 'react-icons/fi';
+import { FiActivity } from 'react-icons/fi';
 
 const PageWrapper = styled.div`
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) =>
-    theme.mode === 'dark'
-      ? 'radial-gradient(ellipse at top left, rgba(22, 163, 74, 0.12), transparent 50%), radial-gradient(ellipse at bottom right, rgba(14, 165, 233, 0.08), transparent 50%), #0d1117'
-      : 'radial-gradient(ellipse at top left, rgba(220, 252, 231, 0.6), transparent 50%), radial-gradient(ellipse at bottom right, rgba(224, 242, 254, 0.5), transparent 50%), #f8fafc'};
+  background-color: ${({ theme }) => theme.colors.background.primary};
   color: ${({ theme }) => theme.colors.text.primary};
-  overflow-x: hidden;
+  overflow: hidden;
 `;
 
 const AuthHeader = styled.header`
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background-color: ${({ theme }) =>
-    theme.mode === 'dark' ? 'rgba(13, 17, 23, 0.85)' : 'rgba(248, 250, 252, 0.85)'};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[8]}`};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[4]}`};
@@ -45,20 +35,19 @@ const Brand = styled(Link)`
 `;
 
 const BrandIcon = styled.div`
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   background: ${({ theme }) => theme.colors.primary[600]};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 2px 10px rgba(22, 163, 74, 0.3);
 `;
 
 const BrandTitle = styled.span`
   font-family: ${({ theme }) => theme.fontFamily?.heading || 'inherit'};
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text.primary};
   letter-spacing: -0.02em;
@@ -66,113 +55,62 @@ const BrandTitle = styled.span`
 
 const SplitLayout = styled.main`
   flex: 1;
-  max-width: 1360px;
+  max-width: 1100px;
   width: 100%;
   margin: 0 auto;
-  padding: ${({ theme }) => `${theme.spacing[4]} ${theme.spacing[8]}`};
+  padding: ${({ theme }) => `${theme.spacing[4]} ${theme.spacing[6]}`};
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: ${({ theme }) => theme.spacing[8]};
+  overflow: hidden;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing[6]};
-    padding: ${({ theme }) => `${theme.spacing[4]} ${theme.spacing[4]}`};
+    gap: ${({ theme }) => theme.spacing[4]};
+    overflow-y: auto;
   }
 `;
 
-const ShowcasePanel = styled.div`
+const IllustrationSide = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[4]};
+  align-items: center;
+  text-align: center;
+  gap: ${({ theme }) => theme.spacing[3]};
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     display: none;
   }
 `;
 
-const BadgePill = styled.div`
-  display: inline-flex;
+const SvgGraphic = styled.div`
+  width: 220px;
+  height: 220px;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  background: ${({ theme }) =>
-    theme.mode === 'dark' ? 'rgba(22, 163, 74, 0.15)' : 'rgba(220, 252, 231, 0.9)'};
-  color: ${({ theme }) => theme.colors.primary[600]};
-  border: 1px solid ${({ theme }) => theme.colors.primary[500]};
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  width: fit-content;
+  justify-content: center;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
-const ShowcaseTitle = styled.h1`
-  font-size: 2.25rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
+const IllustrationTitle = styled.h2`
+  font-size: 1.4rem;
+  font-weight: 700;
   margin: 0;
   color: ${({ theme }) => theme.colors.text.primary};
-
-  span.highlight {
-    background: linear-gradient(135deg, #16a34a 0%, #059669 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+  letter-spacing: -0.02em;
 `;
 
-const ShowcaseDesc = styled.p`
-  font-size: 0.95rem;
-  line-height: 1.6;
+const IllustrationSubtitle = styled.p`
+  font-size: 0.88rem;
   color: ${({ theme }) => theme.colors.text.secondary};
   margin: 0;
-  max-width: 540px;
-`;
-
-const FeaturesGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.spacing[3]};
-  margin-top: ${({ theme }) => theme.spacing[1]};
-`;
-
-const FeatureCard = styled.div`
-  background: ${({ theme }) =>
-    theme.mode === 'dark' ? 'rgba(22, 27, 34, 0.7)' : 'rgba(255, 255, 255, 0.8)'};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  backdrop-filter: blur(10px);
-  transition: all ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary[500]};
-    transform: translateY(-2px);
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: ${({ theme }) => theme.colors.text.primary};
-
-    svg {
-      color: ${({ theme }) => theme.colors.primary[500]};
-    }
-  }
-
-  .desc {
-    font-size: 0.78rem;
-    color: ${({ theme }) => theme.colors.text.secondary};
-    line-height: 1.4;
-  }
+  max-width: 360px;
+  line-height: 1.5;
 `;
 
 const FormColumn = styled.div`
@@ -181,24 +119,12 @@ const FormColumn = styled.div`
   width: 100%;
 `;
 
-const AuthCard = styled.div`
+const FormBox = styled.div`
   width: 100%;
-  max-width: 460px;
-  background: ${({ theme }) =>
-    theme.mode === 'dark' ? 'rgba(22, 27, 34, 0.92)' : 'rgba(255, 255, 255, 0.95)'};
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  padding: ${({ theme }) => `${theme.spacing[6]} ${theme.spacing[6]}`};
+  max-width: 380px;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[3]};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
-    padding: ${({ theme }) => `${theme.spacing[5]} ${theme.spacing[4]}`};
-  }
 `;
 
 export const AuthLayout = ({ children }) => {
@@ -211,7 +137,7 @@ export const AuthLayout = ({ children }) => {
           </BrandIcon>
           <BrandTitle>Skin Disease AI</BrandTitle>
         </Brand>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <Link
             to={ROUTES.HOME}
             style={{
@@ -222,74 +148,35 @@ export const AuthLayout = ({ children }) => {
               opacity: 0.8,
             }}
           >
-            ← Back to Home
+            ← Home
           </Link>
           <ThemeToggle />
         </div>
       </AuthHeader>
 
       <SplitLayout>
-        {/* Left Side: Medical AI Tech Highlights */}
-        <ShowcasePanel>
-          <BadgePill>
-            <FiShield size={13} />
-            Clinical AI Research • HAM10000 Benchmarks
-          </BadgePill>
+        {/* Left Side: Clean Flat Graphic & Simple Intro */}
+        <IllustrationSide>
+          <SvgGraphic>
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="100" cy="100" r="85" fill="#16a34a" fillOpacity="0.08" stroke="#16a34a" strokeWidth="2" strokeDasharray="4 4" />
+              <rect x="50" y="55" width="100" height="90" rx="16" fill="#16a34a" fillOpacity="0.15" stroke="#16a34a" strokeWidth="2" />
+              <circle cx="100" cy="100" r="28" fill="#16a34a" fillOpacity="0.25" />
+              <circle cx="100" cy="100" r="14" fill="#16a34a" />
+              <path d="M70 100H86M114 100H130M100 70V86M100 114V130" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M60 40L75 55M140 40L125 55M60 160L75 145M140 160L125 145" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </SvgGraphic>
 
-          <ShowcaseTitle>
-            Dermoscopic Lesion Classification with <span className="highlight">Ensemble Deep Learning</span>
-          </ShowcaseTitle>
+          <IllustrationTitle>Skin Lesion AI Classifier</IllustrationTitle>
+          <IllustrationSubtitle>
+            Fast, non-invasive dermoscopic screening powered by ensemble neural networks.
+          </IllustrationSubtitle>
+        </IllustrationSide>
 
-          <ShowcaseDesc>
-            Integrated AI diagnostic system trained on 10,015 dermatoscopy images across 7 clinical skin disease categories, utilizing ResNet101, DenseNet121, and EfficientNetB3 with live MongoDB persistence.
-          </ShowcaseDesc>
-
-          <FeaturesGrid>
-            <FeatureCard>
-              <div className="header">
-                <FiLayers size={16} />
-                <span>3-Model Stacking</span>
-              </div>
-              <span className="desc">
-                Ensemble consensus combining deep feature extractors with a meta-classifier.
-              </span>
-            </FeatureCard>
-
-            <FeatureCard>
-              <div className="header">
-                <FiDatabase size={16} />
-                <span>MongoDB Atlas Sync</span>
-              </div>
-              <span className="desc">
-                Instant persistence for prediction logs, confidence scores, and evaluator settings.
-              </span>
-            </FeatureCard>
-
-            <FeatureCard>
-              <div className="header">
-                <FiCheckCircle size={16} />
-                <span>7 Diagnostic Classes</span>
-              </div>
-              <span className="desc">
-                Screening for Melanoma, Basal Cell Carcinoma, Actinic Keratoses, and Benign Nevi.
-              </span>
-            </FeatureCard>
-
-            <FeatureCard>
-              <div className="header">
-                <FiShield size={16} />
-                <span>Pre-filled Evaluator</span>
-              </div>
-              <span className="desc">
-                Instant test account access for zero-friction recruiter and peer evaluation.
-              </span>
-            </FeatureCard>
-          </FeaturesGrid>
-        </ShowcasePanel>
-
-        {/* Right Side: Clean Form Container */}
+        {/* Right Side: Clean Flat Form */}
         <FormColumn>
-          <AuthCard>{children}</AuthCard>
+          <FormBox>{children}</FormBox>
         </FormColumn>
       </SplitLayout>
     </PageWrapper>
@@ -297,4 +184,5 @@ export const AuthLayout = ({ children }) => {
 };
 
 export default AuthLayout;
+
 

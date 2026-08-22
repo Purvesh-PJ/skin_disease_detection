@@ -1,24 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { FiUploadCloud, FiZap, FiCheck } from 'react-icons/fi';
+import { FiUploadCloud, FiCheck } from 'react-icons/fi';
 import { Spinner, Button } from '../../common/ui';
 import { usePrediction } from '../../../hooks';
-import { SAMPLE_IMAGES } from '../../../constants';
 
 const Container = styled.div`
   width: 100%;
+  max-width: 460px;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[3.5]};
-  height: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing[3]};
 `;
 
 const DropZone = styled.div`
   width: 100%;
-  max-width: 340px;
-  aspect-ratio: 1 / 1;
-  min-height: 250px;
-  margin: 0 auto;
+  height: 270px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -101,91 +99,11 @@ const HiddenInput = styled.input`
   display: none;
 `;
 
-const SampleBar = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 380px;
-  margin: 0 auto;
-  width: 100%;
-`;
-
-const SampleBarHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.text.secondary};
-
-  .label-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-`;
-
-const SampleScrollRow = styled.div`
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 4px 2px 8px 2px;
-
-  &::-webkit-scrollbar {
-    height: 5px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.border.default};
-    border-radius: 4px;
-  }
-`;
-
-const SampleChip = styled.button`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 5px 6px;
-  min-width: 62px;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  border: 1.5px solid ${({ $active, theme }) =>
-    $active ? theme.colors.primary[500] : theme.colors.border.default};
-  background: ${({ $active, theme }) =>
-    $active
-      ? (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(220, 252, 231, 0.8)')
-      : theme.colors.background.secondary};
-  color: ${({ theme }) => theme.colors.text.primary};
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-
-  img {
-    width: 44px;
-    height: 44px;
-    border-radius: 6px;
-    object-fit: cover;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  }
-
-  span.code {
-    font-size: 0.72rem;
-    font-weight: 700;
-  }
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary[400]};
-    transform: translateY(-2px);
-  }
-`;
-
 const ButtonGroup = styled.div`
   display: flex;
-  gap: 8px;
-  max-width: 380px;
-  margin: 0 auto;
+  gap: 10px;
   width: 100%;
 `;
-
 
 const ImageUploadCard = ({
   selectedImage,
@@ -193,20 +111,20 @@ const ImageUploadCard = ({
   imageFile,
   setImageFile,
   setPredictionResult,
+  activeSample,
+  setActiveSample,
   loading,
   setLoading,
   setError
 }) => {
   const { predict } = usePrediction();
-  const [activeSample, setActiveSample] = useState(null);
-  const [loadingSample, setLoadingSample] = useState(false);
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedImage(URL.createObjectURL(file));
       setImageFile(file);
-      setActiveSample(null);
+      if (setActiveSample) setActiveSample(null);
       setPredictionResult(null);
       setError(null);
     }
@@ -218,62 +136,9 @@ const ImageUploadCard = ({
     if (file && file.type.startsWith('image/')) {
       setSelectedImage(URL.createObjectURL(file));
       setImageFile(file);
-      setActiveSample(null);
+      if (setActiveSample) setActiveSample(null);
       setPredictionResult(null);
       setError(null);
-    }
-  };
-
-  const urlToFile = async (url, filename) => {
-    try {
-      const response = await fetch(url);
-      if (response.ok) {
-        const blob = await response.blob();
-        if (blob.type && blob.type.startsWith('image/')) {
-          return new File([blob], filename, { type: blob.type });
-        }
-      }
-    } catch (e) {
-      console.warn('Fallback to canvas for sample file generation');
-    }
-
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth || 400;
-        canvas.height = img.naturalHeight || 300;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(new File([blob], filename, { type: 'image/jpeg' }));
-          } else {
-            reject(new Error('Failed to convert sample image'));
-          }
-        }, 'image/jpeg', 0.9);
-      };
-      img.onerror = () => reject(new Error('Sample image failed to load'));
-      img.src = url;
-    });
-  };
-
-  const handleSelectSample = async (sample) => {
-    if (loading || loadingSample) return;
-    setLoadingSample(true);
-    setActiveSample(sample);
-    setSelectedImage(sample.imagePath);
-    setError(null);
-    setPredictionResult(null);
-
-    try {
-      const file = await urlToFile(sample.imagePath, sample.fileName);
-      setImageFile(file);
-    } catch (err) {
-      console.error('Sample preparation failed:', err);
-    } finally {
-      setLoadingSample(false);
     }
   };
 
@@ -313,7 +178,7 @@ const ImageUploadCard = ({
   const handleClear = () => {
     setSelectedImage(null);
     setImageFile(null);
-    setActiveSample(null);
+    if (setActiveSample) setActiveSample(null);
     setPredictionResult(null);
     setError(null);
   };
@@ -338,9 +203,9 @@ const ImageUploadCard = ({
           </>
         ) : (
           <UploadPrompt>
-            <FiUploadCloud size={36} />
+            <FiUploadCloud size={40} />
             <p className="primary-text">
-              <span>Click to upload</span> or drag image here
+              <span>Click to upload</span> or drag lesion image
             </p>
             <span className="secondary-text">PNG, JPG, or JPEG</span>
           </UploadPrompt>
@@ -352,38 +217,15 @@ const ImageUploadCard = ({
         type="file"
         accept="image/*"
         onChange={handleImageChange}
-        disabled={loading || loadingSample}
+        disabled={loading}
       />
-
-      <SampleBar>
-        <SampleBarHeader>
-          <div className="label-group">
-            <FiZap color="#eab308" size={13} />
-            <span>1-Click Test Samples:</span>
-          </div>
-        </SampleBarHeader>
-
-        <SampleScrollRow>
-          {SAMPLE_IMAGES.map((sample) => (
-            <SampleChip
-              key={sample.id}
-              $active={activeSample?.id === sample.id}
-              onClick={() => handleSelectSample(sample)}
-              type="button"
-            >
-              <img src={sample.imagePath} alt={sample.code} />
-              <span className="code">{sample.code}</span>
-            </SampleChip>
-          ))}
-        </SampleScrollRow>
-      </SampleBar>
 
       <ButtonGroup>
         <Button
           onClick={handleUploadClick}
-          disabled={loading || loadingSample || !imageFile}
+          disabled={loading || !imageFile}
           fullWidth
-          size="md"
+          size="lg"
         >
           {loading ? <Spinner size="sm" color="white" /> : 'Run Prediction'}
         </Button>
@@ -391,8 +233,8 @@ const ImageUploadCard = ({
           <Button
             variant="secondary"
             onClick={handleClear}
-            disabled={loading || loadingSample}
-            size="md"
+            disabled={loading}
+            size="lg"
           >
             Clear
           </Button>
@@ -403,5 +245,6 @@ const ImageUploadCard = ({
 };
 
 export default ImageUploadCard;
+
 
 

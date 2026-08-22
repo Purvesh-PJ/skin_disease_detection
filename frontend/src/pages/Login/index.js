@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiZap, FiKey, FiCheck } from 'react-icons/fi';
+import { FiZap } from 'react-icons/fi';
 import { useAuth } from '../../hooks';
+
 import { ROUTES } from '../../constants';
 import { Button, Alert, Spinner } from '../../components/common/ui';
 import { AuthLayout } from '../../components/layout';
@@ -12,18 +13,13 @@ import {
   StyledInput,
   LinkText,
   Divider,
-  DemoCard,
-  DemoHeader,
-  CredentialRow,
-  AutoFillButton,
-  OrDivider,
+  DemoNotice,
 } from './styles';
 
 const DEMO_EMAIL = 'demo@skindisease.ai';
 const DEMO_PASSWORD = 'DemoUser@123';
 
 const Login = () => {
-  // Pre-fill demo credentials by default for zero-friction evaluator experience
   const [email, setEmail] = useState(DEMO_EMAIL);
   const [password, setPassword] = useState(DEMO_PASSWORD);
   const [filledNotice, setFilledNotice] = useState(false);
@@ -61,51 +57,23 @@ const Login = () => {
   return (
     <AuthLayout>
       <FormHeader>
-        <H2>Sign In to Predictor</H2>
+        <H2>Sign In</H2>
         <Text variant="secondary" size="sm">
-          Access dermoscopic AI diagnostics & MongoDB scan history
+          Access diagnostic screening & scan records
         </Text>
       </FormHeader>
 
-      {/* Pre-filled Test Account Card */}
-      <DemoCard>
-        <DemoHeader>
-          <h4>
-            <FiZap color="#16a34a" size={16} />
-            Evaluator / Recruiter Test Account
-          </h4>
-          <span className="badge">Pre-configured</span>
-        </DemoHeader>
-
-        <CredentialRow>
-          <div className="item">
-            <span className="label">Demo Email:</span>
-            <code>{DEMO_EMAIL}</code>
-          </div>
-          <div className="item">
-            <span className="label">Password:</span>
-            <code>{DEMO_PASSWORD}</code>
-          </div>
-        </CredentialRow>
-
-        <AutoFillButton type="button" onClick={handleAutoFill}>
-          {filledNotice ? (
-            <>
-              <FiCheck size={14} color="#16a34a" />
-              <span>Credentials Loaded in Form!</span>
-            </>
-          ) : (
-            <>
-              <FiKey size={14} />
-              <span>Auto-Fill Demo Credentials</span>
-            </>
-          )}
-        </AutoFillButton>
-      </DemoCard>
-
-      <OrDivider>
-        <span>Account Credentials</span>
-      </OrDivider>
+      <DemoNotice>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <FiZap color="#16a34a" size={14} />
+          <span>
+            <span className="bold">Demo Account:</span> Pre-filled
+          </span>
+        </div>
+        <button type="button" className="fill-btn" onClick={handleAutoFill}>
+          {filledNotice ? '✓ Loaded' : 'Auto-Fill'}
+        </button>
+      </DemoNotice>
 
       <Form onSubmit={handleSubmit}>
         <StyledInput
@@ -131,7 +99,7 @@ const Login = () => {
           {loading ? (
             <Spinner size="sm" color="white" />
           ) : email === DEMO_EMAIL ? (
-            'Sign In as Demo Evaluator'
+            'Sign In as Demo'
           ) : (
             'Sign In'
           )}
@@ -140,7 +108,7 @@ const Login = () => {
         <Divider />
 
         <LinkText>
-          Want to create a personal account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
+          Don't have an account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
         </LinkText>
       </Form>
     </AuthLayout>
@@ -148,5 +116,6 @@ const Login = () => {
 };
 
 export default Login;
+
 
 

@@ -14,7 +14,7 @@ export const Form = styled.form`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: ${({ theme }) => theme.spacing[4]};
+  gap: ${({ theme }) => theme.spacing[3]};
 `;
 
 export const StyledInput = styled(Input)`
@@ -42,164 +42,34 @@ export const Divider = styled.hr`
   margin: ${({ theme }) => theme.spacing[1]} 0;
 `;
 
-export const DemoCard = styled.div`
-  background: ${({ theme }) => 
-    theme.mode === 'dark' 
-      ? 'linear-gradient(135deg, rgba(22, 163, 74, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)' 
-      : 'linear-gradient(135deg, rgba(220, 252, 231, 0.8) 0%, rgba(240, 253, 244, 0.5) 100%)'};
-  border: 1px solid ${({ theme }) => theme.colors.primary[500] || '#16a34a'};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  padding: ${({ theme }) => theme.spacing[4]};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[2.5]};
-  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.15);
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
-`;
-
-export const DemoHeader = styled.div`
+export const DemoNotice = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-
-  h4 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin: 0;
-    color: ${({ theme }) => theme.colors.text.primary};
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  span.badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background: ${({ theme }) => theme.colors.primary[600]};
-    color: #ffffff;
-    padding: 2px 8px;
-    border-radius: 9999px;
-  }
-`;
-
-export const CredentialRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  padding: 8px 12px;
   background: ${({ theme }) => 
-    theme.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.6)'};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
+    theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(240, 253, 244, 0.8)'};
+  border: 1px solid ${({ theme }) => 
+    theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(187, 247, 208, 0.8)'};
   border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: 8px 12px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: ${({ theme }) => theme.colors.text.secondary};
+  margin-bottom: ${({ theme }) => theme.spacing[1]};
 
-  .item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+  span.bold {
+    color: ${({ theme }) => theme.colors.primary[600] || '#16a34a'};
+    font-weight: 700;
+  }
 
-    span.label {
-      font-weight: 600;
-      color: ${({ theme }) => theme.colors.text.tertiary};
-    }
-
-    code {
-      font-family: monospace;
-      font-weight: 700;
-      color: ${({ theme }) => theme.colors.text.primary};
-      background: ${({ theme }) => theme.colors.background.tertiary};
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
+  button.fill-btn {
+    background: none;
+    border: none;
+    color: ${({ theme }) => theme.colors.primary[600] || '#16a34a'};
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font-size: 0.78rem;
   }
 `;
 
-export const AutoFillButton = styled.button`
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  border: 1px solid ${({ theme }) => theme.colors.primary[500]};
-  background: ${({ theme }) => theme.colors.background.primary};
-  color: ${({ theme }) => theme.colors.primary[600] || '#16a34a'};
-  font-weight: 600;
-  font-size: 0.82rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primary[600]};
-    color: #ffffff;
-  }
-`;
-
-export const DemoDesc = styled(SmallText)`
-  font-size: 0.8rem;
-  line-height: 1.4;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  margin: 0;
-`;
-
-export const DemoButton = styled.button`
-  width: 100%;
-  padding: 10px 16px;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  border: none;
-  background: linear-gradient(135deg, #16a34a 0%, #059669 100%);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
-  transition: all ${({ theme }) => theme.transitions.fast};
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.45);
-    background: linear-gradient(135deg, #15803d 0%, #047857 100%);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
-
-export const OrDivider = styled.div`
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: ${({ theme }) => theme.spacing[2]} 0;
-  color: ${({ theme }) => theme.colors.text.tertiary || '#888'};
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
-  }
-
-  span {
-    padding: 0 ${({ theme }) => theme.spacing[3]};
-  }
-`;
