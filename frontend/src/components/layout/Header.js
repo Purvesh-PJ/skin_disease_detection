@@ -11,13 +11,22 @@ import DefaultProfile from '../../assets/images/default_profile.jpg';
 import ProfileSettingsModal from '../features/profile/ProfileSettingsModal';
 
 const HeaderContainer = styled.header`
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background-color: ${({ theme }) =>
+    theme.mode === 'dark' ? 'rgba(18, 18, 18, 0.92)' : 'rgba(255, 255, 255, 0.92)'};
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[6]}`};
-  background-color: ${({ theme }) => theme.colors.background.primary};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
 `;
+
 
 const HeaderLeft = styled.div`
   display: flex;
