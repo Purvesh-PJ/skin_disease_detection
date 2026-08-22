@@ -1,42 +1,17 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { authService } from '../services';
 import { ROUTES } from '../constants';
-import { Spinner } from '../components/common/ui';
-import styled from 'styled-components';
-
-const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: ${({ theme }) => theme.colors.background.primary};
-`;
 
 const ProtectedRoute = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const token = authService.getToken();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        await authService.verifyToken();
-        setIsAuthenticated(true);
-      } catch {
-        setIsAuthenticated(false);
-      }
-    };
-    checkAuth();
-  }, []);
-
-  if (isAuthenticated === null) {
-    return (
-      <LoadingContainer>
-        <Spinner size="lg" />
-      </LoadingContainer>
-    );
+  if (!token) {
+    return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
-  return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} />;
+  return children;
 };
 
 export default ProtectedRoute;
+
