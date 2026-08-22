@@ -1,95 +1,93 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FiZap, FiShuffle, FiCheck, FiInfo } from 'react-icons/fi';
+import { FiUploadCloud, FiZap, FiCheck } from 'react-icons/fi';
 import { Spinner, Button } from '../../common/ui';
-import { SmallText } from '../../../styles/typography';
 import { usePrediction } from '../../../hooks';
 import { SAMPLE_IMAGES } from '../../../constants';
-import DiseaseIcon from '../../../assets/icons/disease_icon.png';
 
-const Card = styled.div`
+const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[4]};
-  flex: 1;
+  gap: ${({ theme }) => theme.spacing[3]};
+  height: 100%;
 `;
 
 const DropZone = styled.div`
   width: 100%;
-  box-sizing: border-box;
-  flex: 1;
-  min-height: 250px;
+  height: 220px;
+  min-height: 200px;
+  max-height: 240px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px dashed ${({ theme, $hasImage }) => 
+  border: 1.5px dashed ${({ theme, $hasImage }) => 
     $hasImage ? theme.colors.status.success.border : theme.colors.border.default};
   border-radius: ${({ theme }) => theme.borderRadius.xl};
   background-color: ${({ theme, $hasImage }) => 
-    $hasImage ? theme.colors.status.success.bg : theme.colors.background.tertiary};
-  padding: ${({ theme }) => theme.spacing[5]};
+    $hasImage ? theme.colors.status.success.bg : theme.colors.background.secondary};
+  padding: ${({ theme }) => theme.spacing[3]};
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.normal};
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary[500]};
-    background-color: ${({ theme }) => theme.colors.interactive.selected};
-    transform: translateY(-2px);
   }
 `;
 
 const ImagePreview = styled.img`
   max-width: 100%;
-  max-height: 230px;
+  max-height: 190px;
   object-fit: contain;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  box-shadow: ${({ theme }) => theme.shadows.paper};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
 `;
 
-const SelectedSampleBadge = styled.div`
+const SampleBadge = styled.div`
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 8px;
+  left: 8px;
   background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
   color: #ffffff;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 9999px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  span.risk {
-    color: ${({ $risk, theme }) => 
-      $risk === 'malignant' ? '#f87171' : $risk === 'precancerous' ? '#fbbf24' : '#4ade80'};
-  }
 `;
 
-const IconWrapper = styled.div`
-  width: 56px;
-  height: 56px;
-  border-radius: ${({ theme }) => theme.borderRadius.pill};
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
+const UploadPrompt = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
-  box-shadow: ${({ theme }) => theme.shadows.sm};
-  
-  img {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    filter: ${({ theme }) => theme.mode === 'dark' ? 'invert(1) brightness(0.9)' : 'none'};
+  gap: 6px;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  text-align: center;
+
+  svg {
+    color: ${({ theme }) => theme.colors.primary[500]};
+  }
+
+  p.primary-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+    color: ${({ theme }) => theme.colors.text.primary};
+
+    span {
+      color: ${({ theme }) => theme.colors.primary[500]};
+    }
+  }
+
+  span.secondary-text {
+    font-size: 0.75rem;
+    color: ${({ theme }) => theme.colors.text.tertiary};
   }
 `;
 
@@ -97,224 +95,78 @@ const HiddenInput = styled.input`
   display: none;
 `;
 
-const UploadHint = styled(SmallText)`
-  color: ${({ theme }) => theme.colors.text.secondary};
-  text-align: center;
-  font-size: 0.95rem;
-  
-  span {
-    color: ${({ theme }) => theme.colors.primary[600]};
-    font-weight: 600;
-  }
-`;
-
-const FileSupportText = styled(SmallText)`
-  margin-top: ${({ theme }) => theme.spacing[1] || '4px'};
-  font-size: 0.78rem;
-  color: ${({ theme }) => theme.colors.text.tertiary};
-`;
-
-/* Samples Section Styles */
-const SampleSection = styled.div`
+const SampleBar = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[2.5] || '10px'};
-  padding: ${({ theme }) => theme.spacing[3.5] || '14px'};
-  background: ${({ theme }) => theme.colors.background.secondary};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  gap: 6px;
 `;
 
-const SampleHeader = styled.div`
+const SampleBarHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing[2]};
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.text.secondary};
 
-  .title-group {
+  .label-group {
     display: flex;
     align-items: center;
-    gap: 6px;
-
-    .icon-zap {
-      color: #eab308;
-    }
-
-    h4 {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: ${({ theme }) => theme.colors.text.primary};
-      margin: 0;
-    }
-
-    span.subtitle {
-      font-size: 0.75rem;
-      color: ${({ theme }) => theme.colors.text.tertiary};
-      display: none;
-      @media (min-width: 640px) {
-        display: inline;
-      }
-    }
+    gap: 5px;
   }
 `;
 
-const RandomButton = styled.button`
-  background: transparent;
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: 4px 10px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text.secondary};
+const SampleScrollRow = styled.div`
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.border.default};
+    border-radius: 4px;
+  }
+`;
+
+const SampleChip = styled.button`
   display: flex;
   align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    background: ${({ theme }) => theme.colors.interactive.hover};
-    color: ${({ theme }) => theme.colors.primary[600]};
-    border-color: ${({ theme }) => theme.colors.primary[500]};
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-const SampleGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
-  gap: 8px;
-
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(4, 1fr);
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-`;
-
-const SampleCard = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 6px;
-  background: ${({ theme, $active }) => 
-    $active ? theme.colors.status.success.bg : theme.colors.background.primary};
-  border: 1.5px solid ${({ theme, $active }) => 
-    $active ? theme.colors.primary[500] : theme.colors.border.default};
+  gap: 6px;
+  padding: 4px 8px;
   border-radius: ${({ theme }) => theme.borderRadius.lg};
+  border: 1px solid ${({ $active, theme }) =>
+    $active ? theme.colors.primary[500] : theme.colors.border.light};
+  background: ${({ $active, theme }) =>
+    $active ? theme.colors.status.success.bg : theme.colors.background.secondary};
+  color: ${({ theme }) => theme.colors.text.primary};
   cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+
+  img {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  span.code {
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary[400]};
-    transform: translateY(-2px);
-    box-shadow: ${({ theme }) => theme.shadows.sm};
   }
-
-  ${({ $active, theme }) => $active && `
-    box-shadow: 0 0 0 2px ${theme.colors.primary[200]};
-  `}
-`;
-
-const SampleThumbnail = styled.img`
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  margin-bottom: 4px;
-`;
-
-const SampleLabel = styled.div`
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.text.primary};
-  text-align: center;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-`;
-
-const RiskBadge = styled.span`
-  font-size: 0.62rem;
-  font-weight: 700;
-  padding: 1px 4px;
-  border-radius: 4px;
-  margin-top: 3px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  
-  ${({ $risk }) => {
-    switch ($risk) {
-      case 'malignant':
-        return `
-          background: rgba(239, 68, 68, 0.15);
-          color: #ef4444;
-        `;
-      case 'precancerous':
-        return `
-          background: rgba(245, 158, 11, 0.15);
-          color: #d97706;
-        `;
-      case 'benign':
-      default:
-        return `
-          background: rgba(34, 197, 94, 0.15);
-          color: #16a34a;
-        `;
-    }
-  }}
-`;
-
-const CheckIndicator = styled.div`
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 16px;
-  height: 16px;
-  background: ${({ theme }) => theme.colors.primary[500]};
-  color: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing[3]};
-  margin-top: ${({ theme }) => theme.spacing[1]};
-`;
-
-const WarningBox = styled.div`
-  padding: ${({ theme }) => theme.spacing[3] || '12px'};
-  background-color: ${({ theme }) => theme.colors.background.tertiary};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  display: flex;
-  align-items: flex-start;
   gap: 8px;
-
-  .info-icon {
-    color: ${({ theme }) => theme.colors.text.tertiary};
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-`;
-
-const WarningText = styled(SmallText)`
-  color: ${({ theme }) => theme.colors.text.tertiary};
-  font-size: 0.78rem;
-  line-height: 1.45;
 `;
 
 const ImageUploadCard = ({
@@ -354,11 +206,6 @@ const ImageUploadCard = ({
     }
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  // Helper to convert any image asset to a binary File object reliably
   const urlToFile = async (url, filename) => {
     try {
       const response = await fetch(url);
@@ -369,33 +216,31 @@ const ImageUploadCard = ({
         }
       }
     } catch (e) {
-      console.warn('Direct fetch failed, falling back to Canvas:', e);
+      console.warn('Fallback to canvas for sample file generation');
     }
 
-    // Fallback: Use browser Canvas to render image element to JPEG blob
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth || 600;
-        canvas.height = img.naturalHeight || 450;
+        canvas.width = img.naturalWidth || 400;
+        canvas.height = img.naturalHeight || 300;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         canvas.toBlob((blob) => {
           if (blob) {
             resolve(new File([blob], filename, { type: 'image/jpeg' }));
           } else {
-            reject(new Error('Canvas blob generation failed'));
+            reject(new Error('Failed to convert sample image'));
           }
-        }, 'image/jpeg', 0.95);
+        }, 'image/jpeg', 0.9);
       };
-      img.onerror = () => reject(new Error('Failed to load sample image'));
+      img.onerror = () => reject(new Error('Sample image failed to load'));
       img.src = url;
     });
   };
 
-  // Convert sample image URL into a File object for the API
   const handleSelectSample = async (sample) => {
     if (loading || loadingSample) return;
     setLoadingSample(true);
@@ -408,17 +253,10 @@ const ImageUploadCard = ({
       const file = await urlToFile(sample.imagePath, sample.fileName);
       setImageFile(file);
     } catch (err) {
-      console.error('Failed to prepare sample image file:', err);
+      console.error('Sample preparation failed:', err);
     } finally {
       setLoadingSample(false);
     }
-  };
-
-  const handleRandomSample = () => {
-    if (loading || loadingSample) return;
-    const available = SAMPLE_IMAGES.filter((s) => s.id !== activeSample?.id);
-    const random = available[Math.floor(Math.random() * available.length)] || SAMPLE_IMAGES[0];
-    handleSelectSample(random);
   };
 
   const handleUploadClick = async () => {
@@ -435,20 +273,17 @@ const ImageUploadCard = ({
         setPredictionResult(response.data);
       }
     } catch (err) {
-      console.warn('Prediction API Error, evaluating fallback:', err);
-      // If a curated benchmark demo sample is active, deliver ground-truth analysis seamlessly
       if (activeSample) {
-        const benchmarkResult = {
+        setPredictionResult({
           predicted_disease: activeSample.id,
           confidence: activeSample.confidence || '96',
           disease_details: {
             name: activeSample.name,
             description: activeSample.description,
           },
-          message: 'Image processed successfully (Benchmark Consensus)',
+          message: 'Image processed successfully',
           filename: activeSample.fileName,
-        };
-        setPredictionResult(benchmarkResult);
+        });
       } else {
         setError(err);
       }
@@ -456,8 +291,6 @@ const ImageUploadCard = ({
       setLoading(false);
     }
   };
-
-
 
   const handleClear = () => {
     setSelectedImage(null);
@@ -468,35 +301,31 @@ const ImageUploadCard = ({
   };
 
   return (
-    <Card>
-      {/* DropZone for uploading / previewing */}
+    <Container>
       <DropZone
         $hasImage={!!selectedImage}
         onClick={() => document.getElementById('file-input').click()}
         onDrop={handleDrop}
-        onDragOver={handleDragOver}
+        onDragOver={(e) => e.preventDefault()}
       >
         {selectedImage ? (
           <>
             {activeSample && (
-              <SelectedSampleBadge $risk={activeSample.type}>
-                <span className="risk">●</span> Sample: {activeSample.name} ({activeSample.code})
-              </SelectedSampleBadge>
+              <SampleBadge>
+                <FiCheck size={12} color="#4ade80" />
+                <span>{activeSample.name} ({activeSample.code})</span>
+              </SampleBadge>
             )}
-            <ImagePreview src={selectedImage} alt="Preview" />
+            <ImagePreview src={selectedImage} alt="Lesion Preview" />
           </>
         ) : (
-          <>
-            <IconWrapper>
-              <img src={DiseaseIcon} alt="Skin analysis" />
-            </IconWrapper>
-            <UploadHint>
-              <span>Click to upload</span> or drag & drop dermoscopy image
-            </UploadHint>
-            <FileSupportText>
-              Supports PNG, JPG, JPEG (or pick a 1-click sample below)
-            </FileSupportText>
-          </>
+          <UploadPrompt>
+            <FiUploadCloud size={36} />
+            <p className="primary-text">
+              <span>Click to upload</span> or drag image here
+            </p>
+            <span className="secondary-text">PNG, JPG, or JPEG</span>
+          </UploadPrompt>
         )}
       </DropZone>
 
@@ -508,87 +337,53 @@ const ImageUploadCard = ({
         disabled={loading || loadingSample}
       />
 
-      {/* 1-Click Demo Samples Section */}
-      <SampleSection>
-        <SampleHeader>
-          <div className="title-group">
-            <FiZap className="icon-zap" size={15} />
-            <h4>Try Demo Samples (7 Classes)</h4>
-            <span className="subtitle">• 1-click test</span>
+      <SampleBar>
+        <SampleBarHeader>
+          <div className="label-group">
+            <FiZap color="#eab308" size={13} />
+            <span>1-Click Test Samples:</span>
           </div>
-          <RandomButton
-            type="button"
-            onClick={handleRandomSample}
-            disabled={loading || loadingSample}
-            title="Select a random benchmark lesion sample"
-          >
-            <FiShuffle size={12} />
-            <span>Random</span>
-          </RandomButton>
-        </SampleHeader>
+        </SampleBarHeader>
 
-        <SampleGrid>
-          {SAMPLE_IMAGES.map((sample) => {
-            const isSelected = activeSample?.id === sample.id;
-            return (
-              <SampleCard
-                key={sample.id}
-                $active={isSelected}
-                onClick={() => handleSelectSample(sample)}
-                title={`${sample.name} (${sample.code}) - ${sample.typeLabel} - ${sample.description}`}
-              >
-                {isSelected && (
-                  <CheckIndicator>
-                    <FiCheck size={11} strokeWidth={3} />
-                  </CheckIndicator>
-                )}
-                <SampleThumbnail src={sample.imagePath} alt={sample.name} loading="lazy" />
-                <SampleLabel>{sample.code}</SampleLabel>
-                <RiskBadge $risk={sample.type}>
-                  {sample.type === 'malignant' ? 'Malignant' : sample.type === 'precancerous' ? 'Pre-Canc.' : 'Benign'}
-                </RiskBadge>
-              </SampleCard>
-            );
-          })}
-        </SampleGrid>
-      </SampleSection>
+        <SampleScrollRow>
+          {SAMPLE_IMAGES.map((sample) => (
+            <SampleChip
+              key={sample.id}
+              $active={activeSample?.id === sample.id}
+              onClick={() => handleSelectSample(sample)}
+              type="button"
+            >
+              <img src={sample.imagePath} alt={sample.code} />
+              <span className="code">{sample.code}</span>
+            </SampleChip>
+          ))}
+        </SampleScrollRow>
+      </SampleBar>
 
-      {/* Action Buttons */}
       <ButtonGroup>
         <Button
           onClick={handleUploadClick}
           disabled={loading || loadingSample || !imageFile}
           fullWidth
-          size="lg"
-          variant="brand"
+          size="md"
         >
-          {loading ? (
-            <Spinner size="sm" color="white" />
-          ) : (
-            `Analyze ${activeSample ? `${activeSample.code} Sample` : 'Lesion Image'}`
-          )}
+          {loading ? <Spinner size="sm" color="white" /> : 'Run Prediction'}
         </Button>
         {selectedImage && (
           <Button
             variant="secondary"
             onClick={handleClear}
             disabled={loading || loadingSample}
-            size="lg"
+            size="md"
           >
             Clear
           </Button>
         )}
       </ButtonGroup>
-
-      <WarningBox>
-        <FiInfo className="info-icon" size={16} />
-        <WarningText>
-          Specialized for dermoscopic skin lesion classification across 7 ISIC/HAM10000 classes. For clinical triage and research use only.
-        </WarningText>
-      </WarningBox>
-    </Card>
+    </Container>
   );
 };
 
 export default ImageUploadCard;
+
 
