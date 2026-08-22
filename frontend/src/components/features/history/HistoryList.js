@@ -292,13 +292,12 @@ const formatDate = (isoString) => {
 export const HistoryList = ({ refreshTrigger }) => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const fetchHistory = useCallback(async () => {
     if (!authService.isAuthenticated()) return;
     setLoading(true);
-    setError(null);
     try {
+
       const records = await historyService.getHistory();
       setHistory(records);
     } catch (err) {
