@@ -5,7 +5,7 @@ import { STORAGE_KEYS } from '../../constants';
 // Create axios instance with default config
 const axiosInstance = axios.create({
   baseURL: config.api.baseUrl,
-  timeout: config.api.timeout,
+  timeout: 15000, // 15 seconds timeout to avoid infinite hanging
   headers: {
     'Content-Type': 'application/json',
   },
@@ -23,11 +23,17 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor - handle errors
+// Response interceptor - handle errors without redirect loops
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Only redirect if 401 occurs when navigating outside login/signup
+    if (
+      error.response?.status === 401 &&
+      typeof window !== 'undefined' &&
+      !window.location.pathname.includes('/login') &&
+      !window.location.pathname.includes('/signup')
+    ) {
       localStorage.removeItem(STORAGE_KEYS.TOKEN);
       localStorage.removeItem(STORAGE_KEYS.USER);
       window.location.href = '/login';
@@ -37,3 +43,4 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+

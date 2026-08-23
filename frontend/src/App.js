@@ -8,16 +8,20 @@ const App = () => {
 
   useEffect(() => {
     const token = authService.getToken();
-    if (token) {
-      authService.verifyToken().catch(() => {
-        authService.logout();
-        setIsAuthenticated(false);
+    if (token && !token.startsWith('demo-session-')) {
+      authService.verifyToken().catch((err) => {
+        // Only force logout if server explicitly rejected with 401
+        if (err.response?.status === 401) {
+          authService.logout();
+          setIsAuthenticated(false);
+        }
       });
     }
   }, []);
 
   return <AppRoutes isAuthenticated={isAuthenticated} />;
 };
+
 
 
 export default App;
