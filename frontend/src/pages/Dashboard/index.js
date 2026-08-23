@@ -4,6 +4,7 @@ import { Header } from '../../components/layout';
 import { ImageUploadCard, ResultsCard } from '../../components/features/prediction';
 import HistoryList from '../../components/features/history/HistoryList';
 import { SAMPLE_IMAGES } from '../../constants';
+import { historyService } from '../../services';
 import {
   Container,
   Main,
@@ -31,9 +32,12 @@ const Dashboard = () => {
 
   const handlePredictionSuccess = (result) => {
     setPredictionResult(result);
+    // Record scan history immediately so Saved Scans is always synchronized
+    historyService.recordScan(result);
     setActiveTab('analysis');
     setHistoryRefreshKey((prev) => prev + 1);
   };
+
 
   const handleUserUpdated = () => {
     setUserUpdateKey((prev) => prev + 1);
