@@ -4,7 +4,6 @@ import { ROUTES } from '../../constants';
 import { Button } from '../../components/common/ui';
 import LandingNavbar from '../../components/layout/LandingNavbar';
 import {
-  FiArrowRight,
   FiCpu,
   FiLayers,
   FiShield,
@@ -15,6 +14,7 @@ import {
   FiExternalLink,
   FiZap,
 } from 'react-icons/fi';
+
 import {
   LandingPageWrapper,
   HeroSection,
@@ -166,7 +166,6 @@ const Landing = ({ isAuthenticated }) => {
               <Button asChild variant="brand" size="lg">
                 <Link to={ctaRoute}>
                   {ctaText}
-                  <FiArrowRight size={16} />
                 </Link>
               </Button>
               {!isAuthenticated && (
@@ -176,10 +175,11 @@ const Landing = ({ isAuthenticated }) => {
                   </Link>
                 </Button>
               )}
-              <Button asChild variant="ghost" size="lg">
+              <Button asChild variant="outline" size="lg">
                 <a href="#how-it-works">How It Works</a>
               </Button>
             </HeroCtaRow>
+
 
           </HeroContent>
 
@@ -981,10 +981,10 @@ const Landing = ({ isAuthenticated }) => {
             <Button asChild variant="brand" size="lg">
               <Link to={ctaRoute}>
                 {ctaText}
-                <FiArrowRight size={16} />
               </Link>
             </Button>
           </CtaCard>
+
         </Container>
       </SectionWrapper>
 

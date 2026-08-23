@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { Button, ThemeToggle } from '../common/ui';
 import { ROUTES } from '../../constants';
-import { FiActivity, FiArrowRight } from 'react-icons/fi';
+import { FiActivity } from 'react-icons/fi';
 
 const NavHeader = styled.header`
   position: sticky;
@@ -114,18 +114,16 @@ const LandingNavbar = ({ isAuthenticated }) => {
             <Button asChild variant="brand" size="sm">
               <Link to={ROUTES.DASHBOARD}>
                 Dashboard
-                <FiArrowRight size={14} />
               </Link>
             </Button>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm">
+              <Button asChild variant="outline" size="sm">
                 <Link to={ROUTES.LOGIN}>Log in</Link>
               </Button>
               <Button asChild variant="brand" size="sm">
                 <Link to={ROUTES.DASHBOARD}>
                   Try Predictor
-                  <FiArrowRight size={14} />
                 </Link>
               </Button>
             </>
@@ -135,5 +133,6 @@ const LandingNavbar = ({ isAuthenticated }) => {
     </NavHeader>
   );
 };
+
 
 export default LandingNavbar;
