@@ -312,26 +312,28 @@ export const HistoryList = ({ refreshTrigger }) => {
     fetchHistory();
   }, [fetchHistory, refreshTrigger]);
 
-  const handleDelete = async (id, e) => {
+  const handleDelete = (id, e) => {
     e.stopPropagation();
-    try {
-      await historyService.deleteHistoryItem(id);
-      setHistory((prev) => prev.filter((item) => item._id !== id));
-    } catch (err) {
-      console.error("Delete failed:", err);
+    // 1. Optimistically remove from state immediately (0ms instant UI update)
+    setHistory((prev) => prev.filter((item) => item._id !== id));
+    // 2. Perform background delete in service without blocking UI
+    historyService.deleteHistoryItem(id).catch((err) => {
+      console.warn("Background delete sync failed:", err);
+    });
+  };
+
+  const handleClearAll = (e) => {
+    if (e) e.stopPropagation();
+    if (window.confirm("Are you sure you want to clear all MongoDB scan records for your account?")) {
+      // 1. Optimistically clear state immediately
+      setHistory([]);
+      // 2. Perform background clear in service
+      historyService.clearHistory().catch((err) => {
+        console.warn("Background clear sync failed:", err);
+      });
     }
   };
 
-  const handleClearAll = async () => {
-    if (window.confirm("Are you sure you want to clear all MongoDB scan records for your account?")) {
-      try {
-        await historyService.clearHistory();
-        setHistory([]);
-      } catch (err) {
-        console.error("Clear all failed:", err);
-      }
-    }
-  };
 
   if (!authService.isAuthenticated()) {
     return (
