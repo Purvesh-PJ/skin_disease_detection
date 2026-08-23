@@ -2,7 +2,7 @@ import axiosInstance from './axios';
 import { API_ENDPOINTS, STORAGE_KEYS, ROUTES } from '../../constants';
 
 const DEMO_USER_PROFILE = {
-  username: 'Demo User',
+  username: 'Demo',
   email: 'demo@skindisease.ai',
   roles: ['demo', 'user'],
   settings: {
@@ -12,6 +12,23 @@ const DEMO_USER_PROFILE = {
     theme: 'dark',
     email_notifications: true
   }
+};
+
+const sanitizeUser = (user) => {
+  if (!user) return user;
+  const isDemo = user.email === 'demo@skindisease.ai' || user.is_demo;
+  const hasEvaluatorOrRecruiter =
+    (user.username && (user.username.includes('Evaluator') || user.username.includes('Recruiter'))) ||
+    (user.settings?.full_name && (user.settings.full_name.includes('Evaluator') || user.settings.full_name.includes('Recruiter'))) ||
+    (user.settings?.role_title && (user.settings.role_title.includes('Evaluator') || user.settings.role_title.includes('Recruiter')));
+
+  if (isDemo || hasEvaluatorOrRecruiter) {
+    user.username = 'Demo';
+    if (!user.settings) user.settings = {};
+    user.settings.full_name = 'Demo';
+    user.settings.role_title = 'Demo';
+  }
+  return user;
 };
 
 export const authService = {
@@ -24,7 +41,8 @@ export const authService = {
       if (response.data?.token) {
         localStorage.setItem(STORAGE_KEYS.TOKEN, response.data.token);
         if (response.data.user) {
-          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+          const clean = sanitizeUser(response.data.user);
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(clean));
         }
       }
       return response.data;
@@ -51,7 +69,8 @@ export const authService = {
       if (response.data?.token) {
         localStorage.setItem(STORAGE_KEYS.TOKEN, response.data.token);
         if (response.data.user) {
-          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+          const clean = sanitizeUser(response.data.user);
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(clean));
         }
       }
       return response.data;
@@ -67,6 +86,7 @@ export const authService = {
       };
     }
   },
+
 
 
   async register(userData) {
@@ -154,9 +174,16 @@ export const authService = {
   },
 
   getUser() {
-    const user = localStorage.getItem(STORAGE_KEYS.USER);
-    return user ? JSON.parse(user) : null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.USER);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return sanitizeUser(parsed);
+    } catch {
+      return null;
+    }
   },
+
 
   isAuthenticated() {
     return !!this.getToken();

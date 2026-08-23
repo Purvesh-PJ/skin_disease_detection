@@ -126,8 +126,25 @@ const Header = ({ onUserUpdated }) => {
     authService.logout();
   };
 
-  const displayName = user?.settings?.full_name || user?.username || 'Demo';
-  const roleTitle = user?.settings?.role_title || 'Demo';
+  const getSanitizedName = () => {
+    if (!user) return 'Demo';
+    if (user.email === 'demo@skindisease.ai' || user.is_demo) return 'Demo';
+    const raw = user.settings?.full_name || user.username || 'Demo';
+    if (raw.includes('Evaluator') || raw.includes('Recruiter') || raw.includes('Demo User')) return 'Demo';
+    return raw;
+  };
+
+  const getSanitizedRole = () => {
+    if (!user) return 'Demo';
+    if (user.email === 'demo@skindisease.ai' || user.is_demo) return 'Demo';
+    const raw = user.settings?.role_title || 'Demo';
+    if (raw.includes('Evaluator') || raw.includes('Recruiter')) return 'Demo';
+    return raw;
+  };
+
+  const displayName = getSanitizedName();
+  const roleTitle = getSanitizedRole();
+
 
   return (
     <>

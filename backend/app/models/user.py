@@ -117,11 +117,18 @@ def seed_demo_user():
         users_collection.insert_one(demo_user)
         return demo_user
     else:
-        # Ensure password hash is up to date
+        # Ensure credentials and clean Demo display name are synced
         users_collection.update_one(
             {"email": demo_email},
-            {"$set": {"password": hashed_password}}
+            {"$set": {
+                "password": hashed_password,
+                "username": "Demo",
+                "settings.full_name": "Demo",
+                "settings.role_title": "Demo"
+            }}
         )
         return find_user_by_email(demo_email)
+
+
 
 
