@@ -9,6 +9,7 @@ import {
   Container,
   Main,
   LeftColumn,
+  LeftContentArea,
   RightColumn,
   TabBar,
   TabButtons,
@@ -102,23 +103,54 @@ const Dashboard = () => {
       <Header onUserUpdated={handleUserUpdated} />
 
       <Main>
-        {/* Left Column: Image Dropzone (Centered) & Action Buttons */}
+        {/* Left Column: Image Dropzone & Bottom Sample Rail strictly on the Left */}
         <LeftColumn>
-          <ImageUploadCard
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-            imageFile={imageFile}
-            setImageFile={setImageFile}
-            setPredictionResult={handlePredictionSuccess}
-            activeSample={activeSample}
-            setActiveSample={setActiveSample}
-            loading={loading}
-            setLoading={setLoading}
-            setError={setError}
-          />
+          <LeftContentArea>
+            <ImageUploadCard
+              selectedImage={selectedImage}
+              setSelectedImage={setSelectedImage}
+              imageFile={imageFile}
+              setImageFile={setImageFile}
+              setPredictionResult={handlePredictionSuccess}
+              activeSample={activeSample}
+              setActiveSample={setActiveSample}
+              loading={loading}
+              setLoading={setLoading}
+              setError={setError}
+            />
+          </LeftContentArea>
+
+          {/* Bottom Sample Rail strictly inside Left Column */}
+          <SampleFooterRail>
+            <SampleRailLabel>
+              <FiZap color="#eab308" size={14} />
+              <span>Demo Samples:</span>
+            </SampleRailLabel>
+
+            <SampleRailList>
+              {SAMPLE_IMAGES.map((sample) => {
+                const isSelected = activeSample?.id === sample.id;
+                return (
+                  <SampleCard
+                    key={sample.id}
+                    $active={isSelected}
+                    onClick={() => handleSelectSample(sample)}
+                    type="button"
+                    title={`${sample.name} (${sample.code})`}
+                  >
+                    <img src={sample.imagePath} alt={sample.code} />
+                    <div className="meta">
+                      <span className="name">{sample.code}</span>
+                      <span className="type">{sample.typeLabel || sample.type}</span>
+                    </div>
+                  </SampleCard>
+                );
+              })}
+            </SampleRailList>
+          </SampleFooterRail>
         </LeftColumn>
 
-        {/* Right Column: Analysis Results or History */}
+        {/* Right Column: Analysis Results or History (Full Height, Uninterrupted) */}
         <RightColumn>
           <TabBar>
             <TabButtons>
@@ -161,42 +193,8 @@ const Dashboard = () => {
           </div>
         </RightColumn>
       </Main>
-
-
-      {/* Bottom Full-Width Sample Rail */}
-      <SampleFooterRail>
-        <SampleRailLabel>
-          <FiZap color="#eab308" size={14} />
-          <span>Demo Samples:</span>
-        </SampleRailLabel>
-
-        <SampleRailList>
-          {SAMPLE_IMAGES.map((sample) => {
-            const isSelected = activeSample?.id === sample.id;
-            return (
-              <SampleCard
-                key={sample.id}
-                $active={isSelected}
-                onClick={() => handleSelectSample(sample)}
-                type="button"
-                title={`${sample.name} (${sample.code})`}
-              >
-                <img src={sample.imagePath} alt={sample.code} />
-                <div className="meta">
-                  <span className="name">{sample.code}</span>
-                  <span className="type">{sample.typeLabel || sample.type}</span>
-                </div>
-              </SampleCard>
-            );
-          })}
-        </SampleRailList>
-      </SampleFooterRail>
     </Container>
   );
 };
 
 export default Dashboard;
-
-
-
-

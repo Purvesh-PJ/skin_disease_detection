@@ -6,7 +6,7 @@ import { usePrediction } from '../../../hooks';
 
 const Container = styled.div`
   width: 100%;
-  max-width: 460px;
+  max-width: 560px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,13 +16,14 @@ const Container = styled.div`
 
 const DropZone = styled.div`
   width: 100%;
-  height: 270px;
+  height: 330px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border: 2px dashed ${({ theme, $hasImage }) => 
     $hasImage ? theme.colors.primary[500] : theme.colors.border.default};
+
   border-radius: ${({ theme }) => theme.borderRadius.xl};
   background-color: ${({ theme, $hasImage }) => 
     $hasImage

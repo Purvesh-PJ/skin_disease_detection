@@ -34,11 +34,18 @@ export const Main = styled.main`
 export const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+`;
+
+export const LeftContentArea = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  overflow-y: auto;
   padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[6]}`};
+  overflow-y: auto;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -56,6 +63,7 @@ export const RightColumn = styled.div`
   border-left: 1px solid ${({ theme }) => theme.colors.border.light};
   padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[6]}`};
   overflow-y: auto;
+
 
   &::-webkit-scrollbar {
     width: 5px;
