@@ -191,7 +191,7 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
       const user = authService.getUser();
       if (user) {
         setFullName(user.settings?.full_name || user.username || '');
-        setRoleTitle(user.settings?.role_title || 'Clinical AI Evaluator');
+        setRoleTitle(user.settings?.role_title || 'Demo User');
         setSpecialization(user.settings?.specialization || 'Dermoscopy Analysis');
       }
       setSuccess(null);
@@ -234,7 +234,7 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
         <ModalHeader>
           <div className="title-group">
             <FiUser color="#16a34a" size={18} />
-            <h3>Evaluator Profile & Preferences</h3>
+            <h3>Profile & Preferences</h3>
           </div>
           <CloseButton onClick={onClose}>
             <FiX size={18} />
@@ -258,7 +258,7 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="e.g. Dr. Alex Morgan / Sarah (Recruiter)"
+              placeholder="e.g. Demo User"
               required
             />
           </FormGroup>
@@ -271,10 +271,11 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
               type="text"
               value={roleTitle}
               onChange={(e) => setRoleTitle(e.target.value)}
-              placeholder="e.g. Senior AI Technical Recruiter"
+              placeholder="e.g. AI Research / Doctor"
               required
             />
           </FormGroup>
+
 
           <FormGroup>
             <label>

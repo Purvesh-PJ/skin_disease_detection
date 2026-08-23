@@ -100,19 +100,20 @@ def seed_demo_user():
     hashed_password = bcrypt.generate_password_hash("DemoUser@123").decode('utf-8')
     if not user:
         demo_user = {
-            "username": "Demo Evaluator",
+            "username": "Demo User",
             "email": demo_email,
             "password": hashed_password,
             "roles": ["demo", "user"],
             "settings": {
-                "full_name": "Demo Evaluator (Recruiter)",
-                "role_title": "AI Clinical Evaluator / Recruiter",
+                "full_name": "Demo",
+                "role_title": "Demo",
                 "specialization": "Dermoscopy & Clinical AI",
                 "theme": "dark",
                 "email_notifications": True
             },
             "created_at": datetime.utcnow().isoformat()
         }
+
         users_collection.insert_one(demo_user)
         return demo_user
     else:

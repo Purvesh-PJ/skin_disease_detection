@@ -2,12 +2,12 @@ import axiosInstance from './axios';
 import { API_ENDPOINTS, STORAGE_KEYS, ROUTES } from '../../constants';
 
 const DEMO_USER_PROFILE = {
-  username: 'Demo Evaluator',
+  username: 'Demo User',
   email: 'demo@skindisease.ai',
   roles: ['demo', 'user'],
   settings: {
-    full_name: 'Demo Evaluator',
-    role_title: 'Clinical Evaluator',
+    full_name: 'Demo',
+    role_title: 'Demo',
     specialization: 'Dermatology AI',
     theme: 'dark',
     email_notifications: true
@@ -38,7 +38,7 @@ export const authService = {
         return {
           token: fallbackToken,
           user: DEMO_USER_PROFILE,
-          message: 'Welcome Demo Evaluator'
+          message: 'Welcome Demo'
         };
       }
       throw err;
@@ -63,10 +63,11 @@ export const authService = {
       return {
         token: fallbackToken,
         user: DEMO_USER_PROFILE,
-        message: 'Welcome Demo Evaluator'
+        message: 'Welcome Demo'
       };
     }
   },
+
 
   async register(userData) {
     const response = await axiosInstance.post(API_ENDPOINTS.AUTH.REGISTER, userData);

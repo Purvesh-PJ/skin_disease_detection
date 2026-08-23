@@ -56,10 +56,11 @@ def demo_login():
     
     return jsonify({
         "token": access_token,
-        "message": "Welcome, Recruiter / Guest Evaluator!",
+        "message": "Welcome Demo",
         "user": get_clean_user_profile(demo_user),
         "is_demo": True
     }), 200
+
 
 
 @auth_router.route('/register', methods=['POST'])

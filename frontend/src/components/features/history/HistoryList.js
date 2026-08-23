@@ -349,9 +349,10 @@ export const HistoryList = ({ refreshTrigger }) => {
       <HistoryHeader>
         <div className="header-left">
           <FiDatabase color="#16a34a" size={16} />
-          <h4>Saved Diagnostic Scans</h4>
-          <span className="badge">{history.length} Saved</span>
+          <h4>Diagnostic Scan History</h4>
+          <span className="badge">{history.length} Scans</span>
         </div>
+
 
         <div className="header-actions">
           <HeaderActionButton onClick={fetchHistory} disabled={loading} title="Refresh records">

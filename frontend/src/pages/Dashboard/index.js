@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiActivity, FiDatabase, FiZap } from 'react-icons/fi';
+import { FiActivity, FiClock, FiZap } from 'react-icons/fi';
 import { Header } from '../../components/layout';
 import { ImageUploadCard, ResultsCard } from '../../components/features/prediction';
 import HistoryList from '../../components/features/history/HistoryList';
@@ -30,6 +30,9 @@ const Dashboard = () => {
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
   const [userUpdateKey, setUserUpdateKey] = useState(0);
 
+  const localRecords = historyService.getLocalRecords();
+  const hasScans = Boolean(predictionResult || (localRecords && localRecords.length > 0));
+
   const handlePredictionSuccess = (result) => {
     setPredictionResult(result);
     // Record scan history immediately so Saved Scans is always synchronized
@@ -37,6 +40,7 @@ const Dashboard = () => {
     setActiveTab('analysis');
     setHistoryRefreshKey((prev) => prev + 1);
   };
+
 
 
   const handleUserUpdated = () => {
@@ -128,14 +132,21 @@ const Dashboard = () => {
               </TabButton>
               <TabButton
                 $active={activeTab === 'history'}
-                onClick={() => setActiveTab('history')}
+                onClick={() => {
+                  if (hasScans) {
+                    setActiveTab('history');
+                  }
+                }}
+                disabled={!hasScans}
+                title={hasScans ? 'View diagnostic scan history' : 'Perform an image scan to see history'}
                 type="button"
               >
-                <FiDatabase size={14} />
-                Saved Scans
+                <FiClock size={14} />
+                See History
               </TabButton>
             </TabButtons>
           </TabBar>
+
 
           <div style={{ display: activeTab === 'analysis' ? 'flex' : 'none', flexDirection: 'column', height: '100%' }}>
             <ResultsCard

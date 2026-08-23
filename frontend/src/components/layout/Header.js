@@ -126,8 +126,8 @@ const Header = ({ onUserUpdated }) => {
     authService.logout();
   };
 
-  const displayName = user?.settings?.full_name || user?.username || 'Guest Evaluator';
-  const roleTitle = user?.settings?.role_title || (user ? 'Verified User' : 'Demo Mode');
+  const displayName = user?.settings?.full_name || user?.username || 'Demo';
+  const roleTitle = user?.settings?.role_title || 'Demo';
 
   return (
     <>
@@ -144,8 +144,9 @@ const Header = ({ onUserUpdated }) => {
         <HeaderRight>
           <UserStatusBadge $isAuth={!!user}>
             <span className="dot" />
-            <span>{user ? `${displayName}` : 'Demo / Guest'}</span>
+            <span>{displayName}</span>
           </UserStatusBadge>
+
           
           <ThemeToggle />
           
