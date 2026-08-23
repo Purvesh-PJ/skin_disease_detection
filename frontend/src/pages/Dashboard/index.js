@@ -137,17 +137,20 @@ const Dashboard = () => {
             </TabButtons>
           </TabBar>
 
-          {activeTab === 'analysis' ? (
+          <div style={{ display: activeTab === 'analysis' ? 'flex' : 'none', flexDirection: 'column', height: '100%' }}>
             <ResultsCard
               predictionResult={predictionResult}
               loading={loading}
               error={error}
             />
-          ) : (
+          </div>
+
+          <div style={{ display: activeTab === 'history' ? 'flex' : 'none', flexDirection: 'column', height: '100%' }}>
             <HistoryList refreshTrigger={historyRefreshKey} />
-          )}
+          </div>
         </RightColumn>
       </Main>
+
 
       {/* Bottom Full-Width Sample Rail */}
       <SampleFooterRail>

@@ -21,8 +21,13 @@ const setLocalHistory = (records) => {
 };
 
 export const historyService = {
+  getLocalRecords() {
+    return getLocalHistory();
+  },
+
   recordScan(predictionResult) {
     if (!predictionResult) return null;
+
 
     const record = {
       _id: predictionResult.history_id || 'scan_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),

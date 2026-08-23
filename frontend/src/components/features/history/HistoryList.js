@@ -277,27 +277,37 @@ const formatDate = (isoString) => {
 };
 
 export const HistoryList = ({ refreshTrigger }) => {
-  const [history, setHistory] = useState([]);
+  // Initialize synchronously with cached records for instant 0ms display
+  const [history, setHistory] = useState(() => historyService.getLocalRecords());
   const [loading, setLoading] = useState(false);
 
-  const fetchHistory = useCallback(async () => {
+  const fetchHistory = useCallback(async (isManual = false) => {
     if (!authService.isAuthenticated()) return;
-    setLoading(true);
-    try {
+    
+    // Only show loading indicator if list is completely empty or manual refresh is pressed
+    if (isManual && history.length === 0) {
+      setLoading(true);
+    }
 
+    try {
       const records = await historyService.getHistory();
-      setHistory(records);
+      if (Array.isArray(records)) {
+        setHistory(records);
+      }
     } catch (err) {
-      console.warn("Could not load history from MongoDB:", err);
-      // Non-blocking error
+      console.warn("Scan history sync notice:", err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [history.length]);
 
   useEffect(() => {
-    fetchHistory();
+    // Immediate sync from local records in case new prediction happened
+    setHistory(historyService.getLocalRecords());
+    // Silent background sync with server
+    fetchHistory(false);
   }, [fetchHistory, refreshTrigger]);
+
 
   const handleDelete = (id, e) => {
     e.stopPropagation();
