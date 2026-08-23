@@ -167,8 +167,9 @@ const Header = ({ onUserUpdated }) => {
               {user && (
                 <Dropdown.Item onClick={() => setIsSettingsOpen(true)}>
                   <FiSettings size={14} />
-                  Profile & MongoDB Settings
+                  Profile & Account Settings
                 </Dropdown.Item>
+
               )}
 
               <Dropdown.Item asChild>

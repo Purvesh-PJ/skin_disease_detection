@@ -214,7 +214,7 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
         specialization: specialization.trim(),
       };
       await authService.updateProfile(updatedPayload);
-      setSuccess('Profile settings successfully updated in MongoDB!');
+      setSuccess('Profile settings successfully updated!');
       if (onProfileUpdated) {
         onProfileUpdated();
       }
@@ -222,7 +222,7 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
         onClose();
       }, 900);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to save settings to MongoDB');
+      setError(err.response?.data?.error || 'Failed to save settings');
     } finally {
       setLoading(false);
     }
@@ -247,7 +247,7 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
 
           <MongoNotice>
             <FiDatabase size={16} color="#16a34a" />
-            <span>Settings are persisted real-time to the MongoDB Atlas cluster.</span>
+            <span>Preferences and diagnostic history are synced securely with your account.</span>
           </MongoNotice>
 
           <FormGroup>
@@ -297,7 +297,7 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
               {loading ? <Spinner size="sm" color="white" /> : (
                 <>
                   <FiSave size={14} />
-                  Save to MongoDB
+                  Save Changes
                 </>
               )}
             </ActionButton>
@@ -307,5 +307,6 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
     </ModalOverlay>
   );
 };
+
 
 export default ProfileSettingsModal;

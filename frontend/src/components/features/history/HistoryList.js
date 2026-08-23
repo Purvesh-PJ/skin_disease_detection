@@ -253,21 +253,8 @@ const EmptyState = styled.div`
   }
 `;
 
-const MongoBadge = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  padding: 6px 10px;
-  background: ${({ theme }) => theme.colors.background.tertiary};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  margin-top: 4px;
-`;
-
 const getCategoryClass = (diseaseCode) => {
+
   const code = (diseaseCode || '').toLowerCase();
   if (['mel', 'melanoma', 'bcc', 'basal cell carcinoma'].includes(code)) return 'malignant';
   if (['akiec', 'actinic keratoses', 'bowen'].includes(code)) return 'precancerous';
@@ -339,9 +326,9 @@ export const HistoryList = ({ refreshTrigger }) => {
     return (
       <EmptyState>
         <FiShield size={24} color="#16a34a" />
-        <p>Guest Session (History Storage Inactive)</p>
+        <p>Guest Session (History Inactive)</p>
         <span className="subtext">
-          Sign in or use <strong>⚡ 1-Click Demo Login</strong> to auto-record your scans in MongoDB Atlas.
+          Sign in or use <strong>⚡ 1-Click Demo Login</strong> to record and save your scans.
         </span>
       </EmptyState>
     );
@@ -352,7 +339,7 @@ export const HistoryList = ({ refreshTrigger }) => {
       <HistoryHeader>
         <div className="header-left">
           <FiDatabase color="#16a34a" size={16} />
-          <h4>MongoDB Scan Records</h4>
+          <h4>Saved Diagnostic Scans</h4>
           <span className="badge">{history.length} Saved</span>
         </div>
 
@@ -377,8 +364,8 @@ export const HistoryList = ({ refreshTrigger }) => {
       ) : history.length === 0 ? (
         <EmptyState>
           <FiLayers size={24} color="#16a34a" />
-          <p>No scans stored in MongoDB yet</p>
-          <span className="subtext">Upload an image or pick a demo benchmark above to record a diagnostic scan!</span>
+          <p>No scans recorded yet</p>
+          <span className="subtext">Upload an image or pick a demo benchmark from the bottom rail to record a diagnostic scan!</span>
         </EmptyState>
       ) : (
         <RecordsList>
@@ -421,13 +408,9 @@ export const HistoryList = ({ refreshTrigger }) => {
           })}
         </RecordsList>
       )}
-
-      <MongoBadge>
-        <FiDatabase size={13} color="#16a34a" />
-        <span>Connected to live MongoDB collection: <code>prediction_history</code></span>
-      </MongoBadge>
     </HistoryContainer>
   );
 };
 
 export default HistoryList;
+
