@@ -216,7 +216,7 @@ Disease name + description
 
 ### 📄 License
 
-MIT License See [LICENSE]() file.
+Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
 
 
 ### 🙋 Contact
@@ -224,18 +224,18 @@ MIT License See [LICENSE]() file.
 [@Purvesh-PJ](https://github.com/Purvesh-PJ) 
 
 
-### 📚 Additional Documentation
+### 📚 Project Documentation Hub
 
-Detailed project documentation is available in the `docs/` folder:
+Complete technical documentation is organized in the [`docs/`](docs/README.md) directory:
 
-- **[Architecture Overview](docs/architecture.md)** - System design and component breakdown
-- **[Working Flow](docs/working-flow.md)** - End-to-end process flows
-- **[Modules Documentation](docs/modules.md)** - Detailed module and component reference
-- **[Frontend Flow](docs/frontend-flow.md)** - React architecture and patterns
-- **[Backend Flow](docs/backend-flow.md)** - Flask API and request lifecycle
-- **[API Overview](docs/api-overview.md)** - Complete API endpoint reference
-- **[Interview Notes](docs/interview-notes.md)** - Interview preparation guide
-- **[Improvements](docs/improvements.md)** - Future enhancements and recommendations
+- 📖 **[Master Documentation Portal](docs/README.md)** — Overview, sequential reading guide & tech matrix
+- 🚀 **[Getting Started](docs/getting-started/setup-and-installation.md)** — [Setup Guide](docs/getting-started/setup-and-installation.md) &bull; [Quickstart](docs/getting-started/quickstart.md)
+- 🏛️ **[System Architecture](docs/architecture/system-architecture.md)** — [Architecture Design](docs/architecture/system-architecture.md) &bull; [Frontend SPA](docs/architecture/frontend-architecture.md) &bull; [Data Models](docs/architecture/data-models.md)
+- 🧠 **[Machine Learning](docs/machine-learning/ml-pipeline.md)** — [CNN Ensemble Pipeline](docs/machine-learning/ml-pipeline.md) &bull; [Model Training](docs/machine-learning/model-training.md)
+- 📡 **[REST API Reference](docs/api-reference/endpoints.md)** — Endpoints, schemas & cURL examples
+- 🐳 **[DevOps & Cloud](docs/devops/deployment-guide.md)** — [Production Deploy](docs/devops/deployment-guide.md) &bull; [Docker Orchestration](docs/devops/docker-and-containerization.md) &bull; [Env Matrix](docs/devops/environment-variables.md)
+- 🔒 **[Security & Governance](docs/security/security-and-compliance.md)** — JWT lifecycle, Bcrypt hashing & CDS medical disclaimers
+- 🔍 **[Troubleshooting Playbook](docs/troubleshooting/diagnostic-playbook.md)** — Diagnostic decision tree & error fixes
 
 ---
 
