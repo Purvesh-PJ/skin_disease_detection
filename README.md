@@ -32,21 +32,21 @@ The application provides a complete full-stack workflow: image preprocessing (Op
 
 ---
 
-## 📸 Screenshots
+## 📸 Screenshots & UI Walkthrough
 
 <div align="center">
-  <img src="frontend/public/screenshots/skin_disease_platform_screenshot.png" alt="Skin Disease Platform Dashboard" width="100%" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);" />
+  <img src="frontend/public/screenshots/dashboard_prediction.png" alt="Skin Disease Platform Dashboard" width="100%" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);" />
 </div>
 
 <br />
 
 | 🔍 **Dermoscopy Scanner & Analysis View** | 📊 **Patient History & Audit Log (MongoDB)** |
 | :---: | :---: |
-| <img src="frontend/public/screenshots/skin_disease_platform_screenshot.png" width="100%" alt="Scanner View" /> | <img src="frontend/public/screenshots/skin_disease_platform_screenshot.png" width="100%" alt="History View" /> |
+| <img src="frontend/public/screenshots/dashboard_prediction.png" width="100%" alt="Scanner View" /> | <img src="frontend/public/screenshots/history_audit.png" width="100%" alt="History View" /> |
 
-| 🌓 **Dark / Light Theme Engine** | 🧪 **1-Click HAM10000 Sample Picker** |
+| 🚀 **Landing Page Hero & Overview** | 🧪 **1-Click HAM10000 Sample Picker** |
 | :---: | :---: |
-| <img src="frontend/public/screenshots/skin_disease_platform_screenshot.png" width="100%" alt="Theme Engine" /> | <img src="frontend/public/screenshots/skin_disease_platform_screenshot.png" width="100%" alt="Sample Images Picker" /> |
+| <img src="frontend/public/screenshots/landing_hero.png" width="100%" alt="Landing Page Hero" /> | <img src="frontend/public/screenshots/sample_picker.png" width="100%" alt="Sample Images Picker" /> |
 
 ---
 
