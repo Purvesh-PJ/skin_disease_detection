@@ -27,19 +27,8 @@ Single CNN models in medical imaging often suffer from high variance and class-s
 
 The application provides a complete full-stack workflow: image preprocessing (OpenCV), multi-model inference (TensorFlow/Keras), secure REST APIs (Flask, JWT, Bcrypt), cloud database persistence (MongoDB Atlas), and an interactive clinical dashboard (React 18).
 
----
-
-## 🌐 Live Deployment & Instant Testing
-
-| Component | Cloud Host | Live URL |
-| :--- | :--- | :--- |
-| **Frontend Web App** | Vercel | [https://skin-disease-detection.vercel.app/](https://skin-disease-detection.vercel.app/) |
-| **Backend REST API** | Render | [https://skin-disease-detection-6kxm.onrender.com](https://skin-disease-detection-6kxm.onrender.com) |
-| **Database** | MongoDB Atlas | Managed Cloud Cluster (`skin_disease_db`) |
-
-> 🔑 **1-Click Recruiter Evaluation:**  
-> On the login page, click **"1-Click Demo Login"** to bypass registration and access the full clinical scanning dashboard immediately.  
-> *(Manual demo credentials: `demo@skindisease.ai` / `DemoUser@123`)*
+> 🔑 **Instant Evaluator Access (Zero Setup):**  
+> Test the [Live Web App](https://skin-disease-detection.vercel.app/) by clicking **"1-Click Demo Login"** on the login page (Demo account: `demo@skindisease.ai` / `DemoUser@123`).
 
 ---
 
