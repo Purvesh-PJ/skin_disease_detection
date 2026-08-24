@@ -207,6 +207,6 @@ Technical documentation is organized in the [`docs/`](docs/README.md) directory:
 
 ## 👤 Author & Acknowledgements
 
-* **Author & Lead Developer**: **Purvesh Patel** ([@Purvesh-PJ](https://github.com/Purvesh-PJ))
+* **Maintainer & Author**: [@Purvesh-PJ](https://github.com/Purvesh-PJ)
 * **Dataset**: [HAM10000 Dataset](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000) (ISIC Archive)
 * **Frameworks**: [TensorFlow](https://www.tensorflow.org/) • [React](https://react.dev/) • [Flask](https://flask.palletsprojects.com/) • [MongoDB Atlas](https://www.mongodb.com/atlas)

@@ -20,8 +20,8 @@ We actively maintain and provide security patches for the following versions of 
 If you discover a security vulnerability (e.g. JWT token leakage, unauthorized MongoDB queries, input sanitization bypass, or dependency CVE), please follow these guidelines:
 
 1. **Do NOT open a public GitHub issue** for sensitive vulnerabilities.
-2. Send an email directly to the project maintainer with the subject `[SECURITY ISSUE] Skin Disease Detection Platform`:
-   * 📧 **Security Contact**: [purveshpatel2005@gmail.com](mailto:purveshpatel2005@gmail.com)
+2. Contact the maintainer privately via GitHub Advisory / Profile:
+   * 🛡️ **Security Contact**: [@Purvesh-PJ](https://github.com/Purvesh-PJ)
 3. Please include the following details in your report:
    * A detailed description of the vulnerability.
    * Step-by-step reproduction steps or proof-of-concept (PoC) payload.
