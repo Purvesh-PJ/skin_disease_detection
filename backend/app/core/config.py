@@ -15,6 +15,7 @@ else:
     load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+REPO_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
 
 class AppConfig:
     """Enterprise application configuration container."""
@@ -29,7 +30,10 @@ class AppConfig:
     if os.path.isabs(MODEL_DIR_SETTING):
         MODEL_DIR = MODEL_DIR_SETTING
     else:
-        MODEL_DIR = os.path.abspath(os.path.join(BASE_DIR, MODEL_DIR_SETTING))
+        # Check repo root first (standard monorepo layout: /trained_models)
+        root_path = os.path.abspath(os.path.join(REPO_ROOT, MODEL_DIR_SETTING))
+        backend_path = os.path.abspath(os.path.join(BASE_DIR, MODEL_DIR_SETTING))
+        MODEL_DIR = root_path if os.path.exists(root_path) else backend_path
 
     UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
