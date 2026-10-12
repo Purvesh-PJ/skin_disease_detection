@@ -6,99 +6,68 @@ token validation, and profile settings stored in MongoDB.
 """
 
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flask_bcrypt import Bcrypt
-from app.models.user import (
-    find_user_by_email,
-    create_user,
-    is_email_taken,
-    seed_demo_user,
-    update_user_settings,
-    get_clean_user_profile
-)
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.services.auth_service import AuthService
 
-bcrypt = Bcrypt()
 auth_router = Blueprint('auth', __name__)
 
 @auth_router.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-
     if not data or 'email' not in data or 'password' not in data:
         return jsonify({"error": "Email and password are required"}), 400
 
-    email = data["email"].strip().lower()
-    password = data["password"]
-
-    # Auto-seed demo account if demo credentials are used
-    if email in ("demo@skindisease.ai", "recruiter.demo@skindisease.ai"):
-        seed_demo_user()
-
-    user = find_user_by_email(email)
-    
-    if user and bcrypt.check_password_hash(user["password"], password):
-        access_token = create_access_token(identity=user["email"])
+    result = AuthService.authenticate(data["email"], data["password"])
+    if result:
         return jsonify({
-            "token": access_token,
+            "token": result["token"],
             "message": "Login successful",
-            "user": get_clean_user_profile(user)
+            "user": result["user"]
         }), 200
 
     return jsonify({"error": "Invalid credentials. Please check your email/password."}), 401
 
 
-
 @auth_router.route('/demo-login', methods=['POST'])
 def demo_login():
     """1-Click Recruiter/Demo login endpoint with auto-provisioning."""
-    demo_user = seed_demo_user()
-    access_token = create_access_token(identity=demo_user["email"])
-    
+    result = AuthService.login_demo()
     return jsonify({
-        "token": access_token,
+        "token": result["token"],
         "message": "Welcome Demo",
-        "user": get_clean_user_profile(demo_user),
+        "user": result["user"],
         "is_demo": True
     }), 200
-
 
 
 @auth_router.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-
     if not data or not all(k in data for k in ("username", "email", "password")):
         return jsonify({"error": "Username, email, and password are required"}), 400
 
-    email = data["email"].strip().lower()
-    password = data["password"]
-    username = data["username"].strip()
-
-    if is_email_taken(email):
-        return jsonify({"error": "An account with this email already exists"}), 409
-
-    new_user = create_user(username, email, password)
-    access_token = create_access_token(identity=new_user["email"])
-    
-    return jsonify({
-        "message": "User registered successfully!",
-        "token": access_token,
-        "user": get_clean_user_profile(new_user)
-    }), 201
+    try:
+        result = AuthService.register(data["username"], data["email"], data["password"])
+        return jsonify({
+            "message": "User registered successfully!",
+            "token": result["token"],
+            "user": result["user"]
+        }), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 409
 
 
 @auth_router.route('/verify-token', methods=['GET'])
 @jwt_required()
 def verify_token():
     current_user_email = get_jwt_identity()
-    user = find_user_by_email(current_user_email)
-    
-    if not user:
+    user_profile = AuthService.get_profile(current_user_email)
+    if not user_profile:
         return jsonify({"error": "User session not found"}), 404
-        
+
     return jsonify({
         'message': 'Token is valid',
-        'user': get_clean_user_profile(user)
+        'user': user_profile
     }), 200
 
 
@@ -106,10 +75,10 @@ def verify_token():
 @jwt_required()
 def get_profile():
     current_user_email = get_jwt_identity()
-    user = find_user_by_email(current_user_email)
-    if not user:
+    user_profile = AuthService.get_profile(current_user_email)
+    if not user_profile:
         return jsonify({"error": "User not found"}), 404
-    return jsonify({"user": get_clean_user_profile(user)}), 200
+    return jsonify({"user": user_profile}), 200
 
 
 @auth_router.route('/profile', methods=['PUT'])
@@ -119,13 +88,13 @@ def update_profile():
     data = request.get_json()
     if not data or not isinstance(data, dict):
         return jsonify({"error": "Invalid profile payload"}), 400
-    
-    updated_user = update_user_settings(current_user_email, data)
-    if not updated_user:
+
+    user_profile = AuthService.update_profile(current_user_email, data)
+    if not user_profile:
         return jsonify({"error": "Failed to update profile settings"}), 400
-        
+
     return jsonify({
         "message": "Profile settings saved successfully",
-        "user": get_clean_user_profile(updated_user)
+        "user": user_profile
     }), 200
 
