@@ -17,7 +17,7 @@ from tensorflow.keras.applications.efficientnet import preprocess_input
 from app.core.config import config
 from app.core.constants import IDX2CLASS, USER_FRIENDLY_MAPPING, TARGET_IMAGE_SIZE
 from app.core.exceptions import ModelNotFoundError, InvalidImageError
-from app.ml.cloud_downloader import download_and_extract_zip, download_file_from_cloud
+from app.inference.cloud_downloader import download_and_extract_zip, download_file_from_cloud
 
 logger = logging.getLogger(__name__)
 
