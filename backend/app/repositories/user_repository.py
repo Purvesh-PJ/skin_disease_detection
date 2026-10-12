@@ -5,19 +5,14 @@ Interacts with MongoDB users collection for account management.
 """
 
 from datetime import datetime
-from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
-from app.core.config import config
+from app.core.database import get_db
 
-mongo_client = MongoClient(config.MONGO_DB_URI)
-try:
-    db = mongo_client.get_default_database()
-    if db is None:
-        db = mongo_client[config.MONGO_DB_NAME]
-except Exception:
-    db = mongo_client[config.MONGO_DB_NAME]
+class _CollectionProxy:
+    def __getattr__(self, name):
+        return getattr(get_db()["users"], name)
 
-users_collection = db["users"]
+users_collection = _CollectionProxy()
 bcrypt = Bcrypt()
 
 def get_clean_user_profile(user_doc):

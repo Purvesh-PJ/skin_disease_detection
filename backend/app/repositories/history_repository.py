@@ -8,17 +8,13 @@ retrieving, and deleting skin lesion prediction records per user.
 from datetime import datetime
 from pymongo import MongoClient, DESCENDING
 from bson import ObjectId
-from app.core.config import config
+from app.core.database import get_db
 
-mongo_client = MongoClient(config.MONGO_DB_URI)
-try:
-    db = mongo_client.get_default_database()
-    if db is None:
-        db = mongo_client[config.MONGO_DB_NAME]
-except Exception:
-    db = mongo_client[config.MONGO_DB_NAME]
+class _HistoryCollectionProxy:
+    def __getattr__(self, name):
+        return getattr(get_db()["prediction_history"], name)
 
-history_collection = db["prediction_history"]
+history_collection = _HistoryCollectionProxy()
 
 def save_prediction(user_email: str, prediction_data: dict) -> dict:
     """Stores an image prediction result in MongoDB linked to user email."""

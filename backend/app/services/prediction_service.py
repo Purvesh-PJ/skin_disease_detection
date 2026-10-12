@@ -102,7 +102,7 @@ def process_prediction(file_path: str, filename: str, user_email: str = None) ->
     High-level business service method to execute prediction,
     enrich result metadata, and persist history if authenticated.
     """
-    from app.models.history import save_prediction
+    from app.repositories.history_repository import save_prediction
 
     result = predict_skin_disease(file_path)
     result["message"] = "Image processed successfully"

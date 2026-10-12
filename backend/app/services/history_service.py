@@ -4,7 +4,7 @@ Prediction History Business Service
 Handles retrieval, deletion, and cleanup of user prediction history records.
 """
 
-from app.models.history import get_user_history, delete_history_item, clear_user_history
+from app.repositories.history_repository import get_user_history, delete_history_item, clear_user_history
 
 class HistoryService:
     """Service encapsulating user scan history business logic."""

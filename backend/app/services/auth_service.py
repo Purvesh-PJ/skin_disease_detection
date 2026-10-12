@@ -7,7 +7,7 @@ JWT token generation, and profile sanitation.
 
 from flask_jwt_extended import create_access_token
 from flask_bcrypt import Bcrypt
-from app.models.user import (
+from app.repositories.user_repository import (
     find_user_by_email,
     create_user,
     is_email_taken,
