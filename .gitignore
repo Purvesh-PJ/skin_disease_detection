@@ -14,4 +14,9 @@ env.*
 # Node
 node_modules/
 .npm
-*.log
+*.log
+
+# Large Datasets
+ml_engine/data/skin_disease_dataset/
+backend/data/skin_disease_dataset/
+

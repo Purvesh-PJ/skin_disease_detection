@@ -30,8 +30,8 @@ import argparse
 import pandas as pd
 import sys
 from sklearn.model_selection import train_test_split
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from app.core.constants import SKIN_DISEASE_CLASSES as CLASSES
+# HAM10000 7 Diagnostic Classes
+CLASSES = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
 
 def prepare_dataset(raw_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ratio=0.1, random_state=42):
     """

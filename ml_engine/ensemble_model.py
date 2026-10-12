@@ -9,10 +9,10 @@ import logging
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
-from app.ml.architectures.resnet import build_resnet101
-from app.ml.architectures.efficientnet import build_efficientnetb3
-from app.ml.architectures.densenet import build_densenet121
-from app.ml.pipeline.trainer import ModelTrainer
+from ml_engine.architectures.resnet import build_resnet101
+from ml_engine.architectures.efficientnet import build_efficientnetb3
+from ml_engine.architectures.densenet import build_densenet121
+from ml_engine.pipeline.trainer import ModelTrainer
 
 logger = logging.getLogger(__name__)
 

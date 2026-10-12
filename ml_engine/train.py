@@ -1,4 +1,4 @@
-from app.ml.ensemble_model import train_base_models, stack_and_train_ensemble, evaluate_ensemble_model
+from ml_engine.ensemble_model import train_base_models, stack_and_train_ensemble, evaluate_ensemble_model
 
 def train_and_evaluate_ensemble(train_generator, val_generator, test_generator, class_weights=None, save_dir=None):
     try:
