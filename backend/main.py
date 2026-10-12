@@ -15,7 +15,7 @@ from werkzeug.exceptions import HTTPException
 
 from app.core.config import config
 from app.core.exceptions import BaseDomainException
-from app.api.router import register_routes
+from app.routes import register_routes
 
 # Configure logging
 logging.basicConfig(
