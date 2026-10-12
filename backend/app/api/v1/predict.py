@@ -11,8 +11,7 @@ from werkzeug.utils import secure_filename
 import os
 import logging
 from app.core.config import config
-from app.services.prediction_service import predict_skin_disease
-from app.models.history import save_prediction
+from app.services.prediction_service import process_prediction
 from app.core.exceptions import BaseDomainException
 
 logger = logging.getLogger(__name__)
@@ -34,24 +33,8 @@ def handle_prediction():
 
     try:
         image_file.save(file_path)
-        result = predict_skin_disease(file_path)
-        result["message"] = "Image processed successfully"
-        result["filename"] = filename
-
-        # Persist prediction in MongoDB if user is authenticated
         current_user_email = get_jwt_identity()
-        if current_user_email:
-            try:
-                saved_doc = save_prediction(current_user_email, result)
-                if saved_doc:
-                    result["history_id"] = saved_doc.get("_id")
-                    result["saved_to_db"] = True
-            except Exception as db_err:
-                logger.error(f"Failed to persist prediction history: {db_err}")
-                result["saved_to_db"] = False
-        else:
-            result["saved_to_db"] = False
-
+        result = process_prediction(file_path, filename, user_email=current_user_email)
         return jsonify(result), 200
     except BaseDomainException as e:
         logger.warning(f"Domain Exception: {e.message}")

@@ -96,3 +96,30 @@ def predict_skin_disease(image_path: str) -> dict:
         "confidence": confidence_percent,
         "disease_details": friendly_info
     }
+
+def process_prediction(file_path: str, filename: str, user_email: str = None) -> dict:
+    """
+    High-level business service method to execute prediction,
+    enrich result metadata, and persist history if authenticated.
+    """
+    from app.models.history import save_prediction
+
+    result = predict_skin_disease(file_path)
+    result["message"] = "Image processed successfully"
+    result["filename"] = filename
+
+    if user_email:
+        try:
+            saved_doc = save_prediction(user_email, result)
+            if saved_doc:
+                result["history_id"] = saved_doc.get("_id")
+                result["saved_to_db"] = True
+            else:
+                result["saved_to_db"] = False
+        except Exception as db_err:
+            logger.error(f"Failed to persist prediction history: {db_err}")
+            result["saved_to_db"] = False
+    else:
+        result["saved_to_db"] = False
+
+    return result
