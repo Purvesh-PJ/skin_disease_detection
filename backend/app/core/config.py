@@ -31,6 +31,9 @@ class AppConfig:
     else:
         MODEL_DIR = os.path.abspath(os.path.join(BASE_DIR, MODEL_DIR_SETTING))
 
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
     MODEL_ZIP_URL = os.getenv("MODEL_ZIP_URL", "")
     MODEL_CLOUD_URLS = {
         "resnet": os.getenv("MODEL_URL_RESNET", ""),

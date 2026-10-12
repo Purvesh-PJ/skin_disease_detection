@@ -10,6 +10,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 import os
 import logging
+from app.core.config import config
 from app.services.prediction_service import predict_skin_disease
 from app.models.history import save_prediction
 from app.core.exceptions import BaseDomainException
@@ -17,8 +18,6 @@ from app.core.exceptions import BaseDomainException
 logger = logging.getLogger(__name__)
 
 predict_router = Blueprint('predict', __name__)
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 @predict_router.route('/predict', methods=['POST'])
 @jwt_required(optional=True)
@@ -30,11 +29,8 @@ def handle_prediction():
     if image_file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    temp_dir = os.path.join(BASE_DIR, 'backend', 'uploads')
-    os.makedirs(temp_dir, exist_ok=True)
-
     filename = secure_filename(image_file.filename)
-    file_path = os.path.join(temp_dir, filename)
+    file_path = os.path.join(config.UPLOAD_FOLDER, filename)
 
     try:
         image_file.save(file_path)

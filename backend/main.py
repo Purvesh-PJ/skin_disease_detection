@@ -52,9 +52,7 @@ def configure_app(app, testing=False):
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
     
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
-    app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-    
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
     
     if testing:
         app.config['TESTING'] = True
