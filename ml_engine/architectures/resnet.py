@@ -11,7 +11,7 @@ from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout, Batc
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
-from app.core.constants import TARGET_IMAGE_SIZE
+from ml_engine.constants import TARGET_IMAGE_SIZE
 
 def build_resnet101(input_shape=(*TARGET_IMAGE_SIZE, 3), num_classes=7, initial_lr=1e-4):
     """

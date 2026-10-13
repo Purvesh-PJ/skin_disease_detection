@@ -9,7 +9,7 @@ from tensorflow.keras.applications import DenseNet121
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout, BatchNormalization, LeakyReLU
 from tensorflow.keras.optimizers import Adam
-from app.core.constants import TARGET_IMAGE_SIZE
+from ml_engine.constants import TARGET_IMAGE_SIZE
 
 def build_densenet121(input_shape=(*TARGET_IMAGE_SIZE, 3), num_classes=7, learning_rate=1e-4):
     """
