@@ -2,16 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 import { ROUTES } from '../../constants';
-import { Button, Alert, Spinner } from '../../components/common/ui';
+import { Button, Input, Alert, Spinner } from '../../components/ui';
 import { AuthLayout } from '../../components/layout';
-import { H2, Text } from '../../styles/typography';
-import {
-  FormHeader,
-  Form,
-  StyledInput,
-  LinkText,
-  Divider,
-} from '../Login/styles';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -35,7 +27,7 @@ const Signup = () => {
       await register({ username, email, password });
       navigate(ROUTES.LOGIN);
     } catch {
-      // Error handled by useAuth
+      // Handled in useAuth
     }
   };
 
@@ -43,36 +35,40 @@ const Signup = () => {
 
   return (
     <AuthLayout>
-      <FormHeader>
-        <H2>Create account</H2>
-        <Text variant="secondary" size="sm">
+      {/* Header */}
+      <div className="flex flex-col gap-1 text-center mb-2">
+        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 m-0">
+          Create account
+        </h2>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 m-0">
           Get started with AI-driven skin lesion classification
-        </Text>
-      </FormHeader>
+        </p>
+      </div>
 
-      <Form onSubmit={handleSubmit}>
-        <StyledInput
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="flex flex-col w-full gap-3">
+        <Input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
-        <StyledInput
+        <Input
           type="email"
           placeholder="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <StyledInput
+        <Input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <StyledInput
+        <Input
           type="password"
           placeholder="Confirm Password"
           value={confirmPassword}
@@ -86,12 +82,18 @@ const Signup = () => {
           {loading ? <Spinner size="sm" color="white" /> : 'Create Account'}
         </Button>
 
-        <Divider />
+        <hr className="w-full border-t border-neutral-200 dark:border-neutral-800 my-1" />
 
-        <LinkText>
-          Already have an account? <Link to={ROUTES.LOGIN}>Log in</Link>
-        </LinkText>
-      </Form>
+        <p className="text-center text-xs text-neutral-500 dark:text-neutral-400 m-0">
+          Already have an account?{' '}
+          <Link
+            to={ROUTES.LOGIN}
+            className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline"
+          >
+            Log in
+          </Link>
+        </p>
+      </form>
     </AuthLayout>
   );
 };

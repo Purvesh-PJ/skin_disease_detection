@@ -2,19 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiZap } from 'react-icons/fi';
 import { useAuth } from '../../hooks';
-
 import { ROUTES } from '../../constants';
-import { Button, Alert, Spinner } from '../../components/common/ui';
+import { Button, Input, Alert, Spinner } from '../../components/ui';
 import { AuthLayout } from '../../components/layout';
-import { H2, Text } from '../../styles/typography';
-import {
-  FormHeader,
-  Form,
-  StyledInput,
-  LinkText,
-  Divider,
-  DemoNotice,
-} from './styles';
 
 const DEMO_EMAIL = 'demo@skindisease.ai';
 const DEMO_PASSWORD = 'DemoUser@123';
@@ -37,7 +27,7 @@ const Login = () => {
       await login(email, password);
       navigate(ROUTES.DASHBOARD);
     } catch {
-      // Error handled by useAuth
+      // Handled in useAuth
     }
   };
 
@@ -56,27 +46,36 @@ const Login = () => {
 
   return (
     <AuthLayout>
-      <FormHeader>
-        <H2>Sign In</H2>
-        <Text variant="secondary" size="sm">
+      {/* Header */}
+      <div className="flex flex-col gap-1 text-center mb-2">
+        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 m-0">
+          Sign In
+        </h2>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 m-0">
           Access diagnostic screening & scan records
-        </Text>
-      </FormHeader>
+        </p>
+      </div>
 
-      <DemoNotice>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <FiZap color="#16a34a" size={14} />
+      {/* Demo Account Box */}
+      <div className="flex items-center justify-between px-3 py-2 bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-800/40 rounded-lg text-xs text-neutral-700 dark:text-neutral-300 mb-1">
+        <div className="flex items-center gap-1.5">
+          <FiZap className="text-emerald-600 dark:text-emerald-400 shrink-0" size={14} />
           <span>
-            <span className="bold">Demo Account:</span> Pre-filled
+            <strong className="font-bold text-emerald-700 dark:text-emerald-400">Demo Account:</strong> Pre-filled
           </span>
         </div>
-        <button type="button" className="fill-btn" onClick={handleAutoFill}>
+        <button
+          type="button"
+          onClick={handleAutoFill}
+          className="font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 underline cursor-pointer bg-transparent border-none p-0 text-xs"
+        >
           {filledNotice ? '✓ Loaded' : 'Auto-Fill'}
         </button>
-      </DemoNotice>
+      </div>
 
-      <Form onSubmit={handleSubmit}>
-        <StyledInput
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="flex flex-col w-full gap-3">
+        <Input
           type="email"
           placeholder="Email address"
           value={email}
@@ -84,7 +83,7 @@ const Login = () => {
           error={!!error}
           required
         />
-        <StyledInput
+        <Input
           type="password"
           placeholder="Password"
           value={password}
@@ -105,17 +104,20 @@ const Login = () => {
           )}
         </Button>
 
-        <Divider />
+        <hr className="w-full border-t border-neutral-200 dark:border-neutral-800 my-1" />
 
-        <LinkText>
-          Don't have an account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
-        </LinkText>
-      </Form>
+        <p className="text-center text-xs text-neutral-500 dark:text-neutral-400 m-0">
+          Don't have an account?{' '}
+          <Link
+            to={ROUTES.SIGNUP}
+            className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline"
+          >
+            Sign up
+          </Link>
+        </p>
+      </form>
     </AuthLayout>
   );
 };
 
 export default Login;
-
-
-

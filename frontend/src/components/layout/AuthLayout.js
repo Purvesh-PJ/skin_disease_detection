@@ -1,164 +1,39 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { ThemeToggle } from '../common/ui';
 import { ROUTES } from '../../constants';
 import { FiActivity } from 'react-icons/fi';
-
-const PageWrapper = styled.div`
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  color: ${({ theme }) => theme.colors.text.primary};
-  overflow: hidden;
-`;
-
-const AuthHeader = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[8]}`};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[4]}`};
-  }
-`;
-
-const Brand = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[2.5] || '10px'};
-  text-decoration: none;
-`;
-
-const BrandIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  background: ${({ theme }) => theme.colors.primary[600]};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-`;
-
-const BrandTitle = styled.span`
-  font-family: ${({ theme }) => theme.fontFamily?.heading || 'inherit'};
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.text.primary};
-  letter-spacing: -0.02em;
-`;
-
-const SplitLayout = styled.main`
-  flex: 1;
-  max-width: 1100px;
-  width: 100%;
-  margin: 0 auto;
-  padding: ${({ theme }) => `${theme.spacing[4]} ${theme.spacing[6]}`};
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[8]};
-  overflow: hidden;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing[4]};
-    overflow-y: auto;
-  }
-`;
-
-const IllustrationSide = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: ${({ theme }) => theme.spacing[3]};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    display: none;
-  }
-`;
-
-const SvgGraphic = styled.div`
-  width: 220px;
-  height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-`;
-
-const IllustrationTitle = styled.h2`
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 0;
-  color: ${({ theme }) => theme.colors.text.primary};
-  letter-spacing: -0.02em;
-`;
-
-const IllustrationSubtitle = styled.p`
-  font-size: 0.88rem;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  margin: 0;
-  max-width: 360px;
-  line-height: 1.5;
-`;
-
-const FormColumn = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-`;
-
-const FormBox = styled.div`
-  width: 100%;
-  max-width: 380px;
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[3]};
-`;
+import ThemeToggle from '../ui/ThemeToggle';
 
 export const AuthLayout = ({ children }) => {
   return (
-    <PageWrapper>
-      <AuthHeader>
-        <Brand to={ROUTES.HOME}>
-          <BrandIcon>
+    <div className="min-h-screen w-full flex flex-col bg-white dark:bg-[#121212] text-neutral-900 dark:text-neutral-100 transition-colors">
+      {/* Header */}
+      <header className="flex items-center justify-between px-4 sm:px-8 py-3 border-b border-neutral-200/80 dark:border-neutral-800/80">
+        <Link to={ROUTES.HOME} className="flex items-center gap-2.5 text-inherit no-underline">
+          <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-sm">
             <FiActivity size={18} />
-          </BrandIcon>
-          <BrandTitle>Skin Disease AI</BrandTitle>
-        </Brand>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          </div>
+          <span className="font-sans font-bold text-lg tracking-tight text-neutral-900 dark:text-neutral-100">
+            Skin Disease AI
+          </span>
+        </Link>
+        <div className="flex items-center gap-4">
           <Link
             to={ROUTES.HOME}
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              color: 'inherit',
-              textDecoration: 'none',
-              opacity: 0.8,
-            }}
+            className="text-xs sm:text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-400 no-underline transition-colors"
           >
             ← Home
           </Link>
           <ThemeToggle />
         </div>
-      </AuthHeader>
+      </header>
 
-      <SplitLayout>
-        {/* Left Side: Clean Flat Graphic & Simple Intro */}
-        <IllustrationSide>
-          <SvgGraphic>
-            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Main Split Layout */}
+      <main className="flex-1 max-w-5xl w-full mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12">
+        {/* Left Side: Medical Graphic Illustration */}
+        <div className="hidden md:flex flex-col items-center text-center gap-4">
+          <div className="w-56 h-56 flex items-center justify-center">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-sm">
               <circle cx="100" cy="100" r="85" fill="#16a34a" fillOpacity="0.08" stroke="#16a34a" strokeWidth="2" strokeDasharray="4 4" />
               <rect x="50" y="55" width="100" height="90" rx="16" fill="#16a34a" fillOpacity="0.15" stroke="#16a34a" strokeWidth="2" />
               <circle cx="100" cy="100" r="28" fill="#16a34a" fillOpacity="0.25" />
@@ -166,23 +41,25 @@ export const AuthLayout = ({ children }) => {
               <path d="M70 100H86M114 100H130M100 70V86M100 114V130" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" />
               <path d="M60 40L75 55M140 40L125 55M60 160L75 145M140 160L125 145" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" />
             </svg>
-          </SvgGraphic>
+          </div>
 
-          <IllustrationTitle>Skin Lesion AI Classifier</IllustrationTitle>
-          <IllustrationSubtitle>
+          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 m-0">
+            Skin Lesion AI Classifier
+          </h2>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 max-w-sm leading-relaxed m-0">
             Fast, non-invasive dermoscopic screening powered by ensemble neural networks.
-          </IllustrationSubtitle>
-        </IllustrationSide>
+          </p>
+        </div>
 
-        {/* Right Side: Clean Flat Form */}
-        <FormColumn>
-          <FormBox>{children}</FormBox>
-        </FormColumn>
-      </SplitLayout>
-    </PageWrapper>
+        {/* Right Side: Form Card Container */}
+        <div className="flex justify-center w-full">
+          <div className="w-full max-w-sm flex flex-col gap-3">
+            {children}
+          </div>
+        </div>
+      </main>
+    </div>
   );
 };
 
 export default AuthLayout;
-
-
