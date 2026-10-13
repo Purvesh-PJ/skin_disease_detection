@@ -1,122 +1,12 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiLogOut, FiLogIn, FiActivity, FiHome, FiSettings } from 'react-icons/fi';
-
-import { ThemeToggle } from '../common/ui';
-import Dropdown from '../common/ui/Dropdown';
+import ThemeToggle from '../ui/ThemeToggle';
+import Dropdown from '../ui/Dropdown';
 import { authService } from '../../services';
 import { ROUTES } from '../../constants';
 import DefaultProfile from '../../assets/images/default_profile.jpg';
 import ProfileSettingsModal from '../features/profile/ProfileSettingsModal';
-
-const HeaderContainer = styled.header`
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background-color: ${({ theme }) =>
-    theme.mode === 'dark' ? 'rgba(18, 18, 18, 0.92)' : 'rgba(255, 255, 255, 0.92)'};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[6]}`};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
-`;
-
-
-const HeaderLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[3]};
-`;
-
-const HeaderRight = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[3]};
-`;
-
-const Logo = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[2.5] || '10px'};
-  text-decoration: none;
-`;
-
-const LogoIcon = styled.div`
-  width: 34px;
-  height: 34px;
-  background: ${({ theme }) => theme.colors.primary[600]};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
-`;
-
-const LogoText = styled.span`
-  font-family: ${({ theme }) => theme.fontFamily?.heading || 'inherit'};
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.colors.text.primary};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    display: none;
-  }
-`;
-
-const UserStatusBadge = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  padding: 4px 10px;
-  border-radius: ${({ theme }) => theme.borderRadius.pill};
-  background: ${({ theme }) => theme.colors.background.tertiary};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  font-weight: 600;
-
-  span.dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: ${({ $isAuth }) => ($isAuth ? '#16a34a' : '#f59e0b')};
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
-    display: none;
-  }
-`;
-
-const ProfileTrigger = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  outline: none;
-`;
-
-const ProfileImage = styled.img`
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid ${({ theme }) => theme.colors.border.default};
-  transition: border-color ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary[400]};
-  }
-`;
 
 const Header = ({ onUserUpdated }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -145,77 +35,80 @@ const Header = ({ onUserUpdated }) => {
   const displayName = getSanitizedName();
   const roleTitle = getSanitizedRole();
 
-
   return (
     <>
-      <HeaderContainer>
-        <HeaderLeft>
-          <Logo to={ROUTES.HOME}>
-            <LogoIcon>
+      <header className="sticky top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/90 dark:bg-[#121212]/90 flex items-center justify-between px-6 py-3 border-b border-neutral-200/80 dark:border-neutral-800/80">
+        <div className="flex items-center gap-3">
+          <Link to={ROUTES.HOME} className="flex items-center gap-2.5 no-underline">
+            <div className="w-8.5 h-8.5 bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-sm">
               <FiActivity size={18} />
-            </LogoIcon>
-            <LogoText>Skin Disease AI</LogoText>
-          </Logo>
-        </HeaderLeft>
+            </div>
+            <span className="font-sans font-bold text-lg tracking-tight text-neutral-900 dark:text-neutral-100 hidden sm:inline">
+              Skin Disease AI
+            </span>
+          </Link>
+        </div>
 
-        <HeaderRight>
-          <UserStatusBadge $isAuth={!!user}>
-            <span className="dot" />
+        <div className="flex items-center gap-3">
+          <div className="hidden xs:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
+            <span className={`w-2 h-2 rounded-full ${user ? 'bg-emerald-600' : 'bg-amber-500'}`} />
             <span>{displayName}</span>
-          </UserStatusBadge>
+          </div>
 
-          
           <ThemeToggle />
-          
+
           <Dropdown.Root>
             <Dropdown.Trigger asChild>
-              <ProfileTrigger aria-label="User account menu">
-                <ProfileImage src={DefaultProfile} alt="Profile" />
-              </ProfileTrigger>
+              <button aria-label="User account menu" className="p-0 border-none bg-transparent cursor-pointer flex items-center outline-none">
+                <img
+                  src={DefaultProfile}
+                  alt="Profile"
+                  className="w-9 h-9 rounded-full object-cover border-2 border-neutral-200 dark:border-neutral-700 hover:border-emerald-500 transition-colors"
+                />
+              </button>
             </Dropdown.Trigger>
 
             <Dropdown.Content align="end" sideOffset={8}>
-              <Dropdown.Item style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
-                <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{displayName}</div>
-                <div style={{ fontSize: '0.75rem', color: '#888' }}>{roleTitle}</div>
+              <Dropdown.Item className="flex-col items-start gap-0.5">
+                <div className="font-bold text-sm text-neutral-900 dark:text-neutral-100">{displayName}</div>
+                <div className="text-xs text-neutral-500 dark:text-neutral-400">{roleTitle}</div>
               </Dropdown.Item>
 
               <Dropdown.Separator />
 
               {user && (
                 <Dropdown.Item onClick={() => setIsSettingsOpen(true)}>
-                  <FiSettings size={14} />
-                  Profile & Account Settings
+                  <FiSettings size={14} className="text-neutral-500" />
+                  <span>Profile & Account Settings</span>
                 </Dropdown.Item>
-
               )}
 
               <Dropdown.Item asChild>
-                <Link to={ROUTES.HOME} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
-                  <FiHome size={14} />
-                  Project Home
+                <Link to={ROUTES.HOME} className="no-underline text-inherit flex items-center gap-2 w-full">
+                  <FiHome size={14} className="text-neutral-500" />
+                  <span>Project Home</span>
                 </Link>
               </Dropdown.Item>
 
               <Dropdown.Separator />
 
               {user ? (
-                <Dropdown.Item className="danger" onClick={handleLogout}>
+                <Dropdown.Item className="danger text-red-600" onClick={handleLogout}>
                   <FiLogOut size={14} />
-                  Logout
+                  <span>Logout</span>
                 </Dropdown.Item>
               ) : (
                 <Dropdown.Item asChild>
-                  <Link to={ROUTES.LOGIN} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                  <Link to={ROUTES.LOGIN} className="no-underline text-inherit flex items-center gap-2 w-full">
                     <FiLogIn size={14} />
-                    Sign in / 1-Click Demo
+                    <span>Sign in / 1-Click Demo</span>
                   </Link>
                 </Dropdown.Item>
               )}
             </Dropdown.Content>
           </Dropdown.Root>
-        </HeaderRight>
-      </HeaderContainer>
+        </div>
+      </header>
 
       <ProfileSettingsModal
         isOpen={isSettingsOpen}
@@ -227,4 +120,3 @@ const Header = ({ onUserUpdated }) => {
 };
 
 export default Header;
-

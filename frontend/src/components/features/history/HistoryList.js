@@ -1,260 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
 import {
   FiClock,
   FiTrash2,
   FiRefreshCw,
   FiDatabase,
   FiShield,
-  FiLayers
+  FiLayers,
 } from 'react-icons/fi';
 import { historyService, authService } from '../../../services';
-import { Spinner } from '../../common/ui';
-
-
-const HistoryContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[3]};
-  width: 100%;
-`;
-
-const HistoryHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: ${({ theme }) => theme.spacing[2]};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
-
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    h4 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin: 0;
-      color: ${({ theme }) => theme.colors.text.primary};
-    }
-
-    span.badge {
-      font-size: 0.72rem;
-      font-weight: 600;
-      background: ${({ theme }) => theme.colors.background.tertiary};
-      color: ${({ theme }) => theme.colors.text.secondary};
-      padding: 2px 8px;
-      border-radius: 9999px;
-      border: 1px solid ${({ theme }) => theme.colors.border.default};
-    }
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-`;
-
-const HeaderActionButton = styled.button`
-  background: transparent;
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: 4px 8px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: all ${({ theme }) => theme.transitions.fast};
-
-  &:hover:not(:disabled) {
-    color: ${({ theme }) => theme.colors.text.primary};
-    background: ${({ theme }) => theme.colors.background.tertiary};
-    border-color: ${({ theme }) => theme.colors.border.strong};
-  }
-
-  &.danger:hover:not(:disabled) {
-    color: #ef4444;
-    border-color: #f87171;
-    background: rgba(239, 68, 68, 0.1);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-const RecordsList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 480px;
-  overflow-y: auto;
-  padding-right: 4px;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.border.default};
-    border-radius: 4px;
-  }
-`;
-
-const RecordCard = styled.div`
-  background: ${({ theme }) => theme.colors.background.secondary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  transition: all ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary[500]};
-    background: ${({ theme }) => theme.colors.background.tertiary};
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-`;
-
-const RecordInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 0;
-
-  .top-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-
-    span.disease-name {
-      font-weight: 700;
-      font-size: 0.92rem;
-      color: ${({ theme }) => theme.colors.text.primary};
-      text-transform: capitalize;
-    }
-
-    span.severity-badge {
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 9999px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-
-      &.malignant {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-      }
-      &.precancerous {
-        background: rgba(245, 158, 11, 0.15);
-        color: #f59e0b;
-        border: 1px solid rgba(245, 158, 11, 0.3);
-      }
-      &.benign {
-        background: rgba(34, 197, 94, 0.15);
-        color: #22c55e;
-        border: 1px solid rgba(34, 197, 94, 0.3);
-      }
-    }
-  }
-
-  .meta-line {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.78rem;
-    color: ${({ theme }) => theme.colors.text.tertiary};
-
-    span.date {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    span.file {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 140px;
-    }
-  }
-`;
-
-const ConfidencePill = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-
-  span.score {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: ${({ theme }) => theme.colors.primary[600] || '#16a34a'};
-  }
-
-  span.label {
-    font-size: 0.68rem;
-    color: ${({ theme }) => theme.colors.text.tertiary};
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-`;
-
-const DeleteButton = styled.button`
-  background: transparent;
-  border: none;
-  color: ${({ theme }) => theme.colors.text.tertiary};
-  cursor: pointer;
-  padding: 6px;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    color: #ef4444;
-    background: rgba(239, 68, 68, 0.1);
-  }
-`;
-
-const EmptyState = styled.div`
-  padding: ${({ theme }) => `${theme.spacing[6]} ${theme.spacing[4]}`};
-  text-align: center;
-  border: 1px dashed ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  background: ${({ theme }) => theme.colors.background.tertiary};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-
-  p {
-    margin: 0;
-    font-size: 0.88rem;
-    color: ${({ theme }) => theme.colors.text.secondary};
-  }
-
-  span.subtext {
-    font-size: 0.78rem;
-    color: ${({ theme }) => theme.colors.text.tertiary};
-  }
-`;
+import { Spinner } from '../../ui';
 
 const getCategoryClass = (diseaseCode) => {
-
   const code = (diseaseCode || '').toLowerCase();
   if (['mel', 'melanoma', 'bcc', 'basal cell carcinoma'].includes(code)) return 'malignant';
   if (['akiec', 'actinic keratoses', 'bowen'].includes(code)) return 'precancerous';
@@ -269,7 +25,7 @@ const formatDate = (isoString) => {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   } catch {
     return 'Recent';
@@ -277,14 +33,12 @@ const formatDate = (isoString) => {
 };
 
 export const HistoryList = ({ refreshTrigger }) => {
-  // Initialize synchronously with cached records for instant 0ms display
   const [history, setHistory] = useState(() => historyService.getLocalRecords());
   const [loading, setLoading] = useState(false);
 
   const fetchHistory = useCallback(async (isManual = false) => {
     if (!authService.isAuthenticated()) return;
-    
-    // Only show loading indicator if list is completely empty or manual refresh is pressed
+
     if (isManual && history.length === 0) {
       setLoading(true);
     }
@@ -302,18 +56,13 @@ export const HistoryList = ({ refreshTrigger }) => {
   }, [history.length]);
 
   useEffect(() => {
-    // Immediate sync from local records in case new prediction happened
     setHistory(historyService.getLocalRecords());
-    // Silent background sync with server
     fetchHistory(false);
   }, [fetchHistory, refreshTrigger]);
 
-
   const handleDelete = (id, e) => {
     e.stopPropagation();
-    // 1. Optimistically remove from state immediately (0ms instant UI update)
     setHistory((prev) => prev.filter((item) => item._id !== id));
-    // 2. Perform background delete in service without blocking UI
     historyService.deleteHistoryItem(id).catch((err) => {
       console.warn("Background delete sync failed:", err);
     });
@@ -322,106 +71,140 @@ export const HistoryList = ({ refreshTrigger }) => {
   const handleClearAll = (e) => {
     if (e) e.stopPropagation();
     if (window.confirm("Are you sure you want to clear all MongoDB scan records for your account?")) {
-      // 1. Optimistically clear state immediately
       setHistory([]);
-      // 2. Perform background clear in service
       historyService.clearHistory().catch((err) => {
         console.warn("Background clear sync failed:", err);
       });
     }
   };
 
-
   if (!authService.isAuthenticated()) {
     return (
-      <EmptyState>
-        <FiShield size={24} color="#16a34a" />
-        <p>Guest Session (History Inactive)</p>
-        <span className="subtext">
+      <div className="p-6 text-center border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-[#181818] flex flex-col items-center gap-2">
+        <FiShield size={24} className="text-emerald-600 dark:text-emerald-400" />
+        <p className="m-0 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+          Guest Session (History Inactive)
+        </p>
+        <span className="text-xs text-neutral-500 dark:text-neutral-400">
           Sign in or use <strong>⚡ 1-Click Demo Login</strong> to record and save your scans.
         </span>
-      </EmptyState>
+      </div>
     );
   }
 
   return (
-    <HistoryContainer>
-      <HistoryHeader>
-        <div className="header-left">
-          <FiDatabase color="#16a34a" size={16} />
-          <h4>Diagnostic Scan History</h4>
-          <span className="badge">{history.length} Scans</span>
+    <div className="flex flex-col gap-3 w-full">
+      {/* History Header */}
+      <div className="flex items-center justify-between pb-2 border-b border-neutral-200/80 dark:border-neutral-800/80">
+        <div className="flex items-center gap-2">
+          <FiDatabase className="text-emerald-600 dark:text-emerald-400" size={16} />
+          <h4 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 m-0">
+            Diagnostic Scan History
+          </h4>
+          <span className="text-xs font-semibold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 px-2 py-0.5 rounded-full border border-neutral-200 dark:border-neutral-700">
+            {history.length} Scans
+          </span>
         </div>
 
-
-        <div className="header-actions">
-          <HeaderActionButton onClick={fetchHistory} disabled={loading} title="Refresh records">
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => fetchHistory(true)}
+            disabled={loading}
+            title="Refresh records"
+            className="flex items-center gap-1 px-2 py-1 text-xs font-semibold border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 bg-transparent cursor-pointer transition-colors"
+          >
             <FiRefreshCw size={12} className={loading ? 'animate-spin' : ''} />
             Refresh
-          </HeaderActionButton>
+          </button>
           {history.length > 0 && (
-            <HeaderActionButton className="danger" onClick={handleClearAll} title="Clear all history">
+            <button
+              onClick={handleClearAll}
+              title="Clear all history"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-semibold border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-red-600 hover:border-red-300 dark:hover:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-md bg-transparent cursor-pointer transition-colors"
+            >
               <FiTrash2 size={12} />
               Clear
-            </HeaderActionButton>
+            </button>
           )}
         </div>
-      </HistoryHeader>
+      </div>
 
       {loading && history.length === 0 ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}>
+        <div className="flex justify-center p-6">
           <Spinner size="md" />
         </div>
       ) : history.length === 0 ? (
-        <EmptyState>
-          <FiLayers size={24} color="#16a34a" />
-          <p>No scans recorded yet</p>
-          <span className="subtext">Upload an image or pick a demo benchmark from the bottom rail to record a diagnostic scan!</span>
-        </EmptyState>
+        <div className="p-6 text-center border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-[#181818] flex flex-col items-center gap-2">
+          <FiLayers size={24} className="text-emerald-600 dark:text-emerald-400" />
+          <p className="m-0 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+            No scans recorded yet
+          </p>
+          <span className="text-xs text-neutral-500 dark:text-neutral-400 max-w-sm">
+            Upload an image or pick a demo benchmark from the bottom rail to record a diagnostic scan!
+          </span>
+        </div>
       ) : (
-        <RecordsList>
+        <div className="flex flex-col gap-2 max-h-[480px] overflow-y-auto pr-1">
           {history.map((item) => {
             const category = getCategoryClass(item.predicted_disease);
             return (
-              <RecordCard key={item._id}>
-                <RecordInfo>
-                  <div className="top-line">
-                    <span className="disease-name">
+              <div
+                key={item._id}
+                className="bg-neutral-50 dark:bg-[#181818] border border-neutral-200/80 dark:border-neutral-800/80 rounded-xl p-3 flex items-center justify-between gap-3 hover:border-emerald-500 hover:-translate-y-0.5 transition-all"
+              >
+                <div className="flex flex-col gap-1 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-bold text-sm text-neutral-900 dark:text-neutral-100 capitalize">
                       {item.disease_details?.name || item.predicted_disease}
                     </span>
-                    <span className={`severity-badge ${category}`}>
+                    <span
+                      className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border ${
+                        category === 'malignant'
+                          ? 'bg-red-500/15 text-red-500 border-red-500/30'
+                          : category === 'precancerous'
+                          ? 'bg-amber-500/15 text-amber-500 border-amber-500/30'
+                          : 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30'
+                      }`}
+                    >
                       {category}
                     </span>
                   </div>
-                  <div className="meta-line">
-                    <span className="date">
+                  <div className="flex items-center gap-3 text-xs text-neutral-400 dark:text-neutral-500">
+                    <span className="flex items-center gap-1">
                       <FiClock size={11} />
                       {formatDate(item.created_at)}
                     </span>
                     {item.filename && (
-                      <span className="file" title={item.filename}>
+                      <span className="truncate max-w-[140px]" title={item.filename}>
                         • {item.filename}
                       </span>
                     )}
                   </div>
-                </RecordInfo>
+                </div>
 
-                <ConfidencePill>
-                  <span className="score">{item.confidence}%</span>
-                  <span className="label">Confidence</span>
-                </ConfidencePill>
+                <div className="flex flex-col items-end gap-0.5">
+                  <span className="font-bold text-sm text-emerald-600 dark:text-emerald-400">
+                    {item.confidence}%
+                  </span>
+                  <span className="text-[0.65rem] uppercase text-neutral-400 tracking-wider">
+                    Confidence
+                  </span>
+                </div>
 
-                <DeleteButton onClick={(e) => handleDelete(item._id, e)} title="Delete scan record">
+                <button
+                  onClick={(e) => handleDelete(item._id, e)}
+                  title="Delete scan record"
+                  className="p-1.5 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-500/10 transition-colors bg-transparent border-none cursor-pointer"
+                >
                   <FiTrash2 size={15} />
-                </DeleteButton>
-              </RecordCard>
+                </button>
+              </div>
             );
           })}
-        </RecordsList>
+        </div>
       )}
-    </HistoryContainer>
+    </div>
   );
 };
 
 export default HistoryList;
-

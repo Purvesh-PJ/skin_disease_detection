@@ -1,182 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { FiUser, FiBriefcase, FiAward, FiCheck, FiX, FiSave, FiDatabase } from 'react-icons/fi';
-import { Spinner, Alert } from '../../common/ui';
+import { Spinner, Alert, Button, Input } from '../../ui';
 import { authService } from '../../../services';
-
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: ${({ theme }) => theme.spacing[4]};
-`;
-
-const ModalCard = styled.div`
-  background: ${({ theme }) => theme.colors.background.primary};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  width: 100%;
-  max-width: 520px;
-  box-shadow: ${({ theme }) => theme.shadows.xl};
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: fadeIn 0.2s ease-out;
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: scale(0.96);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-`;
-
-const ModalHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: ${({ theme }) => `${theme.spacing[4]} ${theme.spacing[5]}`};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
-
-  .title-group {
-    display: flex;
-    align-items: center;
-    gap: ${({ theme }) => theme.spacing[2.5]};
-
-    h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin: 0;
-      color: ${({ theme }) => theme.colors.text.primary};
-    }
-  }
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  cursor: pointer;
-  padding: 6px;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.text.primary};
-    background: ${({ theme }) => theme.colors.background.tertiary};
-  }
-`;
-
-const ModalBody = styled.form`
-  padding: ${({ theme }) => theme.spacing[5]};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[4]};
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: ${({ theme }) => theme.colors.text.secondary};
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-`;
-
-const Input = styled.input`
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 14px;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  background: ${({ theme }) => theme.colors.background.secondary};
-  color: ${({ theme }) => theme.colors.text.primary};
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color ${({ theme }) => theme.transitions.fast};
-
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.primary[500]};
-  }
-`;
-
-const MongoNotice = styled.div`
-  background: ${({ theme }) => theme.colors.background.tertiary};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: 10px 12px;
-  font-size: 0.8rem;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const ModalFooter = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: ${({ theme }) => theme.spacing[3]};
-  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[5]}`};
-  border-top: 1px solid ${({ theme }) => theme.colors.border.default};
-  background: ${({ theme }) => theme.colors.background.secondary};
-`;
-
-const ActionButton = styled.button`
-  padding: 8px 16px;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all ${({ theme }) => theme.transitions.fast};
-  border: none;
-
-  &.cancel {
-    background: transparent;
-    color: ${({ theme }) => theme.colors.text.secondary};
-    &:hover {
-      background: ${({ theme }) => theme.colors.background.tertiary};
-      color: ${({ theme }) => theme.colors.text.primary};
-    }
-  }
-
-  &.save {
-    background: ${({ theme }) => theme.colors.primary[600]};
-    color: #ffffff;
-    &:hover:not(:disabled) {
-      background: ${({ theme }) => theme.colors.primary[700]};
-    }
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
 
 export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
   const [fullName, setFullName] = useState('');
@@ -229,29 +54,46 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
   };
 
   return (
-    <ModalOverlay onClick={onClose}>
-      <ModalCard onClick={(e) => e.stopPropagation()}>
-        <ModalHeader>
-          <div className="title-group">
-            <FiUser color="#16a34a" size={18} />
-            <h3>Profile & Preferences</h3>
+    <div
+      onClick={onClose}
+      className="fixed inset-0 bg-black/65 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col"
+      >
+        {/* Modal Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-800">
+          <div className="flex items-center gap-2.5">
+            <FiUser className="text-emerald-600 dark:text-emerald-400" size={18} />
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 m-0">
+              Profile & Preferences
+            </h3>
           </div>
-          <CloseButton onClick={onClose}>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-lg text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors bg-transparent border-none cursor-pointer"
+          >
             <FiX size={18} />
-          </CloseButton>
-        </ModalHeader>
+          </button>
+        </div>
 
-        <ModalBody onSubmit={handleSubmit}>
-          {success && <Alert variant="success"><FiCheck size={16} /> {success}</Alert>}
+        {/* Modal Body */}
+        <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
+          {success && (
+            <Alert variant="success">
+              <FiCheck size={16} /> {success}
+            </Alert>
+          )}
           {error && <Alert variant="error">{error}</Alert>}
 
-          <MongoNotice>
-            <FiDatabase size={16} color="#16a34a" />
+          <div className="bg-neutral-50 dark:bg-[#121212] border border-neutral-200/80 dark:border-neutral-800/80 rounded-xl p-3 text-xs text-neutral-600 dark:text-neutral-400 flex items-center gap-2">
+            <FiDatabase size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>Preferences and diagnostic history are synced securely with your account.</span>
-          </MongoNotice>
+          </div>
 
-          <FormGroup>
-            <label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-1.5">
               <FiUser size={14} /> Full Name / Display Name
             </label>
             <Input
@@ -261,10 +103,10 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
               placeholder="e.g. Demo User"
               required
             />
-          </FormGroup>
+          </div>
 
-          <FormGroup>
-            <label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-1.5">
               <FiBriefcase size={14} /> Role / Title
             </label>
             <Input
@@ -274,11 +116,10 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
               placeholder="e.g. AI Research / Doctor"
               required
             />
-          </FormGroup>
+          </div>
 
-
-          <FormGroup>
-            <label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-1.5">
               <FiAward size={14} /> Clinical Focus / Specialization
             </label>
             <Input
@@ -288,26 +129,33 @@ export const ProfileSettingsModal = ({ isOpen, onClose, onProfileUpdated }) => {
               placeholder="e.g. Melanoma Screening, Ham10000 Benchmarks"
               required
             />
-          </FormGroup>
+          </div>
 
-          <ModalFooter>
-            <ActionButton type="button" className="cancel" onClick={onClose} disabled={loading}>
+          {/* Modal Footer */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onClose}
+              disabled={loading}
+            >
               Cancel
-            </ActionButton>
-            <ActionButton type="submit" className="save" disabled={loading}>
-              {loading ? <Spinner size="sm" color="white" /> : (
-                <>
+            </Button>
+            <Button type="submit" variant="brand" disabled={loading}>
+              {loading ? (
+                <Spinner size="sm" color="white" />
+              ) : (
+                <div className="flex items-center gap-1.5">
                   <FiSave size={14} />
-                  Save Changes
-                </>
+                  <span>Save Changes</span>
+                </div>
               )}
-            </ActionButton>
-          </ModalFooter>
-        </ModalBody>
-      </ModalCard>
-    </ModalOverlay>
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
-
 
 export default ProfileSettingsModal;
