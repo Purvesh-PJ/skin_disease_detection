@@ -1,249 +1,6 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
 import { FiAlertCircle, FiCheckCircle, FiShield, FiFileText } from 'react-icons/fi';
-import { Spinner } from '../../common/ui';
-import { Text, SmallText } from '../../../styles/typography';
-
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const fillProgress = keyframes`
-  from { width: 0%; }
-  to { width: var(--progress-width); }
-`;
-
-const Card = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const EmptyState = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing[6]};
-`;
-
-const StateIcon = styled.div`
-  width: 72px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme, $variant }) => {
-    if ($variant === 'error') return theme.colors.status.error.bg;
-    if ($variant === 'success') return theme.colors.status.success.bg;
-    return theme.colors.status.info.bg;
-  }};
-  border: 1px solid ${({ theme, $variant }) => {
-    if ($variant === 'error') return theme.colors.status.error.border;
-    if ($variant === 'success') return theme.colors.status.success.border;
-    return theme.colors.status.info.border;
-  }};
-  border-radius: ${({ theme }) => theme.borderRadius.pill};
-  margin-bottom: ${({ theme }) => theme.spacing[4]};
-  color: ${({ theme, $variant }) => {
-    if ($variant === 'error') return theme.colors.status.error.icon;
-    if ($variant === 'success') return theme.colors.status.success.icon;
-    return theme.colors.status.info.icon;
-  }};
-  box-shadow: ${({ theme }) => theme.shadows.sm};
-`;
-
-const ResultContainer = styled.div`
-  background-color: ${({ theme }) => theme.colors.background.tertiary};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  padding: ${({ theme }) => theme.spacing[6]};
-  flex: 1;
-  overflow-y: auto;
-  animation: ${fadeIn} 0.3s ease-out forwards;
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[4]};
-`;
-
-const ResultHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[3]};
-  padding-bottom: ${({ theme }) => theme.spacing[4]};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
-`;
-
-const SuccessIcon = styled.div`
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.status.success.bg};
-  border: 1px solid ${({ theme }) => theme.colors.status.success.border};
-  border-radius: ${({ theme }) => theme.borderRadius.pill};
-  color: ${({ theme }) => theme.colors.status.success.icon};
-  flex-shrink: 0;
-`;
-
-const DiseaseName = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.text.primary};
-  margin: 0 0 2px 0;
-  letter-spacing: -0.01em;
-`;
-
-const SubText = styled(SmallText)`
-  font-size: 0.8rem;
-  color: ${({ theme }) => theme.colors.text.tertiary};
-`;
-
-const ConfidenceBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  padding: ${({ theme }) => `${theme.spacing[1]} ${theme.spacing[3]}`};
-  background-color: ${({ theme }) => theme.colors.primary[50]};
-  color: ${({ theme }) => theme.colors.primary[700]};
-  border: 1px solid ${({ theme }) => theme.colors.primary[200]};
-  border-radius: ${({ theme }) => theme.borderRadius.pill};
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-left: auto;
-`;
-
-const ProgressSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[2]};
-`;
-
-const ProgressLabelRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ProgressTitle = styled(SmallText)`
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;
-
-const ProgressPercentText = styled(SmallText)`
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary[600]};
-`;
-
-const ProgressBarContainer = styled.div`
-  width: 100%;
-  height: 8px;
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme }) => theme.borderRadius.pill};
-  overflow: hidden;
-`;
-
-const ProgressBarFill = styled.div`
-  height: 100%;
-  background: ${({ theme }) => theme.gradients.progressBar};
-  border-radius: ${({ theme }) => theme.borderRadius.pill};
-  --progress-width: ${({ $percentage }) => `${$percentage}%`};
-  animation: ${fillProgress} 0.8s ease-out forwards;
-`;
-
-const DescriptionBox = styled.div`
-  padding: ${({ theme }) => theme.spacing[4]};
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-`;
-
-const DescriptionTitle = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[2]};
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text.primary};
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
-
-  svg {
-    color: ${({ theme }) => theme.colors.primary[500]};
-  }
-`;
-
-const Description = styled(Text)`
-  color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: 0.875rem;
-  line-height: 1.6;
-`;
-
-const DetailGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: ${({ theme }) => theme.spacing[3]};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const DetailItem = styled.div`
-  padding: ${({ theme }) => theme.spacing[3]};
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-`;
-
-const DetailLabel = styled(SmallText)`
-  color: ${({ theme }) => theme.colors.text.tertiary};
-  font-size: 0.75rem;
-  margin-bottom: 4px;
-`;
-
-const DetailValue = styled(Text)`
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: ${({ theme }) => theme.colors.text.primary};
-`;
-
-const LoadingText = styled(Text)`
-  margin-top: ${({ theme }) => theme.spacing[5]};
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;
-
-const LoadingSubText = styled(SmallText)`
-  margin-top: ${({ theme }) => theme.spacing[1]};
-  color: ${({ theme }) => theme.colors.text.tertiary};
-`;
-
-const ErrorTitle = styled(Text)`
-  font-weight: 600;
-  font-size: 1.05rem;
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;
-
-const ErrorSubText = styled(SmallText)`
-  margin-top: ${({ theme }) => theme.spacing[1]};
-  max-width: 320px;
-  color: ${({ theme }) => theme.colors.text.tertiary};
-`;
-
-const EmptyTitle = styled(Text)`
-  font-weight: 600;
-  font-size: 1.05rem;
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;
-
-const EmptySubText = styled(SmallText)`
-  margin-top: ${({ theme }) => theme.spacing[1]};
-  max-width: 280px;
-  color: ${({ theme }) => theme.colors.text.tertiary};
-`;
+import { Spinner, Badge } from '../../ui';
 
 const ResultsCard = ({ predictionResult, loading, error }) => {
   const getDiseaseName = (result) => {
@@ -258,102 +15,123 @@ const ResultsCard = ({ predictionResult, loading, error }) => {
 
   if (loading) {
     return (
-      <Card>
-        <EmptyState>
-          <Spinner size="lg" />
-          <LoadingText>Analyzing Skin Lesion...</LoadingText>
-          <LoadingSubText>Running ensemble deep neural network inference</LoadingSubText>
-        </EmptyState>
-      </Card>
+      <div className="w-full h-full flex flex-col items-center justify-center text-center p-6">
+        <Spinner size="lg" />
+        <h4 className="mt-5 font-semibold text-neutral-700 dark:text-neutral-300 text-base m-0">
+          Analyzing Skin Lesion...
+        </h4>
+        <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500 m-0">
+          Running ensemble deep neural network inference
+        </p>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Card>
-        <EmptyState>
-          <StateIcon $variant="error">
-            <FiAlertCircle size={32} />
-          </StateIcon>
-          <ErrorTitle>Analysis Failed</ErrorTitle>
-          <ErrorSubText>
-            {error.response?.data?.error || 
-             error.response?.data?.message || 
-             error.message || 
-             'Unable to process image. Please verify backend connectivity and try again.'}
-          </ErrorSubText>
-
-        </EmptyState>
-      </Card>
+      <div className="w-full h-full flex flex-col items-center justify-center text-center p-6">
+        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 mb-4 shadow-sm">
+          <FiAlertCircle size={32} />
+        </div>
+        <h4 className="font-semibold text-neutral-800 dark:text-neutral-200 text-lg m-0">
+          Analysis Failed
+        </h4>
+        <p className="mt-1.5 text-xs text-neutral-500 dark:text-neutral-400 max-w-xs m-0 leading-relaxed">
+          {error.response?.data?.error ||
+            error.response?.data?.message ||
+            error.message ||
+            'Unable to process image. Please verify backend connectivity and try again.'}
+        </p>
+      </div>
     );
   }
 
   if (predictionResult) {
     return (
-      <Card>
-        <ResultContainer>
-          <ResultHeader>
-            <SuccessIcon>
-              <FiCheckCircle size={24} />
-            </SuccessIcon>
-            <div>
-              <DiseaseName>{getDiseaseName(predictionResult)}</DiseaseName>
-              <SubText>AI Diagnosis Output</SubText>
+      <div className="bg-neutral-50 dark:bg-[#181818] border border-neutral-200/80 dark:border-neutral-800/80 rounded-2xl p-6 flex-1 overflow-y-auto flex flex-col gap-4 animate-in fade-in duration-300">
+        {/* Result Header */}
+        <div className="flex items-center gap-3 pb-4 border-b border-neutral-200 dark:border-neutral-800">
+          <div className="w-11 h-11 rounded-full flex items-center justify-center bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 shrink-0">
+            <FiCheckCircle size={24} />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 m-0 tracking-tight">
+              {getDiseaseName(predictionResult)}
+            </h3>
+            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+              AI Diagnosis Output
+            </span>
+          </div>
+          <Badge variant="medical" className="ml-auto text-sm font-bold px-3 py-1">
+            {confidenceValue}% Match
+          </Badge>
+        </div>
+
+        {/* Progress Bar Section */}
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center text-xs">
+            <span className="font-semibold text-neutral-600 dark:text-neutral-400">
+              Ensemble Confidence Score
+            </span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+              {confidenceValue}%
+            </span>
+          </div>
+          <div className="w-full h-2 bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full transition-all duration-700 ease-out"
+              style={{ width: `${confidenceValue}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Condition Summary */}
+        {getDescription(predictionResult) && (
+          <div className="p-4 bg-white dark:bg-[#121212] rounded-xl border border-neutral-200/80 dark:border-neutral-800/80">
+            <div className="flex items-center gap-2 text-xs font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+              <FiFileText size={16} className="text-emerald-600 dark:text-emerald-400" />
+              <span>Condition Summary & Guidance</span>
             </div>
-            <ConfidenceBadge>{confidenceValue}% Match</ConfidenceBadge>
-          </ResultHeader>
+            <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed m-0">
+              {getDescription(predictionResult)}
+            </p>
+          </div>
+        )}
 
-          <ProgressSection>
-            <ProgressLabelRow>
-              <ProgressTitle>Ensemble Confidence Score</ProgressTitle>
-              <ProgressPercentText>{confidenceValue}%</ProgressPercentText>
-            </ProgressLabelRow>
-            <ProgressBarContainer>
-              <ProgressBarFill $percentage={confidenceValue} />
-            </ProgressBarContainer>
-          </ProgressSection>
-
-          {getDescription(predictionResult) && (
-            <DescriptionBox>
-              <DescriptionTitle>
-                <FiFileText size={16} />
-                Condition Summary & Guidance
-              </DescriptionTitle>
-              <Description>{getDescription(predictionResult)}</Description>
-            </DescriptionBox>
-          )}
-
-          <DetailGrid>
-            {Object.entries(predictionResult)
-              .filter(([key]) => !['predicted_disease', 'confidence', 'disease_details', 'message'].includes(key))
-              .map(([key, value]) => (
-                <DetailItem key={key}>
-                  <DetailLabel>
-                    {key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
-                  </DetailLabel>
-                  <DetailValue>
-                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                  </DetailValue>
-                </DetailItem>
-              ))}
-          </DetailGrid>
-        </ResultContainer>
-      </Card>
+        {/* Metadata Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {Object.entries(predictionResult)
+            .filter(([key]) => !['predicted_disease', 'confidence', 'disease_details', 'message'].includes(key))
+            .map(([key, value]) => (
+              <div
+                key={key}
+                className="p-3 bg-white dark:bg-[#121212] rounded-xl border border-neutral-200/80 dark:border-neutral-800/80"
+              >
+                <div className="text-[0.7rem] uppercase font-bold text-neutral-400 dark:text-neutral-500 mb-1 tracking-wider">
+                  {key.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                </div>
+                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">
+                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <EmptyState>
-        <StateIcon>
-          <FiShield size={32} />
-        </StateIcon>
-        <EmptyTitle>No Diagnostic Data</EmptyTitle>
-        <EmptySubText>
-          Upload a skin lesion image on the left panel to execute multi-model ensemble analysis.
-        </EmptySubText>
-      </EmptyState>
-    </Card>
+    <div className="w-full h-full flex flex-col items-center justify-center text-center p-6">
+      <div className="w-16 h-16 rounded-full flex items-center justify-center bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/30 text-emerald-600 dark:text-emerald-400 mb-4 shadow-sm">
+        <FiShield size={32} />
+      </div>
+      <h4 className="font-semibold text-neutral-800 dark:text-neutral-200 text-lg m-0">
+        No Diagnostic Data
+      </h4>
+      <p className="mt-1.5 text-xs text-neutral-500 dark:text-neutral-400 max-w-xs m-0 leading-relaxed">
+        Upload a skin lesion image on the left panel to execute multi-model ensemble analysis.
+      </p>
+    </div>
   );
 };
 

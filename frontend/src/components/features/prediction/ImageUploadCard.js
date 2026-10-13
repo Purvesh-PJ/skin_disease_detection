@@ -1,110 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import { FiUploadCloud, FiCheck } from 'react-icons/fi';
-import { Spinner, Button } from '../../common/ui';
+import { Spinner, Button } from '../../ui';
 import { usePrediction } from '../../../hooks';
-
-const Container = styled.div`
-  width: 100%;
-  max-width: 560px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing[3]};
-`;
-
-const DropZone = styled.div`
-  width: 100%;
-  height: 330px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 2px dashed ${({ theme, $hasImage }) => 
-    $hasImage ? theme.colors.primary[500] : theme.colors.border.default};
-
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  background-color: ${({ theme, $hasImage }) => 
-    $hasImage
-      ? (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.08)' : 'rgba(240, 253, 244, 0.9)')
-      : theme.colors.background.secondary};
-  padding: ${({ theme }) => theme.spacing[4]};
-  cursor: pointer;
-  transition: all ${({ theme }) => theme.transitions.normal};
-  position: relative;
-  overflow: hidden;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary[500]};
-    background-color: ${({ theme, $hasImage }) => 
-      !$hasImage && (theme.mode === 'dark' ? 'rgba(34, 197, 94, 0.05)' : 'rgba(240, 253, 244, 0.5)')};
-  }
-`;
-
-const ImagePreview = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-`;
-
-const SampleBadge = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(6px);
-  color: #ffffff;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-`;
-
-const UploadPrompt = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  text-align: center;
-
-  svg {
-    color: ${({ theme }) => theme.colors.primary[500]};
-  }
-
-  p.primary-text {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin: 0;
-    color: ${({ theme }) => theme.colors.text.primary};
-
-    span {
-      color: ${({ theme }) => theme.colors.primary[500]};
-    }
-  }
-
-  span.secondary-text {
-    font-size: 0.78rem;
-    color: ${({ theme }) => theme.colors.text.tertiary};
-  }
-`;
-
-const HiddenInput = styled.input`
-  display: none;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 10px;
-  width: 100%;
-`;
 
 const ImageUploadCard = ({
   selectedImage,
@@ -119,6 +16,19 @@ const ImageUploadCard = ({
   setError
 }) => {
   const { predict } = usePrediction();
+  const [coldStartNotice, setColdStartNotice] = React.useState(false);
+
+  React.useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => {
+        setColdStartNotice(true);
+      }, 3500);
+    } else {
+      setColdStartNotice(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -164,21 +74,6 @@ const ImageUploadCard = ({
     }
   };
 
-
-  const [coldStartNotice, setColdStartNotice] = React.useState(false);
-
-  React.useEffect(() => {
-    let timer;
-    if (loading) {
-      timer = setTimeout(() => {
-        setColdStartNotice(true);
-      }, 3500);
-    } else {
-      setColdStartNotice(false);
-    }
-    return () => clearTimeout(timer);
-  }, [loading]);
-
   const handleClear = () => {
     setSelectedImage(null);
     setImageFile(null);
@@ -189,43 +84,56 @@ const ImageUploadCard = ({
   };
 
   return (
-    <Container>
-      <DropZone
-        $hasImage={!!selectedImage}
+    <div className="w-full max-w-[560px] flex flex-col items-center justify-center gap-3">
+      {/* DropZone */}
+      <div
         onClick={() => document.getElementById('file-input').click()}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
+        className={`w-full h-[330px] flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-all relative overflow-hidden select-none ${
+          selectedImage
+            ? 'border-emerald-500 bg-emerald-500/[0.08] dark:bg-emerald-500/[0.08]'
+            : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-[#0a0a0a] hover:border-emerald-500 hover:bg-emerald-500/[0.04]'
+        }`}
       >
         {selectedImage ? (
           <>
             {activeSample && (
-              <SampleBadge>
-                <FiCheck size={12} color="#4ade80" />
+              <div className="absolute top-2.5 left-2.5 bg-black/80 backdrop-blur-md text-white px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 z-10 border border-white/15">
+                <FiCheck size={12} className="text-emerald-400" />
                 <span>{activeSample.name} ({activeSample.code})</span>
-              </SampleBadge>
+              </div>
             )}
-            <ImagePreview src={selectedImage} alt="Lesion Preview" />
+            <img
+              src={selectedImage}
+              alt="Lesion Preview"
+              className="w-full h-full object-contain rounded-xl"
+            />
           </>
         ) : (
-          <UploadPrompt>
-            <FiUploadCloud size={40} />
-            <p className="primary-text">
-              <span>Click to upload</span> or drag lesion image
+          <div className="flex flex-col items-center gap-2 text-neutral-500 dark:text-neutral-400 text-center">
+            <FiUploadCloud size={40} className="text-emerald-500" />
+            <p className="text-[0.95rem] font-semibold text-neutral-900 dark:text-neutral-100 m-0">
+              <span className="text-emerald-600 dark:text-emerald-400">Click to upload</span> or drag lesion image
             </p>
-            <span className="secondary-text">PNG, JPG, or JPEG</span>
-          </UploadPrompt>
+            <span className="text-xs text-neutral-400 dark:text-neutral-500">
+              PNG, JPG, or JPEG
+            </span>
+          </div>
         )}
-      </DropZone>
+      </div>
 
-      <HiddenInput
+      <input
         id="file-input"
         type="file"
         accept="image/*"
         onChange={handleImageChange}
         disabled={loading}
+        className="hidden"
       />
 
-      <ButtonGroup>
+      {/* Buttons */}
+      <div className="flex gap-2.5 w-full">
         <Button
           onClick={handleUploadClick}
           disabled={loading || !imageFile}
@@ -233,7 +141,7 @@ const ImageUploadCard = ({
           size="lg"
         >
           {loading ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+            <div className="flex items-center gap-2 justify-center">
               <Spinner size="sm" color="white" />
               <span>{coldStartNotice ? 'Warming up AI Ensemble...' : 'Analyzing Lesion...'}</span>
             </div>
@@ -251,18 +159,15 @@ const ImageUploadCard = ({
             Clear
           </Button>
         )}
-      </ButtonGroup>
+      </div>
 
       {coldStartNotice && loading && (
-        <p style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center', margin: '4px 0 0 0', lineHeight: '1.3' }}>
+        <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center m-0 mt-1 leading-snug">
           ⚡ Initializing 3-backbone neural network ensemble from model registry. Subsequent scans are instantaneous.
         </p>
       )}
-    </Container>
+    </div>
   );
 };
 
 export default ImageUploadCard;
-
-
-
