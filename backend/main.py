@@ -40,6 +40,11 @@ def create_app(testing=False):
     register_routes(app)
     register_error_handlers(app)
     register_request_handlers(app)
+
+    # Start non-blocking model warmup (Hugging Face sync & load) in background
+    if not testing:
+        from app.services.prediction_service import start_model_warmup
+        start_model_warmup()
     
     return app
 

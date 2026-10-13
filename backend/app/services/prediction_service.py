@@ -17,45 +17,67 @@ from tensorflow.keras.applications.efficientnet import preprocess_input
 from app.core.config import config
 from app.core.constants import IDX2CLASS, USER_FRIENDLY_MAPPING, TARGET_IMAGE_SIZE
 from app.core.exceptions import ModelNotFoundError, InvalidImageError
+import threading
 from app.inference.cloud_downloader import download_and_extract_zip, download_file_from_cloud
 
 logger = logging.getLogger(__name__)
 
 _loaded_models = {}
+_models_lock = threading.Lock()
+_is_warming_up = False
 
 def get_models():
-    """Lazy loads AI model ensemble dictionary."""
+    """Lazy loads or fetches AI model ensemble dictionary in a thread-safe manner."""
     global _loaded_models
-    if not _loaded_models:
-        os.makedirs(config.MODEL_DIR, exist_ok=True)
+    with _models_lock:
+        if not _loaded_models:
+            os.makedirs(config.MODEL_DIR, exist_ok=True)
 
-        model_files = {
-            "resnet": os.path.join(config.MODEL_DIR, "resnet101.h5"),
-            "densenet": os.path.join(config.MODEL_DIR, "densenet121.h5"),
-            "efficientnet": os.path.join(config.MODEL_DIR, "efficientnetb3.h5")
-        }
+            model_files = {
+                "resnet": os.path.join(config.MODEL_DIR, "resnet101.h5"),
+                "densenet": os.path.join(config.MODEL_DIR, "densenet121.h5"),
+                "efficientnet": os.path.join(config.MODEL_DIR, "efficientnetb3.h5")
+            }
 
-        missing_models = [name for name, path in model_files.items() if not os.path.exists(path)]
+            missing_models = [name for name, path in model_files.items() if not os.path.exists(path)]
 
-        if missing_models and config.MODEL_ZIP_URL:
-            logger.info(f"Models missing {missing_models}. Triggering cloud ZIP download...")
-            download_and_extract_zip(config.MODEL_ZIP_URL, config.MODEL_DIR)
+            if missing_models and config.MODEL_ZIP_URL:
+                logger.info(f"Models missing {missing_models}. Triggering cloud ZIP download...")
+                download_and_extract_zip(config.MODEL_ZIP_URL, config.MODEL_DIR)
 
-        for name, path in model_files.items():
-            if not os.path.exists(path) and config.MODEL_CLOUD_URLS.get(name):
-                logger.info(f"Attempting individual download for '{name}'...")
-                download_file_from_cloud(config.MODEL_CLOUD_URLS[name], path)
+            for name, path in model_files.items():
+                if not os.path.exists(path) and config.MODEL_CLOUD_URLS.get(name):
+                    logger.info(f"Attempting individual download for '{name}'...")
+                    download_file_from_cloud(config.MODEL_CLOUD_URLS[name], path)
 
-            if os.path.exists(path):
-                try:
-                    _loaded_models[name] = tf.keras.models.load_model(path, compile=False)
-                    logger.info(f"Loaded model '{name}' from {path}")
-                except Exception as e:
-                    logger.error(f"Failed to load model '{name}' from {path}: {e}")
-            else:
-                logger.warning(f"Model file not found for '{name}' at path: {path}")
+                if os.path.exists(path):
+                    try:
+                        _loaded_models[name] = tf.keras.models.load_model(path, compile=False)
+                        logger.info(f"Loaded model '{name}' from {path}")
+                    except Exception as e:
+                        logger.error(f"Failed to load model '{name}' from {path}: {e}")
+                else:
+                    logger.warning(f"Model file not found for '{name}' at path: {path}")
 
-    return _loaded_models
+        return _loaded_models
+
+def start_model_warmup():
+    """Triggers asynchronous model warmup on server startup so models are pre-loaded."""
+    global _is_warming_up
+    if _is_warming_up:
+        return
+    _is_warming_up = True
+
+    def _warmup_worker():
+        logger.info("⚡ Background Model Warmup Worker started. Ensuring models are downloaded and pre-loaded...")
+        try:
+            get_models()
+            logger.info("✅ Background Model Warmup completed. All models loaded and ready for inference!")
+        except Exception as e:
+            logger.error(f"❌ Background Model Warmup encountered an error: {e}")
+
+    thread = threading.Thread(target=_warmup_worker, daemon=True)
+    thread.start()
 
 def load_and_preprocess_image(image_path: str, target_size=TARGET_IMAGE_SIZE):
     """Loads, resizes, and preprocesses input image for inference."""

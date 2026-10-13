@@ -7,6 +7,7 @@ export const predictionService = {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      timeout: 120000, // 120 seconds generous timeout for heavy multi-model ensemble downloads
     });
     return response;
   },

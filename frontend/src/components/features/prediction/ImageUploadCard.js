@@ -165,12 +165,27 @@ const ImageUploadCard = ({
   };
 
 
+  const [coldStartNotice, setColdStartNotice] = React.useState(false);
+
+  React.useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => {
+        setColdStartNotice(true);
+      }, 3500);
+    } else {
+      setColdStartNotice(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   const handleClear = () => {
     setSelectedImage(null);
     setImageFile(null);
     if (setActiveSample) setActiveSample(null);
     setPredictionResult(null);
     setError(null);
+    setColdStartNotice(false);
   };
 
   return (
@@ -217,7 +232,14 @@ const ImageUploadCard = ({
           fullWidth
           size="lg"
         >
-          {loading ? <Spinner size="sm" color="white" /> : 'Run Prediction'}
+          {loading ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+              <Spinner size="sm" color="white" />
+              <span>{coldStartNotice ? 'Warming up AI Ensemble...' : 'Analyzing Lesion...'}</span>
+            </div>
+          ) : (
+            'Run Prediction'
+          )}
         </Button>
         {selectedImage && (
           <Button
@@ -230,6 +252,12 @@ const ImageUploadCard = ({
           </Button>
         )}
       </ButtonGroup>
+
+      {coldStartNotice && loading && (
+        <p style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center', margin: '4px 0 0 0', lineHeight: '1.3' }}>
+          ⚡ Initializing 3-backbone neural network ensemble from model registry. Subsequent scans are instantaneous.
+        </p>
+      )}
     </Container>
   );
 };
