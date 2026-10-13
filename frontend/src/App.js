@@ -1,24 +1,8 @@
-import { useEffect, useState } from 'react';
 import AppRoutes from './routes';
-import { authService } from './services';
-
+import { useAuth } from './context/AuthContext';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => !!authService.getToken());
-
-  useEffect(() => {
-    const token = authService.getToken();
-    if (token && !token.startsWith('demo-session-')) {
-      authService.verifyToken().catch((err) => {
-        // Only force logout if server explicitly rejected with 401
-        if (err.response?.status === 401) {
-          authService.logout();
-          setIsAuthenticated(false);
-        }
-      });
-    }
-  }, []);
-
+  const { isAuthenticated } = useAuth();
   return <AppRoutes isAuthenticated={isAuthenticated} />;
 };
 

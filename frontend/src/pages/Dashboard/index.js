@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { FiActivity, FiClock, FiZap } from 'react-icons/fi';
 import { Header } from '../../components/layout';
 import { ImageUploadCard, ResultsCard } from '../../components/features/prediction';
 import HistoryList from '../../components/features/history/HistoryList';
 import { SAMPLE_IMAGES } from '../../constants';
-import { historyService } from '../../services';
+import { useDashboard } from '../../hooks';
 import {
   Container,
   Main,
@@ -21,82 +20,31 @@ import {
 } from './styles';
 
 const Dashboard = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
-  const [activeSample, setActiveSample] = useState(null);
-  const [predictionResult, setPredictionResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('analysis');
-  const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
-  const [userUpdateKey, setUserUpdateKey] = useState(0);
+  const { state, actions } = useDashboard();
+  const {
+    selectedImage,
+    imageFile,
+    activeSample,
+    predictionResult,
+    loading,
+    error,
+    activeTab,
+    historyRefreshKey,
+    userUpdateKey,
+    hasScans,
+  } = state;
 
-  const localRecords = historyService.getLocalRecords();
-  const hasScans = Boolean(predictionResult || (localRecords && localRecords.length > 0));
-
-  const handlePredictionSuccess = (result) => {
-    setPredictionResult(result);
-    // Record scan history immediately so Saved Scans is always synchronized
-    historyService.recordScan(result);
-    setActiveTab('analysis');
-    setHistoryRefreshKey((prev) => prev + 1);
-  };
-
-
-
-  const handleUserUpdated = () => {
-    setUserUpdateKey((prev) => prev + 1);
-  };
-
-  const urlToFile = async (url, filename) => {
-    try {
-      const response = await fetch(url);
-      if (response.ok) {
-        const blob = await response.blob();
-        if (blob.type && blob.type.startsWith('image/')) {
-          return new File([blob], filename, { type: blob.type });
-        }
-      }
-    } catch (e) {
-      console.warn('Canvas fallback');
-    }
-
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth || 400;
-        canvas.height = img.naturalHeight || 300;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(new File([blob], filename, { type: 'image/jpeg' }));
-          } else {
-            reject(new Error('Canvas error'));
-          }
-        }, 'image/jpeg', 0.9);
-      };
-      img.onerror = () => reject(new Error('Sample load error'));
-      img.src = url;
-    });
-  };
-
-  const handleSelectSample = async (sample) => {
-    if (loading) return;
-    setActiveSample(sample);
-    setSelectedImage(sample.imagePath);
-    setError(null);
-    setPredictionResult(null);
-
-    try {
-      const file = await urlToFile(sample.imagePath, sample.fileName);
-      setImageFile(file);
-    } catch (err) {
-      console.error('Failed to convert sample image:', err);
-    }
-  };
+  const {
+    setSelectedImage,
+    setImageFile,
+    setActiveSample,
+    setLoading,
+    setError,
+    setActiveTab,
+    handlePredictionSuccess,
+    handleUserUpdated,
+    handleSelectSample,
+  } = actions;
 
   return (
     <Container key={userUpdateKey}>
@@ -150,7 +98,7 @@ const Dashboard = () => {
           </SampleFooterRail>
         </LeftColumn>
 
-        {/* Right Column: Analysis Results or History (Full Height, Uninterrupted) */}
+        {/* Right Column: Analysis Results or History */}
         <RightColumn>
           <TabBar>
             <TabButtons>
@@ -178,7 +126,6 @@ const Dashboard = () => {
               </TabButton>
             </TabButtons>
           </TabBar>
-
 
           <div style={{ display: activeTab === 'analysis' ? 'flex' : 'none', flexDirection: 'column', height: '100%' }}>
             <ResultsCard

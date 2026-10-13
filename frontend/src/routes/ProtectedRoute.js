@@ -1,12 +1,12 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { authService } from '../services';
+import { useAuth } from '../context/AuthContext';
 import { ROUTES } from '../constants';
 
 const ProtectedRoute = ({ children }) => {
-  const token = authService.getToken();
+  const { isAuthenticated } = useAuth();
 
-  if (!token) {
+  if (!isAuthenticated) {
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
