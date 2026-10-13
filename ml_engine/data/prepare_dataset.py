@@ -9,7 +9,7 @@ ready for model training.
 Classes (7): akiec, bcc, bkl, df, mel, nv, vasc
 
 Output Directory Structure:
-backend/data/skin_disease_dataset/base_dir/
+ml_engine/data/skin_disease_dataset/base_dir/
 ├── train_dir/ (80%)
 │   ├── akiec/
 │   ├── bcc/
