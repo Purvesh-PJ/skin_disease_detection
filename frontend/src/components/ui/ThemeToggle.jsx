@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { useTheme } from '../../context/ThemeContext';
-import Tooltip from '../common/ui/Tooltip';
+import Tooltip from './Tooltip';
 
 export const ThemeToggle = () => {
   const { isDarkMode, toggleTheme } = useTheme();

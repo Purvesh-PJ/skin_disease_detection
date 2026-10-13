@@ -1,41 +1,20 @@
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Button } from '../../components/common/ui';
-import { H1, Text } from '../../styles/typography';
+import { Button } from '../../components/ui';
 import { ROUTES } from '../../constants';
-
-const Container = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing[4]};
-  background-color: ${({ theme }) => theme.colors.background.secondary};
-  text-align: center;
-`;
-
-const ErrorCode = styled(H1)`
-  font-size: 6rem;
-  color: ${({ theme }) => theme.colors.primary[500]};
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
-`;
-
-const SubTitle = styled(Text)`
-  margin-bottom: ${({ theme }) => theme.spacing[6]};
-`;
 
 const NotFound = () => {
   return (
-    <Container>
-      <ErrorCode>404</ErrorCode>
-      <SubTitle variant="secondary">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-neutral-50 dark:bg-[#0a0a0a] text-center select-none">
+      <h1 className="text-8xl font-black text-emerald-600 dark:text-emerald-500 m-0 mb-2 tracking-tight">
+        404
+      </h1>
+      <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-6 font-medium">
         Page not found
-      </SubTitle>
-      <Link to={ROUTES.HOME}>
+      </p>
+      <Link to={ROUTES.HOME} className="no-underline">
         <Button size="lg">Go Home</Button>
       </Link>
-    </Container>
+    </div>
   );
 };
 

@@ -1,138 +1,69 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Button, ThemeToggle } from '../common/ui';
+import { Button } from '../ui';
+import ThemeToggle from '../ui/ThemeToggle';
 import { ROUTES } from '../../constants';
 import { FiActivity } from 'react-icons/fi';
 
-const NavHeader = styled.header`
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  background-color: ${({ theme }) =>
-    theme.mode === 'dark' ? 'rgba(18, 18, 18, 0.92)' : 'rgba(255, 255, 255, 0.92)'};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
-  transition: all ${({ theme }) => theme.transitions.normal};
-`;
-
-const NavContainer = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[6]}`};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    padding: ${({ theme }) => `${theme.spacing[3]} ${theme.spacing[4]}`};
-  }
-`;
-
-const Brand = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[2.5] || '10px'};
-  text-decoration: none;
-`;
-
-const BrandIcon = styled.div`
-  width: 36px;
-  height: 36px;
-  background: ${({ theme }) => theme.colors.primary[600]};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
-`;
-
-const BrandName = styled.span`
-  font-family: ${({ theme }) => theme.fontFamily?.heading || 'inherit'};
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.colors.text.primary};
-`;
-
-const NavLinks = styled.nav`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[6]};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
-    display: none;
-  }
-`;
-
-const NavLink = styled.a`
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  text-decoration: none;
-  transition: color ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary[600]};
-  }
-`;
-
-const NavActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[3]};
-`;
-
 const LandingNavbar = ({ isAuthenticated }) => {
   return (
-    <NavHeader>
-      <NavContainer>
-        <Brand to={ROUTES.HOME}>
-          <BrandIcon>
+    <header className="sticky top-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/90 dark:bg-[#121212]/90 border-b border-neutral-200/80 dark:border-neutral-800/80 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+        <Link to={ROUTES.HOME} className="flex items-center gap-2.5 no-underline">
+          <div className="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-sm">
             <FiActivity size={20} />
-          </BrandIcon>
-          <BrandName>Skin Disease AI</BrandName>
-        </Brand>
+          </div>
+          <span className="font-sans text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+            Skin Disease AI
+          </span>
+        </Link>
 
-        <NavLinks>
-          <NavLink href="#overview">Overview</NavLink>
-          <NavLink href="#how-it-works">How It Works</NavLink>
-          <NavLink href="#architecture">Architecture</NavLink>
-          <NavLink href="#dataset">HAM10000 Dataset</NavLink>
-          <NavLink href="#conditions">7 Conditions</NavLink>
-          <NavLink href="#transparency">Project Scope</NavLink>
-        </NavLinks>
+        <nav className="hidden lg:flex items-center gap-6">
+          <a href="#overview" className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-400 no-underline transition-colors">
+            Overview
+          </a>
+          <a href="#how-it-works" className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-400 no-underline transition-colors">
+            How It Works
+          </a>
+          <a href="#architecture" className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-400 no-underline transition-colors">
+            Architecture
+          </a>
+          <a href="#dataset" className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-400 no-underline transition-colors">
+            HAM10000 Dataset
+          </a>
+          <a href="#conditions" className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-400 no-underline transition-colors">
+            7 Conditions
+          </a>
+          <a href="#transparency" className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-400 no-underline transition-colors">
+            Project Scope
+          </a>
+        </nav>
 
-        <NavActions>
+        <div className="flex items-center gap-3">
           <ThemeToggle />
 
           {isAuthenticated ? (
             <Button asChild variant="brand" size="sm">
-              <Link to={ROUTES.DASHBOARD}>
+              <Link to={ROUTES.DASHBOARD} className="no-underline text-white">
                 Dashboard
               </Link>
             </Button>
           ) : (
             <>
               <Button asChild variant="outline" size="sm">
-                <Link to={ROUTES.LOGIN}>Log in</Link>
+                <Link to={ROUTES.LOGIN} className="no-underline">Log in</Link>
               </Button>
               <Button asChild variant="brand" size="sm">
-                <Link to={ROUTES.DASHBOARD}>
+                <Link to={ROUTES.DASHBOARD} className="no-underline text-white">
                   Try Predictor
                 </Link>
               </Button>
             </>
           )}
-        </NavActions>
-      </NavContainer>
-    </NavHeader>
+        </div>
+      </div>
+    </header>
   );
 };
-
 
 export default LandingNavbar;
