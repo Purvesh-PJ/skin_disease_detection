@@ -101,7 +101,7 @@ const ResultsCard = ({ predictionResult, loading, error }) => {
         {/* Metadata Grid */}
         <div className="grid grid-cols-2 gap-3">
           {Object.entries(predictionResult)
-            .filter(([key]) => !['predicted_disease', 'confidence', 'disease_details', 'message'].includes(key))
+            .filter(([key]) => !['predicted_disease', 'confidence', 'disease_details', 'message', 'saved_to_db', 'history_id', '_id', 'id'].includes(key))
             .map(([key, value]) => (
               <div
                 key={key}
