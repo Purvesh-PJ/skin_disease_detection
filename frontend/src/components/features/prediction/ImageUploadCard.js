@@ -152,28 +152,6 @@ const ImageUploadCard = ({
     const formData = new FormData();
     formData.append('image', imageFile);
 
-    // If a benchmark demo sample is selected, provide instant, natural 600ms inference
-    if (activeSample) {
-      setTimeout(() => {
-        setPredictionResult({
-          predicted_disease: activeSample.id,
-          confidence: activeSample.confidence || '96',
-          disease_details: {
-            name: activeSample.name,
-            description: activeSample.description,
-          },
-          message: 'Image processed successfully',
-          filename: activeSample.fileName,
-        });
-        setLoading(false);
-      }, 600);
-
-      // Background parallel call if backend is available
-      predict(formData).catch(() => {});
-      return;
-    }
-
-    // For custom uploaded files, call live backend
     try {
       const response = await predict(formData);
       if (response?.data) {
