@@ -63,9 +63,15 @@ def configure_app(app, testing=False):
         app.config['TESTING'] = True
 
 def setup_cors(app):
-    """Configure Cross-Origin Resource Sharing"""
-    CORS(app, resources={r"/*": {"origins": config.CORS_ORIGINS}})
-    logger.info(f"CORS configured with origins: {config.CORS_ORIGINS}")
+    """Configure Cross-Origin Resource Sharing with full wildcard and header support"""
+    CORS(
+        app,
+        resources={r"/*": {"origins": "*"}},
+        supports_credentials=False,
+        allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    )
+    logger.info("CORS configured with open cross-origin access for web clients")
 
 def setup_jwt(app):
     """Initialize and configure JWT manager"""

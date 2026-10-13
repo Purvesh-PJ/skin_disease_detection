@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-    if (token) {
+    if (token && !token.startsWith('demo-session-')) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
