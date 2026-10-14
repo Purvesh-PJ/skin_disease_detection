@@ -27,28 +27,12 @@ COPY backend/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -U pip setuptools wheel && \
     pip install --no-cache-dir -r /app/requirements.txt
 
-# Pre-download AI model weights directly during Docker build from Hugging Face Model Hub
-# Stream in 16MB chunks with shutil.copyfileobj to avoid memory buffering exit code 1
-RUN python -c "\
-import urllib.request, shutil, os; \
-models = { \
-    'resnet101.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/resnet101.h5', \
-    'densenet121.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/densenet121.h5', \
-    'efficientnetb3.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/efficientnetb3.h5' \
-}; \
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}; \
-for fname, url in models.items(): \
-    target = os.path.join('/app/trained_models', fname); \
-    print(f'Downloading model {fname}...'); \
-    req = urllib.request.Request(url, headers=headers); \
-    with urllib.request.urlopen(req, timeout=120) as resp, open(target, 'wb') as out_f: \
-        shutil.copyfileobj(resp, out_f, length=16*1024*1024); \
-    print(f'Saved {fname} ({os.path.getsize(target)} bytes)'); \
-print('All model weights successfully pre-baked into image.'); \
-"
-
 # Copy backend application source code into container
 COPY backend/ /app/
+
+# Pre-download AI model weights directly during Docker build from Hugging Face Model Hub
+# Uses dedicated script with unbuffered output and proper error handling
+RUN python -u /app/download_models.py
 
 # Expose port
 EXPOSE 5000
