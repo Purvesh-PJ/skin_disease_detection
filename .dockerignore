@@ -1,0 +1,29 @@
+# Git and development
+.git
+.gitignore
+.github
+.vscode
+
+# Python virtualenvs and caches
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+app.log
+
+# Node & Frontend (exclude completely from backend Docker image)
+frontend/
+node_modules/
+build/
+
+# Machine Learning Training Data & Notebooks (exclude from backend inference image)
+ml_engine/
+notebooks/
+*.ipynb
+
+# Local model weights cache (prevent copying local heavy binary weights directly into image context)
+trained_models/*.zip
+uploads/
