@@ -13,6 +13,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Install minimal OS dependencies required for system networking & healthcheck
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory inside container
@@ -26,28 +27,12 @@ COPY backend/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -U pip setuptools wheel && \
     pip install --no-cache-dir -r /app/requirements.txt
 
-# Pre-download AI model weights directly during Docker build from Hugging Face Model Hub
-# This eliminates runtime download delay and prevents Render/Cloud cold-start timeouts
-RUN python -c "\
-import urllib.request; \
-import os; \
-models = { \
-    'resnet101.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/resnet101.h5', \
-    'densenet121.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/densenet121.h5', \
-    'efficientnetb3.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/efficientnetb3.h5' \
-}; \
-headers = {'User-Agent': 'Mozilla/5.0'}; \
-for fname, url in models.items(): \
-    target = os.path.join('/app/trained_models', fname); \
-    print(f'Pre-caching model weight: {fname}...'); \
-    req = urllib.request.Request(url, headers=headers); \
-    with urllib.request.urlopen(req) as resp, open(target, 'wb') as f: \
-        f.write(resp.read()); \
-print('All model weights successfully pre-baked into image.'); \
-"
-
 # Copy backend application source code into container
 COPY backend/ /app/
+
+# Pre-download AI model weights directly during Docker build from Hugging Face Model Hub
+# Uses dedicated script with unbuffered output and proper error handling
+RUN python -u /app/download_models.py
 
 # Expose port
 EXPOSE 5000
