@@ -8,9 +8,9 @@ import shutil
 import urllib.request
 
 MODELS = {
-    'resnet101.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/resnet101.h5',
-    'densenet121.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/densenet121.h5',
-    'efficientnetb3.h5': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/efficientnetb3.h5'
+    'resnet101.tflite': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/resnet101.tflite',
+    'densenet121.tflite': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/densenet121.tflite',
+    'efficientnetb3.tflite': 'https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main/efficientnetb3.tflite'
 }
 
 TARGET_DIR = os.getenv('MODEL_DIR', '/app/trained_models')
