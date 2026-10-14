@@ -13,7 +13,16 @@ import os
 import gc
 import time
 import logging
+import warnings
 import threading
+
+# Silence TensorFlow C++ info & warning spam
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
+# Silence TFLite deprecation UserWarning
+warnings.filterwarnings("ignore", category=UserWarning)
+
 import numpy as np
 import tensorflow as tf
 import cv2
@@ -37,7 +46,20 @@ MODEL_DEFINITIONS = {
 }
 
 def get_memory_usage_mb() -> float:
-    """Returns current process RAM usage in MB."""
+    """Returns accurate container RAM usage in MB."""
+    # First check Linux cgroup memory (exact value used by Render container)
+    for cgroup_path in (
+        "/sys/fs/cgroup/memory.current",  # cgroups v2
+        "/sys/fs/cgroup/memory/memory.usage_in_bytes"  # cgroups v1
+    ):
+        if os.path.exists(cgroup_path):
+            try:
+                with open(cgroup_path, "r") as f:
+                    return float(f.read().strip()) / (1024 * 1024)
+            except Exception:
+                pass
+
+    # Fallback to process RSS
     try:
         process = psutil.Process(os.getpid())
         return process.memory_info().rss / (1024 * 1024)
