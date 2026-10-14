@@ -11,11 +11,13 @@ Production business service layer for skin disease classification:
 
 import os
 import gc
+import time
 import logging
 import threading
 import numpy as np
 import tensorflow as tf
 import cv2
+import psutil
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
 from app.core.config import config
@@ -33,6 +35,14 @@ MODEL_DEFINITIONS = {
     "densenet": "densenet121.tflite",
     "efficientnet": "efficientnetb3.tflite"
 }
+
+def get_memory_usage_mb() -> float:
+    """Returns current process RAM usage in MB."""
+    try:
+        process = psutil.Process(os.getpid())
+        return process.memory_info().rss / (1024 * 1024)
+    except Exception:
+        return 0.0
 
 def ensure_models_available():
     """Verifies all model files exist on disk, downloading if missing."""
@@ -52,7 +62,8 @@ def run_single_model_inference(model_name: str, model_path: str, preprocessed_im
     completely preventing Out-of-Memory (SIGKILL 137) crashes on Render Free Tier while preserving
     exact ensemble accuracy.
     """
-    logger.info(f"Running TFLite inference stage: {model_name} ({os.path.basename(model_path)})...")
+    start_t = time.time()
+    logger.info(f"  [Model Stage] Initializing TFLite runner: {model_name} ({os.path.basename(model_path)})...")
     try:
         interpreter = tf.lite.Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
@@ -72,9 +83,20 @@ def run_single_model_inference(model_name: str, model_path: str, preprocessed_im
 
         del interpreter
         gc.collect()
+
+        elapsed = (time.time() - start_t) * 1000
+        top_idx = int(np.argmax(pred))
+        top_class = IDX2CLASS.get(top_idx, str(top_idx))
+        top_conf = pred[top_idx] * 100
+
+        logger.info(
+            f"  [Model Done] {model_name} completed in {elapsed:.1f}ms | "
+            f"Predicted: '{top_class}' ({top_conf:.1f}%) | "
+            f"Process RAM: {get_memory_usage_mb():.1f} MB / 512 MB"
+        )
         return pred
     except Exception as e:
-        logger.error(f"Error executing TFLite inference for {model_name}: {e}")
+        logger.error(f"❌ Error executing TFLite inference for {model_name}: {e}")
         gc.collect()
         raise e
 
@@ -101,6 +123,7 @@ def start_model_warmup():
 
 def load_and_preprocess_image(image_path: str, target_size=TARGET_IMAGE_SIZE):
     """Loads, resizes, and preprocesses input image for inference."""
+    start_t = time.time()
     image = cv2.imread(image_path)
     if image is None:
         raise InvalidImageError(f"Image not found or unreadable: {image_path}")
@@ -108,6 +131,8 @@ def load_and_preprocess_image(image_path: str, target_size=TARGET_IMAGE_SIZE):
     image = cv2.resize(image, target_size)
     image = preprocess_input(image)
     image = np.expand_dims(image, axis=0)
+    prep_ms = (time.time() - start_t) * 1000
+    logger.info(f"📸 Image preprocessed in {prep_ms:.1f}ms (target_size={target_size}, shape={image.shape})")
     return image
 
 def predict_skin_disease(image_path: str) -> dict:
@@ -115,23 +140,31 @@ def predict_skin_disease(image_path: str) -> dict:
     Executes true 3-model ensemble prediction sequentially to stay under
     memory limits while providing genuine multi-architecture consensus.
     """
+    overall_start = time.time()
+    logger.info(f"==================================================")
+    logger.info(f"🚀 INCOMING INFERENCE REQUEST: {os.path.basename(image_path)}")
+    logger.info(f"Initial Memory Usage: {get_memory_usage_mb():.1f} MB (Render Limit: 512 MB)")
+    logger.info(f"==================================================")
+
     with _models_lock:
         ensure_models_available()
 
         preprocessed_image = load_and_preprocess_image(image_path)
         predictions = {}
 
-        for name, fname in MODEL_DEFINITIONS.items():
+        total_models = len(MODEL_DEFINITIONS)
+        for idx, (name, fname) in enumerate(MODEL_DEFINITIONS.items(), 1):
             path = os.path.join(config.MODEL_DIR, fname)
             if not os.path.exists(path):
-                logger.warning(f"Skipping {name}: model file not found at {path}")
+                logger.warning(f"⚠️ [{idx}/{total_models}] Skipping {name}: model file not found at {path}")
                 continue
 
+            logger.info(f"🧠 [{idx}/{total_models}] Starting inference for architecture: {name.upper()}")
             try:
                 pred = run_single_model_inference(name, path, preprocessed_image)
                 predictions[name] = pred
             except Exception as infer_err:
-                logger.error(f"Failed inference on {name}: {infer_err}")
+                logger.error(f"❌ [{idx}/{total_models}] Failed inference on {name}: {infer_err}")
 
         if not predictions:
             raise ModelNotFoundError(
@@ -148,7 +181,15 @@ def predict_skin_disease(image_path: str) -> dict:
         max_confidence = max(pred[predicted_index] for pred in predictions.values())
         confidence_percent = f"{int(round(max_confidence * 100))}"
 
-        logger.info(f"Ensemble consensus reached: {predicted_label} ({confidence_percent}%) from {list(predictions.keys())}")
+        total_duration = time.time() - overall_start
+        logger.info(f"--------------------------------------------------")
+        logger.info(f"🎯 ENSEMBLE CONSENSUS REACHED:")
+        logger.info(f"   • Disease: {predicted_label} ({friendly_info.get('name', 'N/A')})")
+        logger.info(f"   • Confidence: {confidence_percent}%")
+        logger.info(f"   • Models contributing: {list(predictions.keys())}")
+        logger.info(f"   • Total request duration: {total_duration:.2f}s")
+        logger.info(f"   • Final Memory: {get_memory_usage_mb():.1f} MB / 512 MB")
+        logger.info(f"==================================================")
 
         return {
             "predicted_disease": predicted_label,
