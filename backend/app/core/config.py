@@ -41,9 +41,9 @@ class AppConfig:
     HUGGINGFACE_REPO_BASE = "https://huggingface.co/purvesh-pj/skin-disease-ensemble/resolve/main"
     MODEL_ZIP_URL = os.getenv("MODEL_ZIP_URL", "")
     MODEL_CLOUD_URLS = {
-        "resnet": os.getenv("MODEL_URL_RESNET", f"{HUGGINGFACE_REPO_BASE}/resnet101.h5"),
-        "densenet": os.getenv("MODEL_URL_DENSENET", f"{HUGGINGFACE_REPO_BASE}/densenet121.h5"),
-        "efficientnet": os.getenv("MODEL_URL_EFFICIENTNET", f"{HUGGINGFACE_REPO_BASE}/efficientnetb3.h5")
+        "resnet": os.getenv("MODEL_URL_RESNET", f"{HUGGINGFACE_REPO_BASE}/resnet101.tflite"),
+        "densenet": os.getenv("MODEL_URL_DENSENET", f"{HUGGINGFACE_REPO_BASE}/densenet121.tflite"),
+        "efficientnet": os.getenv("MODEL_URL_EFFICIENTNET", f"{HUGGINGFACE_REPO_BASE}/efficientnetb3.tflite")
     }
 
 config = AppConfig()

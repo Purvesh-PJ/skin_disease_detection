@@ -4,6 +4,8 @@ FROM python:3.12-slim
 # Prevent Python from writing .pyc files and enable unbuffered output
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    TF_CPP_MIN_LOG_LEVEL=3 \
+    TF_ENABLE_ONEDNN_OPTS=0 \
     MODEL_DIR=/app/trained_models \
     PORT=5000 \
     GUNICORN_TIMEOUT=300 \
@@ -41,5 +43,5 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:${PORT:-5000}/ || exit 1
 
-# Launch production Gunicorn with threaded workers to prevent HTTP blocking during TensorFlow inference
-CMD ["sh", "-c", "gunicorn main:app --bind 0.0.0.0:${PORT:-5000} --workers ${GUNICORN_WORKERS:-1} --threads ${GUNICORN_THREADS:-4} --timeout ${GUNICORN_TIMEOUT:-300} --access-logfile - --error-logfile -"]
+# Launch production Gunicorn with threaded workers and quiet healthcheck logging
+CMD ["sh", "-c", "gunicorn main:app --bind 0.0.0.0:${PORT:-5000} --workers ${GUNICORN_WORKERS:-1} --threads ${GUNICORN_THREADS:-4} --timeout ${GUNICORN_TIMEOUT:-300} --logger-class gunicorn_logger.QuietHealthcheckLogger --access-logfile - --error-logfile -"]
