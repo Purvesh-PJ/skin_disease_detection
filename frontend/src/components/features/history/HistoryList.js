@@ -150,7 +150,7 @@ export const HistoryList = ({ refreshTrigger }) => {
             return (
               <div
                 key={item._id}
-                className="bg-neutral-50 dark:bg-[#181818] border border-neutral-200/80 dark:border-neutral-800/80 rounded-xl p-3 flex items-center justify-between gap-3 hover:border-emerald-500 hover:-translate-y-0.5 transition-all"
+                className="bg-neutral-50 dark:bg-[#181818] border border-neutral-200/80 dark:border-neutral-800/80 rounded-xl p-3 flex items-center justify-between gap-3 hover:border-emerald-500/80 hover:bg-white dark:hover:bg-[#1c1c1c] transition-all duration-150"
               >
                 <div className="flex flex-col gap-1 flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">

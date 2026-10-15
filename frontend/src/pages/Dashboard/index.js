@@ -70,10 +70,10 @@ const Dashboard = () => {
                     onClick={() => handleSelectSample(sample)}
                     type="button"
                     title={`${sample.name} (${sample.code})`}
-                    className={`flex items-center gap-2 px-2.5 py-1 rounded-xl border text-left shrink-0 transition-all ${
+                    className={`flex items-center gap-2 px-2.5 py-1 rounded-xl border text-left shrink-0 transition-all duration-150 active:scale-[0.98] ${
                       isSelected
-                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30'
-                        : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#181818] hover:border-emerald-400 hover:-translate-y-0.5'
+                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 shadow-sm'
+                        : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#181818] hover:border-emerald-400/80 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50'
                     }`}
                   >
                     <img
