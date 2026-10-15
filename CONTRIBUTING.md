@@ -1,37 +1,38 @@
-# Contributing Guide
+# Contributing Guidelines
 
-Guidelines for contributing to the Skin Disease Detection project.
+Thank you for your interest in contributing to the Skin Disease Detection platform.
 
----
+## Workflow & Branching
 
-## 🛠️ Branching Strategy
+We follow GitHub Flow. Create focused branches from `main`:
 
-We follow a standard GitHub Flow model:
-* `feature/<feature-name>`: New features
-* `fix/<bug-name>`: Bug fixes
-* `refactor/<module-name>`: Architectural and code restructuring
-* `docs/<topic>`: Documentation updates
+- `feat/<feature-name>`: New features or UI components
+- `fix/<bug-name>`: Bug fixes and patches
+- `refactor/<module-name>`: Code cleanup and performance improvements
+- `docs/<topic>`: Documentation updates
 
----
+## Commit Conventions
 
-## 📝 Commit Convention
+Use clear conventional commit messages:
 
-Follow conventional commit formats:
-* `feat`: New feature
-* `fix`: Bug fix
-* `refactor`: Code change that neither fixes a bug nor adds a feature
-* `docs`: Documentation changes
-* `chore`: Build tasks, dependency updates, configs
+- `feat`: Introduces a new feature
+- `fix`: Patches a bug
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `docs`: Documentation updates
+- `chore`: Dependency updates, tooling, and build tasks
 
----
+## Local Verification
 
-## 🧪 Verification
+Ensure local checks pass before submitting a Pull Request:
 
-Before submitting changes, make sure local checks pass:
 ```bash
-# Backend tests
-cd backend && python -m unittest discover -s app/tests
+# 1. Run backend unit tests
+cd backend
+python -m unittest discover -s app/tests
 
-# Frontend production build
-cd ../frontend && npm run build
+# 2. Verify frontend build
+cd ../frontend
+npm run build
 ```
+
+Open a Pull Request against `main` with a clear summary of changes and test results.

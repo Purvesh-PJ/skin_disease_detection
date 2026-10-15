@@ -1,46 +1,20 @@
-# 🔒 Security Policy
+# Security Policy
 
-The **Skin Disease Detection Platform** team takes security vulnerabilities seriously. We appreciate the responsible disclosure of any potential security risks or data exposure vulnerabilities.
+## Supported Versions
 
----
+Only the latest release and active commits on the default repository branch receive security updates.
 
-## 📋 Supported Versions
+| Version | Supported |
+| :--- | :---: |
+| Latest release (`main`) | Yes |
+| Older releases | No |
 
-We actively maintain and provide security patches for the following versions of the platform:
+## Reporting a Vulnerability
 
-| Version | Supported | Notes |
-| :--- | :---: | :--- |
-| `1.0.x` | ✅ Yes | Current production release |
-| `< 1.0.0` | ❌ No | Deprecated development prototypes |
+If you discover a security vulnerability (such as token exposure, authentication bypass, injection flaws, or dependency CVEs):
 
----
+1. **Do not create a public GitHub issue.**
+2. Report the vulnerability privately through [GitHub Security Advisories](https://github.com/Purvesh-PJ/skin_disease_detection/security/advisories/new) or directly contact the maintainer via [@Purvesh-PJ](https://github.com/Purvesh-PJ).
+3. Provide a clear description of the vulnerability, the affected endpoint or component, and steps to reproduce (proof-of-concept payload if applicable).
 
-## 🚨 Reporting a Vulnerability
-
-If you discover a security vulnerability (e.g. JWT token leakage, unauthorized MongoDB queries, input sanitization bypass, or dependency CVE), please follow these guidelines:
-
-1. **Do NOT open a public GitHub issue** for sensitive vulnerabilities.
-2. Contact the maintainer privately via GitHub Advisory / Profile:
-   * 🛡️ **Security Contact**: [@Purvesh-PJ](https://github.com/Purvesh-PJ)
-3. Please include the following details in your report:
-   * A detailed description of the vulnerability.
-   * Step-by-step reproduction steps or proof-of-concept (PoC) payload.
-   * Potential impact on user data, prediction models, or infrastructure.
-   * Any suggested remediations or mitigations.
-
----
-
-## ⏱️ Response & Disclosure Timeline
-
-* **Initial Acknowledgment**: Within **48 hours** of receiving your report.
-* **Triage & Assessment**: Within **5 business days**, confirming whether the vulnerability is valid.
-* **Patch Release**: A security patch will be prepared, tested, and deployed promptly.
-* **Public Credit**: Once resolved, we will gladly acknowledge your contribution in our [CHANGELOG.md](CHANGELOG.md) (unless you prefer to remain anonymous).
-
----
-
-## 🛡️ Best Security Practices for Deployments
-
-* Always set strong, cryptographically random values for `FLASK_SECRET_KEY` and `JWT_SECRET_KEY` in production.
-* Never commit real `.env` files with database passwords or cloud secrets to public source control.
-* In public healthcare deployments, ensure communication is strictly enforced over HTTPS/TLS.
+Valid security issues will be triaged and patched promptly.
