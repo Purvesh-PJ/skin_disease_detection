@@ -86,33 +86,38 @@ Model binaries are converted from heavy Keras `.h5` files into quantized TensorF
 ```mermaid
 flowchart TD
     subgraph Client["1. Client Tier (Vercel)"]
-        UI["React 18 SPA<br/>(Image Upload & Audit Dashboard)"]
+        UI["React 18 Single-Page Application<br/>(Lesion Upload & Clinical Dashboard)"]
     end
 
     subgraph Backend["2. Application Tier (Render)"]
-        API["Flask REST API<br/>(Route Handler & JWT Auth)"]
-        CV["OpenCV Pipeline<br/>(Decode, Resize 224x224, RGB Normalization)"]
+        API["Flask REST Controller<br/>(Request Validation & JWT Authentication)"]
+        CV["OpenCV Preprocessing Pipeline<br/>(BGR to RGB • Resize 224×224 • Normalization)"]
     end
 
-    subgraph Inference["3. Sequential TFLite Inference (RAM ~120 MB)"]
-        direction LR
-        M1["ResNet-101<br/>(43.8 MB)"]
-        M2["DenseNet-121<br/>(7.7 MB)"]
-        M3["EfficientNet-B3<br/>(12.7 MB)"]
+    subgraph Models["3. Model Inference Tier (TFLite Flatbuffers • ~120 MB Peak RAM)"]
+        direction TB
+        RUNNER["Sequential Inference Runner"]
+        M1["ResNet-101 (43.8 MB)"]
+        M2["DenseNet-121 (7.7 MB)"]
+        M3["EfficientNet-B3 (12.7 MB)"]
     end
 
-    subgraph Consensus["4. Decision & Persistence Tier"]
-        FUSION["Soft-Voting Fusion<br/>(Consensus Probability Vector)"]
-        DB[("MongoDB Atlas Cloud<br/>(User Sessions & Scan Audit Logs)")]
+    subgraph Consensus["4. Decision & Storage Tier"]
+        FUSION["Soft-Voting Consensus Engine<br/>(Averages 7-Class Softmax Probability Vectors)"]
+        DB[("MongoDB Atlas Cloud<br/>(Patient Scan History & Audit Records)")]
+        RES["Diagnostic JSON Response<br/>(Condition, Confidence %, Risk Level)"]
     end
 
-    UI -->|"Multipart Form Image (POST /predict)"| API
+    UI -->|"POST /predict (Multipart Image + JWT)"| API
     API -->|"Raw Image Buffer"| CV
-    CV -->|"Normalized Tensor [1, 224, 224, 3]"| Inference
-    Inference -->|"Softmax Probability Vectors"| FUSION
-    FUSION -->|"Diagnostic Label + Risk Level"| API
-    API -.->|"Async Write Scan Record"| DB
-    API -->|"JSON Response (Confidence Breakdown)"| UI
+    CV -->|"Normalized Float Tensor [1, 224, 224, 3]"| RUNNER
+    RUNNER --> M1
+    RUNNER --> M2
+    RUNNER --> M3
+    M1 & M2 & M3 -->|"Probability Vectors"| FUSION
+    FUSION -->|"Persist Record (Async)"| DB
+    FUSION -->|"Structured Diagnosis"| RES
+    RES -->|"Render Result on Dashboard"| UI
 ```
 
 ### Architectural Data Flow
