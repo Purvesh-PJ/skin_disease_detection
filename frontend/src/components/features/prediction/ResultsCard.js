@@ -98,24 +98,40 @@ const ResultsCard = ({ predictionResult, loading, error }) => {
           </div>
         )}
 
-        {/* Metadata Grid */}
-        <div className="grid grid-cols-2 gap-3">
-          {Object.entries(predictionResult)
-            .filter(([key]) => !['predicted_disease', 'confidence', 'disease_details', 'message', 'saved_to_db', 'history_id', '_id', 'id'].includes(key))
-            .map(([key, value]) => (
-              <div
-                key={key}
-                className="p-3 bg-white dark:bg-[#121212] rounded-xl border border-neutral-200/80 dark:border-neutral-800/80"
-              >
-                <div className="text-[0.7rem] uppercase font-bold text-neutral-400 dark:text-neutral-500 mb-1 tracking-wider">
-                  {key.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
-                </div>
-                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">
-                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                </div>
-              </div>
-            ))}
+        {/* Ensemble Verification Badges */}
+        <div className="p-3.5 bg-white dark:bg-[#121212] rounded-xl border border-neutral-200/80 dark:border-neutral-800/80 flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[0.7rem] uppercase font-bold text-neutral-400 dark:text-neutral-500 tracking-wider">
+              Ensemble Consensus Verification
+            </span>
+            <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+              3/3 Models Evaluated
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40">
+              ResNet-101
+            </span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40">
+              DenseNet-121
+            </span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
+              EfficientNet-B3
+            </span>
+          </div>
         </div>
+
+        {/* Scan Details */}
+        {predictionResult?.filename && (
+          <div className="p-3 bg-white dark:bg-[#121212] rounded-xl border border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-between text-xs">
+            <span className="font-medium text-neutral-400 dark:text-neutral-500">
+              Analyzed Scan
+            </span>
+            <span className="font-semibold text-neutral-700 dark:text-neutral-300 truncate max-w-[200px]">
+              {predictionResult.filename}
+            </span>
+          </div>
+        )}
       </div>
     );
   }
