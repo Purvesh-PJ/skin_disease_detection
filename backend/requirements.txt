@@ -1,6 +1,6 @@
 # Core Flask Web Framework & Extensions
 Flask>=3.1.0
-Flask-Cors>=4.0.0
+Flask-Cors>=6.0.5
 Flask-Bcrypt>=1.0.1
 Flask-JWT-Extended>=4.7.0
 python-dotenv>=1.0.0
