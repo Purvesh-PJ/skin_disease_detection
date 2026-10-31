@@ -1,37 +1,17 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from '../constants';
-import ProtectedRoute from './ProtectedRoute';
 
 // Pages
-import { Landing, Login, Signup, Dashboard, NotFound } from '../pages';
+import { Landing, Dashboard, NotFound } from '../pages';
 
-const AppRoutes = ({ isAuthenticated }) => {
+const AppRoutes = () => {
   return (
     <Routes>
-      <Route 
-        path={ROUTES.HOME} 
-        element={<Landing isAuthenticated={isAuthenticated} />} 
-      />
-      <Route 
-        path={ROUTES.LOGIN} 
-        element={isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <Login />} 
-      />
-      <Route 
-        path={ROUTES.SIGNUP} 
-        element={isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <Signup />} 
-      />
-      <Route 
-        path={ROUTES.DASHBOARD} 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
+      <Route path={ROUTES.HOME} element={<Landing />} />
+      <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
-
 
 export default AppRoutes;

@@ -4,10 +4,9 @@ import {
   FiTrash2,
   FiRefreshCw,
   FiDatabase,
-  FiShield,
   FiLayers,
 } from 'react-icons/fi';
-import { historyService, authService } from '../../../services';
+import { historyService } from '../../../services';
 import { Spinner } from '../../ui';
 
 const getCategoryClass = (diseaseCode) => {
@@ -37,8 +36,6 @@ export const HistoryList = ({ refreshTrigger }) => {
   const [loading, setLoading] = useState(false);
 
   const fetchHistory = useCallback(async (isManual = false) => {
-    if (!authService.isAuthenticated()) return;
-
     if (isManual && history.length === 0) {
       setLoading(true);
     }
@@ -49,7 +46,7 @@ export const HistoryList = ({ refreshTrigger }) => {
         setHistory(records);
       }
     } catch (err) {
-      console.warn("Scan history sync notice:", err);
+      console.warn('Scan history notice:', err);
     } finally {
       setLoading(false);
     }
@@ -64,33 +61,19 @@ export const HistoryList = ({ refreshTrigger }) => {
     e.stopPropagation();
     setHistory((prev) => prev.filter((item) => item._id !== id));
     historyService.deleteHistoryItem(id).catch((err) => {
-      console.warn("Background delete sync failed:", err);
+      console.warn('Background delete failed:', err);
     });
   };
 
   const handleClearAll = (e) => {
     if (e) e.stopPropagation();
-    if (window.confirm("Are you sure you want to clear all MongoDB scan records for your account?")) {
+    if (window.confirm('Are you sure you want to clear all recorded scan history?')) {
       setHistory([]);
       historyService.clearHistory().catch((err) => {
-        console.warn("Background clear sync failed:", err);
+        console.warn('Background clear failed:', err);
       });
     }
   };
-
-  if (!authService.isAuthenticated()) {
-    return (
-      <div className="p-6 text-center border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-[#181818] flex flex-col items-center gap-2">
-        <FiShield size={24} className="text-emerald-600 dark:text-emerald-400" />
-        <p className="m-0 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
-          Guest Session (History Inactive)
-        </p>
-        <span className="text-xs text-neutral-500 dark:text-neutral-400">
-          Sign in or use <strong>⚡ 1-Click Demo Login</strong> to record and save your scans.
-        </span>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-3 w-full">

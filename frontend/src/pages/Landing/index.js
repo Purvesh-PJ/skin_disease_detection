@@ -75,7 +75,7 @@ const ALL_CONDITIONS = [
   },
 ];
 
-const Landing = ({ isAuthenticated }) => {
+const Landing = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const ctaRoute = ROUTES.DASHBOARD;
   const ctaText = 'Try Image Detection';
@@ -88,7 +88,7 @@ const Landing = ({ isAuthenticated }) => {
   return (
     <div id="overview" className="min-h-screen bg-slate-50 dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 overflow-x-hidden">
       {/* Top Navigation */}
-      <LandingNavbar isAuthenticated={isAuthenticated} />
+      <LandingNavbar />
 
       {/* SECTION 1: HERO & PROJECT INTRODUCTION */}
       <section className="relative px-4 sm:px-6 pt-10 sm:pt-16 pb-8 sm:pb-12 max-w-[1240px] mx-auto flex flex-col items-center text-center">
@@ -125,13 +125,7 @@ const Landing = ({ isAuthenticated }) => {
                   {ctaText}
                 </Link>
               </Button>
-              {!isAuthenticated && (
-                <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
-                  <Link to={ROUTES.LOGIN}>
-                    ⚡ 1-Click Demo Login
-                  </Link>
-                </Button>
-              )}
+
               <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
                 <a href="#how-it-works">How It Works</a>
               </Button>
