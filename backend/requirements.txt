@@ -9,7 +9,7 @@ werkzeug>=3.0.6
 jinja2>=3.1.5
 
 # Database Persistence
-pymongo>=4.9.0
+pymongo>=4.19.0
 
 # Inference Engine & Image Preprocessing (Serving Only)
 tensorflow>=2.18.0
