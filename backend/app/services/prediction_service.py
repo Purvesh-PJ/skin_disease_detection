@@ -47,7 +47,6 @@ MODEL_DEFINITIONS = {
 
 def get_memory_usage_mb() -> float:
     """Returns accurate container RAM usage in MB."""
-    # First check Linux cgroup memory (exact value used by Render container)
     for cgroup_path in (
         "/sys/fs/cgroup/memory.current",  # cgroups v2
         "/sys/fs/cgroup/memory/memory.usage_in_bytes"  # cgroups v1
@@ -59,7 +58,6 @@ def get_memory_usage_mb() -> float:
             except Exception:
                 pass
 
-    # Fallback to process RSS
     try:
         process = psutil.Process(os.getpid())
         return process.memory_info().rss / (1024 * 1024)
@@ -118,7 +116,7 @@ def run_single_model_inference(model_name: str, model_path: str, preprocessed_im
         )
         return pred
     except Exception as e:
-        logger.error(f"❌ Error executing TFLite inference for {model_name}: {e}")
+        logger.error(f"[ERROR] Error executing TFLite inference for {model_name}: {e}")
         gc.collect()
         raise e
 
@@ -133,12 +131,12 @@ def start_model_warmup():
     _is_warming_up = True
 
     def _warmup_worker():
-        logger.info("⚡ Background Model Warmup Worker: Verifying model files on disk...")
+        logger.info("[WARMUP] Background Model Warmup Worker: Verifying model files on disk...")
         try:
             ensure_models_available()
-            logger.info("✅ All ensemble model files verified and ready on disk for sequential inference.")
+            logger.info("[READY] All ensemble model files verified and ready on disk for sequential inference.")
         except Exception as e:
-            logger.error(f"❌ Model verification encountered error: {e}")
+            logger.error(f"[ERROR] Model verification encountered error: {e}")
 
     thread = threading.Thread(target=_warmup_worker, daemon=True)
     thread.start()
@@ -154,7 +152,7 @@ def load_and_preprocess_image(image_path: str, target_size=TARGET_IMAGE_SIZE):
     image = preprocess_input(image)
     image = np.expand_dims(image, axis=0)
     prep_ms = (time.time() - start_t) * 1000
-    logger.info(f"📸 Image preprocessed in {prep_ms:.1f}ms (target_size={target_size}, shape={image.shape})")
+    logger.info(f"[PREP] Image preprocessed in {prep_ms:.1f}ms (target_size={target_size}, shape={image.shape})")
     return image
 
 def predict_skin_disease(image_path: str) -> dict:
@@ -164,7 +162,7 @@ def predict_skin_disease(image_path: str) -> dict:
     """
     overall_start = time.time()
     logger.info(f"==================================================")
-    logger.info(f"🚀 INCOMING INFERENCE REQUEST: {os.path.basename(image_path)}")
+    logger.info(f"[REQUEST] INCOMING INFERENCE REQUEST: {os.path.basename(image_path)}")
     logger.info(f"Initial Memory Usage: {get_memory_usage_mb():.1f} MB (Render Limit: 512 MB)")
     logger.info(f"==================================================")
 
@@ -178,15 +176,15 @@ def predict_skin_disease(image_path: str) -> dict:
         for idx, (name, fname) in enumerate(MODEL_DEFINITIONS.items(), 1):
             path = os.path.join(config.MODEL_DIR, fname)
             if not os.path.exists(path):
-                logger.warning(f"⚠️ [{idx}/{total_models}] Skipping {name}: model file not found at {path}")
+                logger.warning(f"[WARN] [{idx}/{total_models}] Skipping {name}: model file not found at {path}")
                 continue
 
-            logger.info(f"🧠 [{idx}/{total_models}] Starting inference for architecture: {name.upper()}")
+            logger.info(f"[INFER] [{idx}/{total_models}] Starting inference for architecture: {name.upper()}")
             try:
                 pred = run_single_model_inference(name, path, preprocessed_image)
                 predictions[name] = pred
             except Exception as infer_err:
-                logger.error(f"❌ [{idx}/{total_models}] Failed inference on {name}: {infer_err}")
+                logger.error(f"[ERROR] [{idx}/{total_models}] Failed inference on {name}: {infer_err}")
 
         if not predictions:
             raise ModelNotFoundError(
@@ -205,7 +203,7 @@ def predict_skin_disease(image_path: str) -> dict:
 
         total_duration = time.time() - overall_start
         logger.info(f"--------------------------------------------------")
-        logger.info(f"🎯 ENSEMBLE CONSENSUS REACHED:")
+        logger.info(f"[CONSENSUS] ENSEMBLE CONSENSUS REACHED:")
         logger.info(f"   • Disease: {predicted_label} ({friendly_info.get('name', 'N/A')})")
         logger.info(f"   • Confidence: {confidence_percent}%")
         logger.info(f"   • Models contributing: {list(predictions.keys())}")
@@ -220,29 +218,12 @@ def predict_skin_disease(image_path: str) -> dict:
             "ensemble_models_used": list(predictions.keys())
         }
 
-def process_prediction(file_path: str, filename: str, user_email: str = None) -> dict:
+def process_prediction(file_path: str, filename: str) -> dict:
     """
-    High-level business service method to execute prediction,
-    enrich result metadata, and persist history if authenticated.
+    High-level business service method to execute prediction
+    and enrich result metadata for client presentation.
     """
-    from app.repositories.history_repository import save_prediction
-
     result = predict_skin_disease(file_path)
     result["message"] = "Image processed successfully"
     result["filename"] = filename
-
-    if user_email:
-        try:
-            saved_doc = save_prediction(user_email, result)
-            if saved_doc:
-                result["history_id"] = saved_doc.get("_id")
-                result["saved_to_db"] = True
-            else:
-                result["saved_to_db"] = False
-        except Exception as db_err:
-            logger.error(f"Failed to persist prediction history: {db_err}")
-            result["saved_to_db"] = False
-    else:
-        result["saved_to_db"] = False
-
     return result

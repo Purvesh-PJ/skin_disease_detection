@@ -5,7 +5,7 @@ import ThemeToggle from '../ui/ThemeToggle';
 import { ROUTES } from '../../constants';
 import { FiActivity } from 'react-icons/fi';
 
-const LandingNavbar = ({ isAuthenticated }) => {
+const LandingNavbar = () => {
   return (
     <header className="sticky top-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/90 dark:bg-[#121212]/90 border-b border-neutral-200/80 dark:border-neutral-800/80 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
@@ -41,25 +41,11 @@ const LandingNavbar = ({ isAuthenticated }) => {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
-
-          {isAuthenticated ? (
-            <Button asChild variant="brand" size="sm">
-              <Link to={ROUTES.DASHBOARD} className="no-underline text-white">
-                Dashboard
-              </Link>
-            </Button>
-          ) : (
-            <>
-              <Button asChild variant="outline" size="sm">
-                <Link to={ROUTES.LOGIN} className="no-underline">Log in</Link>
-              </Button>
-              <Button asChild variant="brand" size="sm">
-                <Link to={ROUTES.DASHBOARD} className="no-underline text-white">
-                  Try Predictor
-                </Link>
-              </Button>
-            </>
-          )}
+          <Button asChild variant="brand" size="sm">
+            <Link to={ROUTES.DASHBOARD} className="no-underline text-white font-medium">
+              Launch Diagnostic Studio
+            </Link>
+          </Button>
         </div>
       </div>
     </header>

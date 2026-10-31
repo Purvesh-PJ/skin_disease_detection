@@ -1,12 +1,11 @@
 """
 Skin Lesion Prediction API Controller
 ------------------------------------
-API endpoint for processing skin image uploads, returning ensemble predictions,
-and persisting scan history to MongoDB for authenticated users.
+Public API endpoint for processing skin image uploads and returning ensemble predictions.
+Zero authentication friction: Open diagnostic endpoint for clinical AI evaluation.
 """
 
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 import os
 import logging
@@ -19,7 +18,6 @@ logger = logging.getLogger(__name__)
 predict_router = Blueprint('predict', __name__)
 
 @predict_router.route('/predict', methods=['POST'])
-@jwt_required(optional=True)
 def handle_prediction():
     if 'image' not in request.files:
         return jsonify({"error": "No image file provided"}), 400
@@ -33,8 +31,7 @@ def handle_prediction():
 
     try:
         image_file.save(file_path)
-        current_user_email = get_jwt_identity()
-        result = process_prediction(file_path, filename, user_email=current_user_email)
+        result = process_prediction(file_path, filename)
         return jsonify(result), 200
     except BaseDomainException as e:
         logger.warning(f"Domain Exception: {e.message}")
@@ -48,4 +45,3 @@ def handle_prediction():
                 os.remove(file_path)
             except Exception:
                 pass
-
