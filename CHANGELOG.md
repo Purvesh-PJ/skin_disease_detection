@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-11-01
+
+### Added
+- Direct 1-click access to the Diagnostic Studio (`/dashboard`) from the landing page with zero login friction.
+- Browser `localStorage` diagnostic scan history persistence for instant, offline-resilient saving.
+- Architecture Decision Record [0005](docs/adr/0005-removed-mongodb.md) documenting decoupling of MongoDB.
+- Automated TFLite model pre-caching during Docker build via `download_models.py` from Hugging Face Hub.
+
+### Changed
+- Refactored Python backend into a dedicated, stateless AI inference microservice (<200MB RAM footprint).
+- Streamlined Header and Navigation components to eliminate auth tokens, user menus, and session state.
+- Updated `docker-compose.yml` and `.env.example` to remove database containers, credentials, and MongoDB dependencies.
+
+### Removed
+- Removed MongoDB database connection pool, user models, repositories, and server-side history routes.
+- Removed user authentication layers (`Flask-JWT-Extended`, `Flask-Bcrypt`, `AuthContext`, login/signup pages).
+- Removed `pymongo` dependency from `backend/requirements.txt`.
+
 ## [1.0.0] - 2026-10-15
 
 ### Added
