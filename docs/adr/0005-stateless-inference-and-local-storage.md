@@ -1,4 +1,4 @@
-# 0005. Stateless Inference Microservice & Client-Side Storage
+# 0005. Decouple MongoDB and Use Browser Storage for Scan History
 
 ## Status
 Accepted
@@ -23,3 +23,4 @@ The legacy application coupled machine learning model inference with user authen
 - **Positive**: Zero friction for recruiters, doctors, and evaluators evaluating the diagnostic ensemble.
 - **Positive**: Diagnostic scan history persists reliably and instantaneously in browser `localStorage`.
 - **Negative**: History is scoped per browser client and does not sync across separate devices.
+
