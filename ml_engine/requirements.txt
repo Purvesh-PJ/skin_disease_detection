@@ -7,7 +7,7 @@ joblib>=1.4.0
 
 # Data Processing & Augmentation
 pandas>=2.2.2
-opencv-python-headless>=4.10.0.84
+opencv-python-headless>=5.0.0.93
 albumentations>=1.4.0
 
 # Exploratory Data Analysis & Visualization
