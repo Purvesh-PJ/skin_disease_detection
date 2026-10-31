@@ -47,7 +47,6 @@ MODEL_DEFINITIONS = {
 
 def get_memory_usage_mb() -> float:
     """Returns accurate container RAM usage in MB."""
-    # First check Linux cgroup memory (exact value used by Render container)
     for cgroup_path in (
         "/sys/fs/cgroup/memory.current",  # cgroups v2
         "/sys/fs/cgroup/memory/memory.usage_in_bytes"  # cgroups v1
@@ -59,7 +58,6 @@ def get_memory_usage_mb() -> float:
             except Exception:
                 pass
 
-    # Fallback to process RSS
     try:
         process = psutil.Process(os.getpid())
         return process.memory_info().rss / (1024 * 1024)
@@ -220,29 +218,12 @@ def predict_skin_disease(image_path: str) -> dict:
             "ensemble_models_used": list(predictions.keys())
         }
 
-def process_prediction(file_path: str, filename: str, user_email: str = None) -> dict:
+def process_prediction(file_path: str, filename: str) -> dict:
     """
-    High-level business service method to execute prediction,
-    enrich result metadata, and persist history if authenticated.
+    High-level business service method to execute prediction
+    and enrich result metadata for client presentation.
     """
-    from app.repositories.history_repository import save_prediction
-
     result = predict_skin_disease(file_path)
     result["message"] = "Image processed successfully"
     result["filename"] = filename
-
-    if user_email:
-        try:
-            saved_doc = save_prediction(user_email, result)
-            if saved_doc:
-                result["history_id"] = saved_doc.get("_id")
-                result["saved_to_db"] = True
-            else:
-                result["saved_to_db"] = False
-        except Exception as db_err:
-            logger.error(f"Failed to persist prediction history: {db_err}")
-            result["saved_to_db"] = False
-    else:
-        result["saved_to_db"] = False
-
     return result
