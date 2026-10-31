@@ -1,6 +1,6 @@
 # Deep Learning Framework
 tensorflow>=2.18.0
-numpy>=1.26.4
+numpy>=2.5.4
 scikit-learn>=1.4.0
 scipy>=1.11.4
 joblib>=1.4.0
