@@ -8,7 +8,6 @@ The legacy application coupled machine learning model inference with user authen
 - Reviewers and evaluators faced an unnecessary login/signup wall just to test the AI models.
 - An active MongoDB cluster connection introduced cold-start connection timeouts, network latency, and external points of failure.
 - Container memory usage on Render Free Tier (<512 MB) was burdened by database connection pools and auth middleware.
-- Full-stack state is safely tagged and preserved under Git release tag `v1.0.0` for rollback capability.
 
 ## Decision
 1. **Decouple Persistence & Auth**: Completely remove MongoDB, user authentication, password hashing, and server-side history routes from the backend.
