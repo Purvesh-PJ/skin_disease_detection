@@ -14,6 +14,8 @@ from pathlib import Path
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, NUM_CLASSES, CLASSES
 from ml_engine.data.download_dataset import verify_dataset
+from ml_engine.data.generators import create_data_generators, compute_balanced_class_weights
+from ml_engine.pipeline.orchestrator import SUPPORTED_MODELS
 from ml_engine.pipeline.export_tflite import convert_h5_to_tflite, convert_all_models
 
 class TestMLEngineAutomation:
@@ -92,4 +94,25 @@ class TestMLEngineAutomation:
         with tempfile.TemporaryDirectory() as tmp_dir:
             result = convert_all_models(tmp_dir)
             assert result == []
+
+    def test_orchestrator_supported_models_list(self):
+        """Verifies orchestrator includes all expected model architectures."""
+        expected = ["resnet101", "densenet121", "efficientnetb3", "ensemble"]
+        assert sorted(SUPPORTED_MODELS) == sorted(expected)
+
+    def test_create_data_generators_and_class_weights(self):
+        """Ensures data generators and balanced class weights are successfully generated."""
+        dataset_dir = Path(__file__).resolve().parent.parent / "data" / "skin_disease_dataset" / "base_dir"
+        train_gen, val_gen, test_gen = create_data_generators(dataset_dir, batch_size=32)
+
+        assert train_gen is not None
+        assert val_gen is not None
+        assert test_gen is not None
+        assert train_gen.num_classes == 7
+
+        weights = compute_balanced_class_weights(train_gen)
+        assert len(weights) == 7
+        for cls_idx in range(7):
+            assert cls_idx in weights
+            assert weights[cls_idx] > 0
 
