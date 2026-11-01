@@ -60,3 +60,4 @@ describe('ResultsCard Unit Tests', () => {
     expect(screen.getByText(/lesion_scan_01.jpg/i)).toBeInTheDocument();
   });
 });
+

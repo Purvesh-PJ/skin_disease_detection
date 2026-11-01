@@ -77,3 +77,4 @@ describe('HistoryList Component Unit Tests', () => {
     expect(screen.getByText(/No scans recorded yet/i)).toBeInTheDocument();
   });
 });
+

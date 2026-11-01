@@ -58,3 +58,4 @@ describe('ImageUploadCard Component Unit Tests', () => {
     expect(screen.getByText(/Melanoma \(mel\)/i)).toBeInTheDocument();
   });
 });
+

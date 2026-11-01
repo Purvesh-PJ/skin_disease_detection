@@ -46,3 +46,4 @@ describe('predictionService Unit Tests', () => {
     await expect(predictionService.predict(formData)).rejects.toThrow('Network Error');
   });
 });
+
