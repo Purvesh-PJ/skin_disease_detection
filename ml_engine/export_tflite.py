@@ -134,3 +134,4 @@ if __name__ == "__main__":
         convert_h5_to_tflite(args.model_path, args.output_path, quantize=quantize_flag)
     else:
         convert_all_models(args.models_dir, quantize=quantize_flag)
+

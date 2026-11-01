@@ -92,3 +92,4 @@ class TestMLEngineAutomation:
         with tempfile.TemporaryDirectory() as tmp_dir:
             result = convert_all_models(tmp_dir)
             assert result == []
+
