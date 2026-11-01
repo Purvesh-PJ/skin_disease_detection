@@ -248,6 +248,28 @@ npm start
 ```
 *Frontend will open at `http://localhost:3000`.*
 
+### 4. ML Engine & Model Training (For Data Science & Research Workflows)
+
+If you want to train models from scratch, experiment with architectures, or run exploratory analysis on the HAM10000 dataset:
+
+`ash
+cd ml_engine
+
+# Create dedicated virtual environment for training
+python -m venv venv_ml
+# Windows: .\venv_ml\Scripts\activate  |  Linux/macOS: source venv_ml/bin/activate
+
+# Install ML dependencies (TensorFlow, Albumentations, Matplotlib, Jupyter, etc.)
+pip install -r requirements.txt
+
+# Option A: Interactive Experiments & EDA via Jupyter Notebooks
+jupyter notebook notebooks/
+# Open 01_exploratory_data_analysis.ipynb or 02_model_training_and_evaluation.ipynb
+
+# Option B: Run Standalone Training Pipeline
+python train.py
+`
+
 ---
 
 ## 🧪 Automated Testing & Coverage
