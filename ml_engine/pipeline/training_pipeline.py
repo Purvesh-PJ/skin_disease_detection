@@ -12,10 +12,10 @@ from pathlib import Path
 
 from ml_engine.constants import DEFAULT_BATCH_SIZE
 from ml_engine.scripts.download_dataset import verify_dataset, DEFAULT_DATASET_DIR
-from ml_engine.pipeline.data_loader import create_data_generators
+from ml_engine.pipeline.data_augmentation import create_data_generators
 from ml_engine.pipeline.class_weights import compute_balanced_class_weights
+from ml_engine.pipeline.model_trainer import ModelTrainer
 from ml_engine.export.tflite import convert_h5_to_tflite
-from ml_engine.pipeline.trainer import ModelTrainer
 
 logger = logging.getLogger(__name__)
 
@@ -94,8 +94,8 @@ def run_training_pipeline(model_name, epochs=20, batch_size=DEFAULT_BATCH_SIZE, 
         logger.info(f"EfficientNet-B3 ready: {tflite_path}")
 
     elif model_name == "ensemble":
-        from ml_engine.pipeline.ensemble import train_base_models, stack_and_train_ensemble
-        from ml_engine.pipeline.evaluator import evaluate_ensemble_model
+        from ml_engine.pipeline.ensemble_training import train_base_models, stack_and_train_ensemble
+        from ml_engine.pipeline.model_evaluation import evaluate_ensemble_model
 
         logger.info("--- Running Full 3-Model Ensemble Training ---")
         base_models = train_base_models(train_gen, val_gen, class_weights=class_weights, epochs=epochs, save_dir=str(output_dir))

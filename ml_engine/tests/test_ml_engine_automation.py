@@ -14,10 +14,10 @@ from pathlib import Path
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, NUM_CLASSES, CLASSES
 from ml_engine.scripts.download_dataset import verify_dataset
-from ml_engine.pipeline.data_loader import create_data_generators
+from ml_engine.pipeline.data_augmentation import create_data_generators
 from ml_engine.pipeline.class_weights import compute_balanced_class_weights
-from ml_engine.pipeline.evaluator import evaluate_model_predictions
-from ml_engine.pipeline.orchestrator import SUPPORTED_MODELS
+from ml_engine.pipeline.model_evaluation import evaluate_model_predictions
+from ml_engine.pipeline.training_pipeline import SUPPORTED_MODELS
 from ml_engine.export.tflite import convert_h5_to_tflite, convert_all_models
 
 class TestMLEngineAutomation:

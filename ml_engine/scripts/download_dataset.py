@@ -90,12 +90,12 @@ def print_kaggle_setup_instructions(target_dir=DEFAULT_DATASET_DIR):
     logger.info("Option 1: Using Kaggle CLI (Recommended for fast local download)")
     logger.info("   1. Ensure kaggle is installed:  pip install kaggle")
     logger.info("   2. Download the dataset:        kaggle datasets download -d kmader/skin-cancer-mnist-ham10000 -p ml_engine/data/raw --unzip")
-    logger.info("   3. Run automated preparation:   python ml_engine/scripts/prepare_dataset.py --raw-dir ml_engine/data/raw")
+    logger.info("   3. Run automated preparation:   python ml_engine/pipeline/dataset_preparation.py --raw-dir ml_engine/data/raw")
     logger.info("-" * 60)
     logger.info("Option 2: Direct Kaggle Web Download")
     logger.info("   1. Visit: https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000")
     logger.info("   2. Download and unzip files into: ml_engine/data/raw/")
-    logger.info("   3. Run: python ml_engine/scripts/prepare_dataset.py --raw-dir ml_engine/data/raw")
+    logger.info("   3. Run: python ml_engine/pipeline/dataset_preparation.py --raw-dir ml_engine/data/raw")
     logger.info("=" * 60 + "\n")
 
 if __name__ == "__main__":

@@ -34,7 +34,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from ml_engine.constants import DEFAULT_BATCH_SIZE
 from ml_engine.scripts.download_dataset import DEFAULT_DATASET_DIR
-from ml_engine.pipeline.orchestrator import run_training_pipeline, SUPPORTED_MODELS
+from ml_engine.pipeline.training_pipeline import run_training_pipeline, SUPPORTED_MODELS
 
 
 def main():
