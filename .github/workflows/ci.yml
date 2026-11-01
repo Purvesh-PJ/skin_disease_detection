@@ -67,4 +67,4 @@ jobs:
           CI: false
           GENERATE_SOURCEMAP: false
           NODE_OPTIONS: "--max-old-space-size=4096"
-        run: npm run build
+        run: CI=false npm run build
