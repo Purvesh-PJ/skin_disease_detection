@@ -17,8 +17,8 @@ We adopted a dual-track ML engineering standard:
 - **Track 1 (Interactive Research via Jupyter Notebooks)**: `01_exploratory_data_analysis.ipynb` and `02_model_training_and_evaluation.ipynb` for visual demographic analysis, class imbalance inspection, augmentation tuning, and confusion matrix evaluation. Added a dedicated Section 5 for direct in-notebook `.tflite` export.
 - **Track 2 (Headless Automated CLI Pipeline)**: `ml_engine/run_pipeline.py` providing a lightweight CLI driver supported by a modular orchestration layer (`ml_engine/pipeline/orchestrator.py` and `ml_engine/pipeline/data_loader.py`) to train individual architectures (`resnet101`, `densenet121`, `efficientnetb3`) or the full soft-voting ensemble with balanced class weighting.
 
-### 2. Automated Dynamic Range Quantization (`ml_engine/pipeline/export_tflite.py`)
-Implemented `export_tflite.py` utilizing `tf.lite.TFLiteConverter` with `Optimize.DEFAULT`:
+### 2. Automated Dynamic Range Quantization (`ml_engine/export/tflite.py`)
+Implemented `ml_engine/export/tflite.py` utilizing `tf.lite.TFLiteConverter` with `Optimize.DEFAULT`:
 - Automatically converts `.h5` weight graphs into `.tflite` flatbuffers.
 - Achieves ~70% binary size reduction while preserving multi-class diagnostic accuracy.
 - Guarantees peak memory consumption remains below ~120 MB on Render's 512 MB cgroup limit.

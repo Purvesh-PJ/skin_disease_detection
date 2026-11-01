@@ -66,3 +66,4 @@ def evaluate_ensemble_model(base_models, meta_model, test_generator, class_names
     report, cm = evaluate_model_predictions(true_labels, final_preds, class_names=class_names)
 
     return final_preds, report, cm
+

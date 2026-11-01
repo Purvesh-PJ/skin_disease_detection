@@ -14,7 +14,7 @@ from ml_engine.constants import DEFAULT_BATCH_SIZE
 from ml_engine.scripts.download_dataset import verify_dataset, DEFAULT_DATASET_DIR
 from ml_engine.pipeline.data_loader import create_data_generators
 from ml_engine.pipeline.class_weights import compute_balanced_class_weights
-from ml_engine.pipeline.export_tflite import convert_h5_to_tflite
+from ml_engine.export.tflite import convert_h5_to_tflite
 from ml_engine.pipeline.trainer import ModelTrainer
 
 logger = logging.getLogger(__name__)

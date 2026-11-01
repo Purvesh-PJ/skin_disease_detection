@@ -18,7 +18,7 @@ from ml_engine.pipeline.data_loader import create_data_generators
 from ml_engine.pipeline.class_weights import compute_balanced_class_weights
 from ml_engine.pipeline.evaluator import evaluate_model_predictions
 from ml_engine.pipeline.orchestrator import SUPPORTED_MODELS
-from ml_engine.pipeline.export_tflite import convert_h5_to_tflite, convert_all_models
+from ml_engine.export.tflite import convert_h5_to_tflite, convert_all_models
 
 class TestMLEngineAutomation:
 

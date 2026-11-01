@@ -29,3 +29,4 @@ def compute_balanced_class_weights(train_gen):
     class_weights_dict = {int(cls): float(weight) for cls, weight in zip(unique_classes, weights)}
     logger.info(f"Computed Balanced Class Weights: {class_weights_dict}")
     return class_weights_dict
+
