@@ -11,6 +11,12 @@ __pycache__/
 *.env
 env.*
 
+# Test & Coverage artifacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
 # Node
 node_modules/
 .npm
@@ -19,4 +25,3 @@ node_modules/
 # Large Datasets
 ml_engine/data/skin_disease_dataset/
 backend/data/skin_disease_dataset/
-
