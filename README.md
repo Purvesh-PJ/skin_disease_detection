@@ -253,17 +253,25 @@ npm start
 The `ml_engine/` directory houses the complete end-to-end machine learning engineering and research pipeline that trained the HAM10000 ensemble.
 
 #### Core Modules:
-- **`data/prepare_dataset.py`**: Automated stratified dataset splitting (80% train, 10% validation, 10% test) across all 7 diagnostic classes (`akiec`, `bcc`, `bkl`, `df`, `mel`, `nv`, `vasc`).
+- **`pipeline/`**: Modular, single-responsibility training workflow:
+  - `prepare_dataset.py`: Stratified data splitting (80% train, 10% validation, 10% test) across all 7 classes.
+  - `data_generators.py`: Keras batch image generators with real-time augmentation.
+  - `class_weights.py`: Balanced class weighting for minority diagnostic conditions.
+  - `model_trainer.py`: Callbacks (`EarlyStopping`, `ReduceLROnPlateau`) and model fitting.
+  - `ensemble_training.py`: Multi-model base training and Logistic Regression meta-learner stacking.
+  - `model_evaluation.py`: Test dataset evaluation, classification report, and confusion matrix.
+  - `training_pipeline.py`: Master pipeline runner coordinating the full lifecycle.
+- **`export/`**:
+  - `tflite.py`: Automated Dynamic Range Quantization to produce lightweight `.tflite` flatbuffers.
+- **`scripts/`**:
+  - `download_dataset.py`: Kaggle CLI download helper and dataset integrity verifier.
 - **`architectures/`**: Transfer-learning backbones fine-tuned for dermatoscopic feature extraction:
   - `resnet.py`: ResNet-101 architecture preserving low-level lesion texture and border asymmetry.
   - `densenet.py`: DenseNet-121 architecture with dense feature concatenation.
   - `efficientnet.py`: EfficientNet-B3 architecture utilizing compound scaling.
-- **`pipeline/`**: Training engine and model evaluation:
-  - `trainer.py`: Encapsulates training callbacks, early stopping, and model checkpoint saving.
-  - `ensemble_model.py`: Trains base models, stacks validation probability vectors, and trains the ensemble meta-model.
 - **`notebooks/`**:
-  - `01_exploratory_data_analysis.ipynb`: Class distribution, metadata statistics, and image visualization.
-  - `02_model_training_and_evaluation.ipynb`: Multi-class confusion matrices, ROC-AUC curves, and classification reports.
+  - `01_exploratory_data_analysis.ipynb`: Class distribution, demographic analysis, and visual lesion gallery.
+  - `02_model_training_and_evaluation.ipynb`: Interactive training, ROC-AUC, confusion matrices, and direct `.tflite` quantization.
 
 #### Running the ML Pipeline Locally:
 
@@ -278,17 +286,21 @@ python -m venv venv_ml
 pip install -r requirements.txt
 
 # 3. (Optional) Stratify raw Kaggle HAM10000 dataset into train/val/test
-python data/prepare_dataset.py --raw_dir path/to/raw_ham10000 --output_dir data/skin_disease_dataset/base_dir
+python pipeline/prepare_dataset.py --raw-dir path/to/raw_ham10000 --output-dir data/skin_disease_dataset/base_dir
 
-# 4. Option A: Interactive Experiments via Jupyter Notebooks
+# 4. Option A: Interactive Research & Visualization via Jupyter Notebooks
 jupyter notebook notebooks/
 # Open 01_exploratory_data_analysis.ipynb or 02_model_training_and_evaluation.ipynb
 
-# 5. Option B: Standalone Full Ensemble Training
-python train.py
+# 5. Option B: Automated Headless CLI Pipeline (with auto TFLite export)
+# Train single model:
+python run_pipeline.py --model resnet101 --epochs 20
+
+# Train full ensemble:
+python run_pipeline.py --model ensemble --epochs 15
 ```
 
-> **TFLite Quantization**: After `.h5` base models are trained, convert them to quantized `.tflite` flatbuffers using TensorFlow Lite for production inference (<200MB RAM footprint).
+> **TFLite Quantization**: Handled automatically in `run_pipeline.py` or via Section 5 in `02_model_training_and_evaluation.ipynb` using `ml_engine.export.tflite` to produce production flatbuffers (<120MB RAM footprint).
 
 
 ---
