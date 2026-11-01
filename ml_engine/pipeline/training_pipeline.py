@@ -12,7 +12,7 @@ from pathlib import Path
 
 from ml_engine.constants import DEFAULT_BATCH_SIZE
 from ml_engine.scripts.download_dataset import verify_dataset, DEFAULT_DATASET_DIR
-from ml_engine.pipeline.data_augmentation import create_data_generators
+from ml_engine.pipeline.data_generators import create_data_generators
 from ml_engine.pipeline.class_weights import compute_balanced_class_weights
 from ml_engine.pipeline.model_trainer import ModelTrainer
 from ml_engine.export.tflite import convert_h5_to_tflite
