@@ -15,7 +15,7 @@ Following the transition to a decoupled microservice architecture (ADR 0005) and
 ### 1. Dual-Track Architecture: Interactive Research & Automated CLI
 We adopted a dual-track ML engineering standard:
 - **Track 1 (Interactive Research via Jupyter Notebooks)**: `01_exploratory_data_analysis.ipynb` and `02_model_training_and_evaluation.ipynb` for visual demographic analysis, class imbalance inspection, augmentation tuning, and confusion matrix evaluation. Added a dedicated Section 5 for direct in-notebook `.tflite` export.
-- **Track 2 (Headless Automated CLI Pipeline)**: `ml_engine/run_pipeline.py` providing unified CLI commands to train individual architectures (`resnet101`, `densenet121`, `efficientnetb3`) or the full soft-voting ensemble with balanced class weighting.
+- **Track 2 (Headless Automated CLI Pipeline)**: `ml_engine/run_pipeline.py` providing a lightweight CLI driver supported by a modular orchestration layer (`ml_engine/pipeline/orchestrator.py` and `ml_engine/pipeline/data_loader.py`) to train individual architectures (`resnet101`, `densenet121`, `efficientnetb3`) or the full soft-voting ensemble with balanced class weighting.
 
 ### 2. Automated Dynamic Range Quantization (`ml_engine/pipeline/export_tflite.py`)
 Implemented `export_tflite.py` utilizing `tf.lite.TFLiteConverter` with `Optimize.DEFAULT`:
@@ -23,10 +23,10 @@ Implemented `export_tflite.py` utilizing `tf.lite.TFLiteConverter` with `Optimiz
 - Achieves ~70% binary size reduction while preserving multi-class diagnostic accuracy.
 - Guarantees peak memory consumption remains below ~120 MB on Render's 512 MB cgroup limit.
 
-### 3. Dataset Integrity Verifier & Downloader (`ml_engine/data/download_dataset.py`)
-Implemented automated dataset verification:
-- Validates the existence and distribution of all 10,015 HAM10000 images across `train_dir`, `val_dir`, and `test_dir` for all 7 classes (`akiec`, `bcc`, `bkl`, `df`, `mel`, `nv`, `vasc`).
-- Provides 1-click Kaggle CLI automated download instructions if local dataset is missing.
+### 3. Operational Utilities & Data Segregation (`ml_engine/scripts/`, `ml_engine/data/`)
+- `ml_engine/data/`: Strictly dedicated to housing actual data assets (`skin_disease_dataset/base_dir`).
+- `ml_engine/scripts/download_dataset.py`: Validates the existence and distribution of all 10,015 HAM10000 images across `train_dir`, `val_dir`, and `test_dir` for all 7 classes (`akiec`, `bcc`, `bkl`, `df`, `mel`, `nv`, `vasc`), providing 1-click Kaggle CLI automated download instructions if local dataset is missing.
+- `ml_engine/scripts/prepare_dataset.py`: Automated stratified data splitter.
 
 ### 4. Machine Learning Automation Test Suite (`ml_engine/tests/`)
 Created an automated test suite (`test_ml_engine_automation.py`) and integrated it into the root test runner (`npm run test:ml`):

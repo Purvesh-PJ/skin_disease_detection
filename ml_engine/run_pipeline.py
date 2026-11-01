@@ -33,7 +33,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from ml_engine.constants import DEFAULT_BATCH_SIZE
-from ml_engine.data.download_dataset import DEFAULT_DATASET_DIR
+from ml_engine.scripts.download_dataset import DEFAULT_DATASET_DIR
 from ml_engine.pipeline.orchestrator import run_training_pipeline, SUPPORTED_MODELS
 
 

@@ -13,8 +13,8 @@ import tensorflow as tf
 from pathlib import Path
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, NUM_CLASSES, CLASSES
-from ml_engine.data.download_dataset import verify_dataset
-from ml_engine.data.generators import create_data_generators, compute_balanced_class_weights
+from ml_engine.scripts.download_dataset import verify_dataset
+from ml_engine.pipeline.data_loader import create_data_generators, compute_balanced_class_weights
 from ml_engine.pipeline.orchestrator import SUPPORTED_MODELS
 from ml_engine.pipeline.export_tflite import convert_h5_to_tflite, convert_all_models
 
