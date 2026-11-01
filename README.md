@@ -327,26 +327,45 @@ docker-compose up --build
 
 ---
 
-## 🧪 Running Tests
+## 🧪 Automated Testing & Coverage
 
-### Backend Unit Tests
+The platform enforces comprehensive full-stack testing across unit and integration layers with unified cross-platform commands.
 
-Run automated test suite verifying image validation, model presence checks, and error handling:
+### Quick Test Execution (Root)
 
-```bash
-cd backend
-python -m unittest discover -s app/tests
-```
+Run all 63 unit and integration tests across backend and frontend in a single command:
 
-### Frontend Tests
+`ash
+# Run all tests (Backend pytest + Frontend Jest)
+npm test
 
-Run Jest test suites for React components and utilities:
+# Run all tests with complete code coverage tables
+npm run test:cov
+`
 
-```bash
-cd frontend
-npm test -- --watchAll=false
-```
+### Backend Test Suite (pytest)
 
+The backend features 30 unit and integration tests covering image preprocessing, Google Drive model downloader, real TFLite execution, and Flask API error routing with **91% statement coverage**:
+
+`ash
+# Run backend tests
+npm run test:backend
+
+# Run backend tests with coverage report
+npm run test:backend:cov
+`
+
+### Frontend Test Suite (Jest + React Testing Library)
+
+The frontend contains 33 tests across 8 test suites verifying component states, Radix UI dialogs, history local storage persistence, navigation routing, and end-to-end diagnostic studio flows:
+
+`ash
+# Run frontend tests (CI mode)
+npm run test:frontend
+
+# Run frontend tests with coverage report
+npm run test:frontend:cov
+`
 ---
 
 ## 🌐 Live Demo
