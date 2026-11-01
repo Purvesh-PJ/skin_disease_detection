@@ -8,6 +8,7 @@
     "test:cov": "npm run test:backend:cov && npm run test:frontend:cov",
     "test:backend": "python scripts/run_backend_tests.py",
     "test:backend:cov": "python scripts/run_backend_tests.py --cov=backend/app --cov-report=term-missing",
+    "test:ml": "python scripts/run_backend_tests.py -s ml_engine/tests",
     "test:frontend": "npm --prefix frontend run test:ci",
     "test:frontend:cov": "npm --prefix frontend run test:cov",
     "test:all": "npm test"
