@@ -95,3 +95,4 @@ class TestCloudDownloader:
         extracted_file = extract_dir / "model_inside_zip.tflite"
         assert os.path.exists(str(extracted_file))
         assert not os.path.exists(str(extract_dir / "models_download.zip"))
+

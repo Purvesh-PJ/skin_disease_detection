@@ -62,3 +62,4 @@ class TestTFLiteEngineAndDiagnostics:
 
         with pytest.raises(Exception):
             run_single_model_inference("fake_model", "invalid_path.tflite", dummy_tensor)
+
