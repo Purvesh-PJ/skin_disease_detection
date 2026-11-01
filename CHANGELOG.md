@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unified single-command root test runner (`npm test`) and full-stack coverage reporter (`npm run test:cov`).
 - Direct 1-click access to the Diagnostic Studio (`/dashboard`) from the landing page with zero login friction.
 - Browser `localStorage` diagnostic scan history persistence for instant, offline-resilient saving.
+- Architecture Decision Record [0006](docs/adr/0006-testing-infrastructure-and-ci-cd.md) documenting testing frameworks selection (pytest, Jest) and CI/CD quality gates.
 - Architecture Decision Record [0005](docs/adr/0005-removed-mongodb.md) documenting decoupling of MongoDB.
 - Automated TFLite model pre-caching during Docker build via `download_models.py` from Hugging Face Hub.
 
