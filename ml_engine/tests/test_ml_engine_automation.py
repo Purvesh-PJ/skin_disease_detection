@@ -14,7 +14,7 @@ from pathlib import Path
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, NUM_CLASSES, CLASSES
 from ml_engine.data.download_dataset import verify_dataset
-from ml_engine.export_tflite import convert_h5_to_tflite, convert_all_models
+from ml_engine.pipeline.export_tflite import convert_h5_to_tflite, convert_all_models
 
 class TestMLEngineAutomation:
 

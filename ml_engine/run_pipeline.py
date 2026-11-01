@@ -34,7 +34,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, DEFAULT_BATCH_SIZE, CLASSES
 from ml_engine.data.download_dataset import verify_dataset, DEFAULT_DATASET_DIR
-from ml_engine.export_tflite import convert_h5_to_tflite
+from ml_engine.pipeline.export_tflite import convert_h5_to_tflite
 
 SUPPORTED_MODELS = ["resnet101", "densenet121", "efficientnetb3", "ensemble"]
 
