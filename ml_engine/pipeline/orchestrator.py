@@ -2,8 +2,8 @@
 ML Training Pipeline Orchestrator
 ---------------------------------
 Orchestrates end-to-end dataset verification, model training across architectures
-(ResNet-101, DenseNet-121, EfficientNet-B3, Stacking Ensemble), and automated
-quantized TFLite flatbuffer compilation.
+(ResNet-101, DenseNet-121, EfficientNet-B3, Stacking Ensemble), performance evaluation,
+and automated quantized TFLite flatbuffer compilation.
 """
 
 import os
@@ -12,7 +12,8 @@ from pathlib import Path
 
 from ml_engine.constants import DEFAULT_BATCH_SIZE
 from ml_engine.scripts.download_dataset import verify_dataset, DEFAULT_DATASET_DIR
-from ml_engine.pipeline.data_loader import create_data_generators, compute_balanced_class_weights
+from ml_engine.pipeline.data_loader import create_data_generators
+from ml_engine.pipeline.class_weights import compute_balanced_class_weights
 from ml_engine.pipeline.export_tflite import convert_h5_to_tflite
 from ml_engine.pipeline.trainer import ModelTrainer
 
@@ -51,7 +52,7 @@ def run_training_pipeline(model_name, epochs=20, batch_size=DEFAULT_BATCH_SIZE, 
     if not ready:
         raise RuntimeError("Dataset verification failed! Please run 'python ml_engine/scripts/download_dataset.py' to configure data.")
 
-    # 2. Setup Generators & Class Weights
+    # 2. Setup Generators & Class Weights (Distinct Single-Responsibility Modules)
     train_gen, val_gen, test_gen = create_data_generators(dataset_dir, batch_size)
     class_weights = compute_balanced_class_weights(train_gen)
 
@@ -93,7 +94,9 @@ def run_training_pipeline(model_name, epochs=20, batch_size=DEFAULT_BATCH_SIZE, 
         logger.info(f"EfficientNet-B3 ready: {tflite_path}")
 
     elif model_name == "ensemble":
-        from ml_engine.pipeline.ensemble_model import train_base_models, stack_and_train_ensemble, evaluate_ensemble_model
+        from ml_engine.pipeline.ensemble import train_base_models, stack_and_train_ensemble
+        from ml_engine.pipeline.evaluator import evaluate_ensemble_model
+
         logger.info("--- Running Full 3-Model Ensemble Training ---")
         base_models = train_base_models(train_gen, val_gen, class_weights=class_weights, epochs=epochs, save_dir=str(output_dir))
         meta_model = stack_and_train_ensemble(base_models, val_gen)
@@ -108,4 +111,3 @@ def run_training_pipeline(model_name, epochs=20, batch_size=DEFAULT_BATCH_SIZE, 
 
     logger.info("🎉 Pipeline execution completed successfully!")
     return artifacts
-

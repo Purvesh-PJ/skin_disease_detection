@@ -1,14 +1,12 @@
 """
 Dataset Generators & Augmentation Utilities
 ------------------------------------------
-Handles loading, augmentation pipelines, and class weight computations
+Handles loading, batch generation, and augmentation pipelines
 for the HAM10000 7-class dermatological dataset.
 """
 
 import logging
 from pathlib import Path
-import numpy as np
-from sklearn.utils.class_weight import compute_class_weight
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, DEFAULT_BATCH_SIZE
@@ -21,12 +19,20 @@ def create_data_generators(dataset_dir=DEFAULT_DATASET_DIR, batch_size=DEFAULT_B
     """
     Initializes train, validation, and test Keras ImageDataGenerators.
     Applies data augmentation on training set and rescaling on val/test sets.
+
+    Args:
+        dataset_dir (str or Path): Path to structured dataset directory containing
+                                   train_dir, val_dir, test_dir.
+        batch_size (int): Batch size for generators.
+
+    Returns:
+        tuple: (train_gen, val_gen, test_gen) DirectoryIterators.
     """
     train_dir = Path(dataset_dir) / "train_dir"
     val_dir = Path(dataset_dir) / "val_dir"
     test_dir = Path(dataset_dir) / "test_dir"
 
-    # Data augmentation on train
+    # Data augmentation on training dataset
     train_datagen = ImageDataGenerator(
         rescale=1.0 / 255.0,
         rotation_range=20,
@@ -39,7 +45,7 @@ def create_data_generators(dataset_dir=DEFAULT_DATASET_DIR, batch_size=DEFAULT_B
         fill_mode="nearest"
     )
 
-    # Clean scaling for validation and test
+    # Clean scaling for validation and test datasets
     eval_datagen = ImageDataGenerator(rescale=1.0 / 255.0)
 
     logger.info("Initializing Data Generators...")
@@ -68,17 +74,3 @@ def create_data_generators(dataset_dir=DEFAULT_DATASET_DIR, batch_size=DEFAULT_B
     )
 
     return train_gen, val_gen, test_gen
-
-
-def compute_balanced_class_weights(train_gen):
-    """
-    Computes balanced class weights using scikit-learn to balance dominant classes
-    (like 'nv') against minority malignant conditions (like 'mel', 'bcc', 'akiec').
-    """
-    classes = train_gen.classes
-    unique_classes = np.unique(classes)
-    weights = compute_class_weight(class_weight="balanced", classes=unique_classes, y=classes)
-    class_weights_dict = {int(cls): float(weight) for cls, weight in zip(unique_classes, weights)}
-    logger.info(f"Computed Balanced Class Weights: {class_weights_dict}")
-    return class_weights_dict
-

@@ -14,7 +14,9 @@ from pathlib import Path
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, NUM_CLASSES, CLASSES
 from ml_engine.scripts.download_dataset import verify_dataset
-from ml_engine.pipeline.data_loader import create_data_generators, compute_balanced_class_weights
+from ml_engine.pipeline.data_loader import create_data_generators
+from ml_engine.pipeline.class_weights import compute_balanced_class_weights
+from ml_engine.pipeline.evaluator import evaluate_model_predictions
 from ml_engine.pipeline.orchestrator import SUPPORTED_MODELS
 from ml_engine.pipeline.export_tflite import convert_h5_to_tflite, convert_all_models
 
@@ -115,4 +117,16 @@ class TestMLEngineAutomation:
         for cls_idx in range(7):
             assert cls_idx in weights
             assert weights[cls_idx] > 0
+
+    def test_evaluator_metrics_calculation(self):
+        """Ensures evaluator produces classification report and confusion matrix."""
+        y_true = np.array([0, 1, 2, 3, 4, 5, 6])
+        y_pred = np.array([0, 1, 2, 3, 4, 5, 6])
+        report, cm = evaluate_model_predictions(y_true, y_pred, class_names=CLASSES)
+
+        assert report is not None
+        assert "precision" in report
+        assert "recall" in report
+        assert cm.shape == (7, 7)
+        assert np.trace(cm) == 7  # All correctly predicted along diagonal
 
