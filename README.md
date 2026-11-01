@@ -248,27 +248,48 @@ npm start
 ```
 *Frontend will open at `http://localhost:3000`.*
 
-### 4. ML Engine & Model Training (For Data Science & Research Workflows)
+### 4. ML Engine: Training, Evaluation & Experimentation
 
-If you want to train models from scratch, experiment with architectures, or run exploratory analysis on the HAM10000 dataset:
+The `ml_engine/` directory houses the complete end-to-end machine learning engineering and research pipeline that trained the HAM10000 ensemble.
 
-`ash
+#### Core Modules:
+- **`data/prepare_dataset.py`**: Automated stratified dataset splitting (80% train, 10% validation, 10% test) across all 7 diagnostic classes (`akiec`, `bcc`, `bkl`, `df`, `mel`, `nv`, `vasc`).
+- **`architectures/`**: Transfer-learning backbones fine-tuned for dermatoscopic feature extraction:
+  - `resnet.py`: ResNet-101 architecture preserving low-level lesion texture and border asymmetry.
+  - `densenet.py`: DenseNet-121 architecture with dense feature concatenation.
+  - `efficientnet.py`: EfficientNet-B3 architecture utilizing compound scaling.
+- **`pipeline/`**: Training engine and model evaluation:
+  - `trainer.py`: Encapsulates training callbacks, early stopping, and model checkpoint saving.
+  - `ensemble_model.py`: Trains base models, stacks validation probability vectors, and trains the ensemble meta-model.
+- **`notebooks/`**:
+  - `01_exploratory_data_analysis.ipynb`: Class distribution, metadata statistics, and image visualization.
+  - `02_model_training_and_evaluation.ipynb`: Multi-class confusion matrices, ROC-AUC curves, and classification reports.
+
+#### Running the ML Pipeline Locally:
+
+```bash
 cd ml_engine
 
-# Create dedicated virtual environment for training
+# 1. Create and activate a dedicated training virtual environment
 python -m venv venv_ml
 # Windows: .\venv_ml\Scripts\activate  |  Linux/macOS: source venv_ml/bin/activate
 
-# Install ML dependencies (TensorFlow, Albumentations, Matplotlib, Jupyter, etc.)
+# 2. Install ML & Data Science dependencies
 pip install -r requirements.txt
 
-# Option A: Interactive Experiments & EDA via Jupyter Notebooks
+# 3. (Optional) Stratify raw Kaggle HAM10000 dataset into train/val/test
+python data/prepare_dataset.py --raw_dir path/to/raw_ham10000 --output_dir data/skin_disease_dataset/base_dir
+
+# 4. Option A: Interactive Experiments via Jupyter Notebooks
 jupyter notebook notebooks/
 # Open 01_exploratory_data_analysis.ipynb or 02_model_training_and_evaluation.ipynb
 
-# Option B: Run Standalone Training Pipeline
+# 5. Option B: Standalone Full Ensemble Training
 python train.py
-`
+```
+
+> **TFLite Quantization**: After `.h5` base models are trained, convert them to quantized `.tflite` flatbuffers using TensorFlow Lite for production inference (<200MB RAM footprint).
+
 
 ---
 
