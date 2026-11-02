@@ -9,8 +9,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     TF_ENABLE_ONEDNN_OPTS=0 \
     PYTHONPATH=/app
 
-# Install minimal OS dependencies needed for OpenCV, system utils, and healthchecks
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Step 1: Install minimal OS dependencies needed for OpenCV, system utils, and healthchecks
+RUN echo "=== [Step 1/5] Installing OS System Libraries (OpenCV dependencies) ===" && \
+    apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     libgl1 \
@@ -20,9 +21,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set working directory inside container matching repository layout
 WORKDIR /app
 
-# Install ML requirements first for optimal Docker layer caching
+# Upgrade pip and packaging tools with visible progress
+RUN echo "=== [Step 2/5] Upgrading Pip & Setup Utilities ===" && \
+    pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Step 3: Install Deep Learning Framework (TensorFlow & NumPy) in dedicated cached layer
+RUN echo "=== [Step 3/5] Installing Deep Learning Framework (TensorFlow & NumPy) ===" && \
+    pip install --no-cache-dir \
+    "tensorflow>=2.18.0" \
+    "numpy>=1.26.4" \
+    "scipy>=1.11.4"
+
+# Step 4: Install Computer Vision & Machine Learning Tools (Scikit-Learn, OpenCV, Albumentations)
+RUN echo "=== [Step 4/5] Installing Machine Learning & Vision Libraries (Scikit-Learn, OpenCV) ===" && \
+    pip install --no-cache-dir \
+    "scikit-learn>=1.4.0" \
+    "joblib>=1.4.0" \
+    "pandas>=2.2.2" \
+    "opencv-python-headless>=4.10.0.84" \
+    "albumentations>=1.4.0"
+
+# Step 5: Install Data Science Visualization & Notebook Research Tools
 COPY ml_engine/requirements.txt /app/ml_engine/requirements.txt
-RUN pip install --no-cache-dir -U pip setuptools wheel && \
+RUN echo "=== [Step 5/5] Installing Research, EDA & Notebook Packages (JupyterLab, Matplotlib, Seaborn) ===" && \
     pip install --no-cache-dir -r /app/ml_engine/requirements.txt
 
 # Copy ML engine code into the container

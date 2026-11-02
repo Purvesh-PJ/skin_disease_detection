@@ -6,7 +6,7 @@ Provides transparent feedback during container builds and generates a
 clean status summary table with image sizes, ports, and operational states.
 
 Usage:
-    # Build all services (frontend, backend, ml-engine) with summary:
+    # Build all services (frontend, backend, ml-engine) with live visible progress:
     python scripts/docker_manager.py build
 
     # Build a specific target service:
@@ -91,11 +91,12 @@ def display_status_table():
     print("Workflow Shortcuts:")
     print("  * Start Web App (Frontend + Backend): docker compose up -d backend frontend")
     print("  * Start All Services:                docker compose up -d")
+    print("  * Inspect ML Setup & Dataset:        docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py")
     print("  * Run Model Training:                docker compose run --rm ml-engine python ml_engine/run_pipeline.py --help")
     print("  * Stop All Containers:               docker compose down\n")
 
 
-def build_services(target_service=None):
+def build_services(target_service=None, plain_output=True):
     check_docker_available()
 
     if target_service and target_service in SERVICES_META:
@@ -109,8 +110,11 @@ def build_services(target_service=None):
         print(f"  -> Target: {meta['display_name']} ({meta['role']})")
 
     print("-" * 75)
+    print("ℹ️ Note: Live streaming output enabled. You will see real-time download & build progress.\n")
 
     cmd = ["docker", "compose", "build"]
+    if plain_output:
+        cmd.append("--progress=plain")
     if target_service:
         cmd.append(target_service)
 
