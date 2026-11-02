@@ -39,22 +39,25 @@ Integrated the `ml-engine` service into root `docker-compose.yml`:
 
 ## Developer Workflows
 
-Developers can train models or explore notebooks without installing Python or TensorFlow on their host OS:
+Developers can inspect the environment, verify datasets, and train models without installing Python or TensorFlow on their host OS:
 
 ```bash
-# 1. Build the ML engine image:
+# 1. Build the ML engine image (targeted, skips web services):
 docker compose build ml-engine
 
-# 2. Enter interactive container shell (safe exploration):
+# 2. Inspect ML framework and dataset readiness (0% training, safe check):
+docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py
+
+# 3. Enter interactive container shell (safe exploration):
 docker compose run --rm ml-engine bash
 
-# 3. View pipeline CLI help:
+# 4. View pipeline CLI help:
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --help
 
-# 4. Explicitly trigger training for a specific architecture (e.g., ResNet-101):
+# 5. Explicitly trigger training for a specific architecture (e.g., ResNet-101):
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model resnet101 --epochs 20
 
-# 5. Explicitly trigger full 3-model stacking ensemble and auto-export quantized TFLite:
+# 6. Explicitly trigger full 3-model stacking ensemble and auto-export quantized TFLite:
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model ensemble --epochs 15
 ```
 

@@ -280,19 +280,22 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
 #### Running the ML Pipeline:
 
 ##### Option A: Containerized via Docker (Recommended — Zero Host Setup)
-Run model training directly inside an isolated Docker container without installing Python, TensorFlow, or CUDA drivers on your host machine:
+Run model training and environment inspection directly inside an isolated Docker container without installing Python, TensorFlow, or CUDA drivers on your host machine:
 
 ```bash
-# 1. Build the ML training container
+# 1. Build the ML training container (skips backend/frontend to save bandwidth)
 docker compose build ml-engine
 
-# 2. (Optional) Stratify raw Kaggle dataset into train/val/test
+# 2. Inspect ML libraries & verify dataset readiness (0% training, safe check):
+docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py
+
+# 3. (Optional) Stratify raw Kaggle dataset into train/val/test:
 docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py --raw-dir ml_engine/data/raw --output-dir ml_engine/data/skin_disease_dataset/base_dir
 
-# 3. Train a single architecture (e.g., ResNet-101):
+# 4. Explicitly train a single architecture (e.g., ResNet-101):
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model resnet101 --epochs 20
 
-# 4. Train the full 3-model stacking ensemble and auto-export quantized TFLite:
+# 5. Explicitly train full 3-model stacking ensemble and auto-export quantized TFLite:
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model ensemble --epochs 15
 ```
 *Note: Checkpoints (`.h5` and `.tflite`) are automatically saved to your host `trained_models/` directory via volume mounts.*
