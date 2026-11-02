@@ -8,17 +8,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.0] - 2026-11-03
 
 ### Added
-- **Dedicated Containerized ML Training Environment**: Added `ml_engine/Dockerfile` (Python 3.12-slim, system OpenCV libraries, cached dependencies) and a decoupled `ml-engine` service in `docker-compose.yml` for isolated model training without host pollution.
-- **Accidental Training Safeguards**: Configured `restart: "no"` and an idle standby container state (`tail -f /dev/null`) to guarantee that heavy training never triggers automatically on container boot or `docker compose up`.
-- **Live Streaming Progress Feedback**: Added real-time extraction counters and live copy progress logs (every 500 images) with `PYTHONUNBUFFERED=1` so terminal status is continuously visible.
-- **Optimized Native Dataset Preprocessor**: Added `npm run ml:prepare` to copy and partition 10,015 images into balanced train/val/test splits across 7 classes in ~30 seconds directly on host disk, bypassing WSL2 cross-filesystem bind-mount I/O latency.
-- **Safe Dataset Readiness Verifier**: Implemented `verify_dataset_readiness.py` (`npm run ml:verify`) to safely inspect ML dependencies and validate all 10,015 images with 0% risk of starting training.
-- **Smart Virtual Environment Runner**: Added `scripts/run_ml_command.py` to automatically detect local Python virtual environments, preventing missing `pandas` errors on host machines.
-- **Architecture Decision Record 0008**: Documented containerized ML training decisions and I/O workload separation in [ADR 0008](docs/adr/0008-containerized-ml-training-engine.md).
+- **Containerized ML Training Engine**: Dedicated `ml_engine/Dockerfile` (Python 3.12-slim, OpenCV system libraries, layer-cached dependencies) and decoupled `ml-engine` service in `docker-compose.yml` for isolated model training without polluting the host environment.
+- **Accidental Training Safeguards**: Configured `restart: "no"` and an idle container standby state (`tail -f /dev/null`) to guarantee that heavy neural network training never triggers automatically on container boot or `docker compose up`.
+- **Modular Machine Learning Pipeline (`ml_engine/pipeline/`)**: Decoupled the training lifecycle into single-responsibility modules:
+  - `data_generators.py`: Keras batch image generators with data augmentation.
+  - `class_weights.py`: Balanced class weighting for minority diagnostic conditions.
+  - `model_trainer.py`: Callback management (`EarlyStopping`, `ReduceLROnPlateau`) and model fitting.
+  - `ensemble_training.py`: Multi-model base training and Logistic Regression meta-learner stacking.
+  - `model_evaluation.py`: Test dataset evaluation, classification report, and confusion matrix.
+  - `training_pipeline.py`: Master pipeline runner coordinating the end-to-end training lifecycle.
+- **Headless Master Training CLI**: Added `python ml_engine/run_pipeline.py --model [resnet101|densenet121|efficientnetb3|ensemble]` for automated training and evaluation.
+- **Dynamic Range Quantization (`ml_engine/export/tflite.py`)**: Automated conversion of heavy Keras `.h5` models into deployable, optimized `.tflite` flatbuffers.
+- **Comprehensive Automated Testing Suite (63 Tests)**:
+  - Backend unit and integration tests (`pytest`, `pytest-cov`, `pytest-mock`) covering endpoints (`/health`, `/predict`), preprocessing, ensemble consensus, and cloud model downloader with ~90%+ coverage.
+  - Frontend component and service tests (`Jest` + React Testing Library) covering `ResultsCard`, `HistoryList`, `ImageUploadCard`, and `predictionService`.
+  - ML Engine automation tests (`ml_engine/tests/`) validating dataset verification, archive extraction, and TFLite compilation.
+- **Unified Test Runners**: Root commands `npm test`, `npm run test:backend`, `npm run test:frontend`, `npm run test:ml`, and full-stack coverage `npm run test:cov`.
+- **Automated GitHub Actions CI/CD (`.github/workflows/ci.yml`)**: Cloud CI pipeline running tests and build checks on every push and PR to ensure zero regressions.
+- **High-Speed Native Dataset Preprocessor (`npm run ml:prepare`)**: Direct disk-to-disk file copier and partitioner that splits 10,015 images into balanced train/val/test folders across 7 classes in ~30 seconds, bypassing WSL2/Docker volume bind-mount latency.
+- **Live Streaming Progress Feedback**: Real-time archive extraction counters and live copying progress logs (every 500 images) with `PYTHONUNBUFFERED=1` so terminal status is continuously visible.
+- **Safe Dataset Readiness Verifier (`npm run ml:verify`)**: Self-contained `verify_dataset_readiness.py` script that safely checks core dependencies and dataset integrity with 0% risk of starting training.
+- **Smart Virtual Environment Runner (`scripts/run_ml_command.py`)**: Automatically detects host Python virtual environments, preventing missing `pandas` errors.
+- **Architecture Decision Records**:
+  - [ADR 0006](docs/adr/0006-testing-infrastructure-and-ci-cd.md): Testing infrastructure and CI/CD quality gate decisions.
+  - [ADR 0007](docs/adr/0007-automated-local-ml-training-and-quantization.md): Modular ML training architecture and TFLite export.
+  - [ADR 0008](docs/adr/0008-containerized-ml-training-engine.md): Containerized ML training engine and file I/O separation.
 
 ### Changed
 - Streamlined HAM10000 dataset onboarding into a direct 2-step browser download workflow (`ml_engine/data/raw/`).
-- Centralized dataset paths (`DEFAULT_DATASET_DIR`, `DEFAULT_RAW_DIR`, `SPLITS`) into `ml_engine/constants.py`.
+- Centralized dataset configuration paths (`DEFAULT_DATASET_DIR`, `DEFAULT_RAW_DIR`, `SPLITS`) into `ml_engine/constants.py`.
+- Upgraded frontend Dockerfile to `node:20-alpine` and tuned CI build flags to prevent memory issues.
 
 ### Removed
 - Removed legacy `backend/convert_to_tflite.py` and redundant `ml_engine/scripts/download_dataset.py`.
@@ -26,15 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.0] - 2026-11-01
 
 ### Added
-- Automated full-stack CI/CD workflow via GitHub Actions (`.github/workflows/ci.yml`) with automated test execution and coverage verification.
-- Comprehensive automated test infrastructure with 63 unit and integration tests across backend (`pytest`) and frontend (`Jest` + RTL).
-- Unified single-command root test runner (`npm test`) and full-stack coverage reporter (`npm run test:cov`).
 - Direct 1-click access to the Diagnostic Studio (`/dashboard`) from the landing page with zero login friction.
 - Browser `localStorage` diagnostic scan history persistence for instant, offline-resilient saving.
-- Architecture Decision Record [0007](docs/adr/0007-automated-local-ml-training-and-quantization.md) documenting local ML training automation, dataset verification, and quantized TFLite export.
-- Automated ML training pipeline (`run_pipeline.py`), dataset integrity verifier (`download_dataset.py`), and TFLite model quantizer (`pipeline/export_tflite.py`).
-- Added automated ML engine testing suite (`ml_engine/tests/`) with root command `npm run test:ml`.
-- Architecture Decision Record [0006](docs/adr/0006-testing-infrastructure-and-ci-cd.md) documenting testing frameworks selection (pytest, Jest) and CI/CD quality gates.
 - Architecture Decision Record [0005](docs/adr/0005-removed-mongodb.md) documenting decoupling of MongoDB.
 - Automated TFLite model pre-caching during Docker build via `download_models.py` from Hugging Face Hub.
 
