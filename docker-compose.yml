@@ -35,6 +35,9 @@ services:
       - ./trained_models:/app/trained_models
     environment:
       - TF_ENABLE_ONEDNN_OPTS=0
+      - PYTHONPATH=/app
     working_dir: /app
     stdin_open: true
     tty: true
+    restart: "no"
+    command: ["bash", "-c", "echo 'ML Engine environment ready. Run commands via docker compose run --rm ml-engine ...' && tail -f /dev/null"]
