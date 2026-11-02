@@ -17,7 +17,7 @@ class TestHealthAndSystemRoutes:
         assert data is not None
         assert data["status"] == "online"
         assert "Skin Disease Detection" in data["service"]
-        assert "version" in data
+        assert data["version"] == "2.1.0"
 
     def test_non_existent_route_returns_404(self, client):
         """Requesting an undefined endpoint should return a structured 404 response."""

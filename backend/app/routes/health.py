@@ -13,5 +13,5 @@ def health_check():
     return jsonify({
         "status": "online",
         "service": "Skin Disease Detection API",
-        "version": "1.0.0"
+        "version": "2.1.0"
     }), 200
