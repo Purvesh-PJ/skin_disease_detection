@@ -22,11 +22,10 @@ node_modules/
 .npm
 *.log
 
-# Large Datasets (Preserve folder structure, ignore contents)
+# Large Datasets
 ml_engine/data/raw/*
 !ml_engine/data/raw/.gitkeep
-ml_engine/data/skin_disease_dataset/*
-!ml_engine/data/skin_disease_dataset/.gitkeep
+ml_engine/data/skin_disease_dataset/
 backend/data/skin_disease_dataset/
 *.zip
 *.tar.gz
