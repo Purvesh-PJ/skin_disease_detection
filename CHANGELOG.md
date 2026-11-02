@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-11-03
+
+### Added
+- **Dedicated Containerized ML Training Environment**: Added `ml_engine/Dockerfile` (Python 3.12-slim, system OpenCV libraries, cached dependencies) and a decoupled `ml-engine` service in `docker-compose.yml` for isolated model training without host pollution.
+- **Accidental Training Safeguards**: Configured `restart: "no"` and an idle standby container state (`tail -f /dev/null`) to guarantee that heavy training never triggers automatically on container boot or `docker compose up`.
+- **Live Streaming Progress Feedback**: Added real-time extraction counters and live copy progress logs (every 500 images) with `PYTHONUNBUFFERED=1` so terminal status is continuously visible.
+- **Optimized Native Dataset Preprocessor**: Added `npm run ml:prepare` to copy and partition 10,015 images into balanced train/val/test splits across 7 classes in ~30 seconds directly on host disk, bypassing WSL2 cross-filesystem bind-mount I/O latency.
+- **Safe Dataset Readiness Verifier**: Implemented `verify_dataset_readiness.py` (`npm run ml:verify`) to safely inspect ML dependencies and validate all 10,015 images with 0% risk of starting training.
+- **Smart Virtual Environment Runner**: Added `scripts/run_ml_command.py` to automatically detect local Python virtual environments, preventing missing `pandas` errors on host machines.
+- **Architecture Decision Record 0008**: Documented containerized ML training decisions and I/O workload separation in [ADR 0008](docs/adr/0008-containerized-ml-training-engine.md).
+
+### Changed
+- Streamlined HAM10000 dataset onboarding into a direct 2-step browser download workflow (`ml_engine/data/raw/`).
+- Centralized dataset paths (`DEFAULT_DATASET_DIR`, `DEFAULT_RAW_DIR`, `SPLITS`) into `ml_engine/constants.py`.
+
+### Removed
+- Removed legacy `backend/convert_to_tflite.py` and redundant `ml_engine/scripts/download_dataset.py`.
+
 ## [2.0.0] - 2026-11-01
 
 ### Added
