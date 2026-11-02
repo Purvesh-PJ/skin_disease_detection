@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: skin_disease_backend
+    image: skin_disease_backend:latest
     ports:
       - "5000:5000"
     environment:
@@ -19,6 +20,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: skin_disease_frontend
+    image: skin_disease_frontend:latest
     ports:
       - "3000:80"
     depends_on:
@@ -30,6 +32,7 @@ services:
       context: .
       dockerfile: ml_engine/Dockerfile
     container_name: skin_disease_ml_engine
+    image: skin_disease_ml_engine:latest
     volumes:
       - ./ml_engine:/app/ml_engine
       - ./trained_models:/app/trained_models
