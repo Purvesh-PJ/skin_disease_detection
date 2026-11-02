@@ -37,6 +37,10 @@ Integrated the `ml-engine` service into root `docker-compose.yml`:
 - **Training Safeguard (`restart: "no"`)**: Ensures the container never auto-restarts into a training loop.
 - **Idle Readiness Command**: Container stays in an idle standby state (`tail -f /dev/null`) when running with `docker compose up`, only executing training when explicitly commanded by the developer.
 
+### 4. File-I/O Separation (Dataset Preparation vs. Model Training)
+- **Dataset Preparation (10,015 files)**: Involves intensive file system traversal, unzipping, and directory copying. Running this natively (`npm run ml:prepare`) is recommended on Windows hosts to avoid WSL2 9p cross-filesystem translation latency, completing in ~30 seconds.
+- **Model Training & Quantization**: Compute and memory-intensive; executed inside the containerized `ml-engine` environment where TensorFlow, CUDA drivers, and layer caching are fully isolated without host pollution.
+
 ## Developer Workflows
 
 Developers can inspect the environment, verify datasets, and train models without installing Python or TensorFlow on their host OS:

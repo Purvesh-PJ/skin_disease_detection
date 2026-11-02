@@ -310,19 +310,27 @@ To train or experiment with models locally, configure the HAM10000 dataset (10,0
    ml_engine/data/raw/
    ```
 3. **Run Automated Preparation**:
-   Run the automated preprocessor to automatically unpack internal image archives, map lesion metadata, and partition images into balanced `train_dir` (80%), `val_dir` (10%), and `test_dir` (10%) across all 7 diagnostic classes:
+   Run the automated preprocessor to unpack internal image archives, map lesion metadata, and partition images into balanced `train_dir` (80%), `val_dir` (10%), and `test_dir` (10%) across all 7 diagnostic classes:
    ```bash
-   # Via Docker (Recommended):
-   docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py
-
-   # Or native host:
+   # Native Host (Recommended — Blazing fast 30s completion, no VM disk I/O overhead):
+   npm run ml:prepare
+   # Or using active python virtual environment:
    python ml_engine/pipeline/prepare_dataset.py
+
+   # Or via Docker:
+   docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py
    ```
+   > [!TIP]
+   > **Why Native is recommended for Dataset Preparation:**
+   > HAM10000 consists of 10,015 individual image files. Running file copying natively on your host OS finishes in ~30 seconds because it writes directly to disk without the WSL2/Docker volume bind-mount filesystem translation bridge.
+
 4. **Verify Readiness**:
    ```bash
-   docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
-   # Or using shortcut:
+   # Instant verification via root runner:
    npm run ml:verify
+
+   # Or via Docker:
+   docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
    ```
 
 ---

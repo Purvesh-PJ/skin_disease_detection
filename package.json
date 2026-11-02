@@ -14,7 +14,8 @@
     "test:all": "npm test",
     "docker:build": "python scripts/docker_manager.py build",
     "docker:status": "python scripts/docker_manager.py status",
-    "ml:verify": "python ml_engine/scripts/verify_dataset_readiness.py",
-    "ml:setup": "npm run ml:verify"
+    "ml:prepare": "python scripts/run_ml_command.py prepare",
+    "ml:verify": "python scripts/run_ml_command.py verify",
+    "ml:setup": "npm run ml:prepare"
   }
 }
