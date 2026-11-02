@@ -14,10 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Direct 1-click access to the Diagnostic Studio (`/dashboard`) from the landing page with zero login friction.
 - Browser `localStorage` diagnostic scan history persistence for instant, offline-resilient saving.
 - Architecture Decision Record [0007](docs/adr/0007-automated-local-ml-training-and-quantization.md) documenting local ML training automation, dataset verification, and quantized TFLite export.
-- Automated ML training pipeline (
-un_pipeline.py), dataset integrity verifier (download_dataset.py), and TFLite model quantizer (pipeline/export_tflite.py).
-- Added automated ML engine testing suite (ml_engine/tests/) with root command 
-pm run test:ml.
+- Automated ML training pipeline (`run_pipeline.py`), dataset integrity verifier (`download_dataset.py`), and TFLite model quantizer (`pipeline/export_tflite.py`).
+- Added automated ML engine testing suite (`ml_engine/tests/`) with root command `npm run test:ml`.
 - Architecture Decision Record [0006](docs/adr/0006-testing-infrastructure-and-ci-cd.md) documenting testing frameworks selection (pytest, Jest) and CI/CD quality gates.
 - Architecture Decision Record [0005](docs/adr/0005-removed-mongodb.md) documenting decoupling of MongoDB.
 - Automated TFLite model pre-caching during Docker build via `download_models.py` from Hugging Face Hub.

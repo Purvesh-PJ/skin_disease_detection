@@ -1,11 +1,10 @@
-version: '3.8'
-
 services:
   backend:
     build:
       context: .
       dockerfile: backend/Dockerfile
     container_name: skin_disease_backend
+    image: skin_disease_backend:latest
     ports:
       - "5000:5000"
     environment:
@@ -21,8 +20,28 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: skin_disease_frontend
+    image: skin_disease_frontend:latest
     ports:
       - "3000:80"
     depends_on:
       - backend
     restart: always
+
+  ml-engine:
+    build:
+      context: .
+      dockerfile: ml_engine/Dockerfile
+    container_name: skin_disease_ml_engine
+    image: skin_disease_ml_engine:latest
+    volumes:
+      - ./ml_engine:/app/ml_engine
+      - ./trained_models:/app/trained_models
+    environment:
+      - TF_ENABLE_ONEDNN_OPTS=0
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    restart: "no"
+    command: ["bash", "-c", "echo 'ML Engine environment ready. Run commands via docker compose run --rm ml-engine ...' && tail -f /dev/null"]

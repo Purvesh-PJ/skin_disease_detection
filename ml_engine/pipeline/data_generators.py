@@ -10,7 +10,7 @@ from pathlib import Path
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, DEFAULT_BATCH_SIZE
-from ml_engine.scripts.download_dataset import DEFAULT_DATASET_DIR
+from ml_engine.constants import DEFAULT_DATASET_DIR
 
 logger = logging.getLogger(__name__)
 

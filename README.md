@@ -34,9 +34,9 @@ The application is deployed as a high-performance, stateless AI inference micros
 | **Backend API** | Python 3.12, Flask 3, Gunicorn | Stateless REST inference microservice and request validation |
 | **ML Inference** | TensorFlow Lite (`tf.lite.Interpreter`) | Sequential low-memory flatbuffer inference across 3 CNN architectures |
 | **Computer Vision** | OpenCV (`opencv-python-headless`), NumPy | Image decode, RGB conversion, and 224×224 tensor normalization |
-| **Testing & CI/CD** | pytest, pytest-cov, Jest, GitHub Actions | 63 automated tests, 91% backend coverage, automated CI pipelines |
+| **Testing & CI/CD** | pytest, pytest-cov, Jest, GitHub Actions | 71 automated tests across backend, frontend, and ML engine, 91% backend coverage, automated CI pipelines |
 | **Storage & Persistence**| Browser `localStorage` API | Fast, offline-resilient diagnostic audit logs (up to 50 scans) |
-| **Infrastructure** | Docker, Vercel, Render, Hugging Face Hub | Containerization, cloud hosting, automated model checkpoint streaming |
+| **Infrastructure** | Docker (Compose, Multi-stage, ML Environment), Vercel, Render, Hugging Face Hub | Containerization, cloud hosting, automated model checkpoint streaming |
 
 ---
 
@@ -185,15 +185,20 @@ skin_disease_detection/
 │   │   └── index.css           # Tailwind CSS directives and global theme tokens
 │   └── package.json            # Frontend dependencies and npm scripts
 ├── ml_engine/
+│   ├── Dockerfile              # Dedicated ML engine container image for local training
 │   ├── architectures/          # Model architecture definitions (ResNet, DenseNet, EfficientNet)
-│   ├── data/                   # HAM10000 dataset loading, cleaning & augmentation pipeline
-│   ├── notebooks/              # Jupyter notebooks for EDA and model training experiments
-│   └── train.py                # Standalone training script for ensemble models
+│   ├── pipeline/               # Modular training workflow (generators, trainer, evaluation)
+│   ├── export/                 # Dynamic Range Quantization to .tflite flatbuffers
+│   ├── scripts/                # Dataset readiness verifier (verify_dataset_readiness.py)
+│   ├── data/                   # HAM10000 structured dataset directory
+│   ├── notebooks/              # Jupyter notebooks for EDA and research experiments
+│   └── run_pipeline.py         # Headless CLI entrypoint for model training & TFLite export
 ├── scripts/
+│   ├── docker_manager.py       # Docker ML build runner with live output and image summary
 │   └── run_backend_tests.py    # Smart cross-platform test runner
 ├── docs/
-│   └── adr/                    # Architecture Decision Records
-├── package.json                # Root cross-platform unified test & coverage runner
+│   └── adr/                    # Architecture Decision Records (ADR 0001 - ADR 0008)
+├── package.json                # Root cross-platform unified test & Docker runner
 └── README.md                   # Project documentation
 ```
 
@@ -204,7 +209,8 @@ skin_disease_detection/
 ### Prerequisites
 
 - **Python**: `3.10+` (Recommended: `3.12` or `3.13`)
-- **Node.js**: `18.x+` and `npm`
+- **Node.js**: `18.x+` (Recommended: `20.x`) and `npm`
+- **Docker & Docker Compose** (Optional, for containerized local workflows)
 
 ### 1. Clone Repository
 
@@ -248,13 +254,29 @@ npm start
 ```
 *Frontend will open at `http://localhost:3000`.*
 
-### 4. ML Engine: Training, Evaluation & Experimentation
+### 4. Full-Stack Docker Deployment (Optional)
+
+To run the complete web application locally in Docker containers:
+
+```bash
+# Build and start Backend & Frontend in background (skips ML engine training)
+docker compose up -d backend frontend
+
+# Check container status
+docker compose ps
+```
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:5000`
+
+---
+
+## 🔬 ML Engine: Training, Evaluation & Experimentation
 
 The `ml_engine/` directory houses the complete end-to-end machine learning engineering and research pipeline that trained the HAM10000 ensemble.
 
 #### Core Modules:
 - **`pipeline/`**: Modular, single-responsibility training workflow:
-  - `prepare_dataset.py`: Stratified data splitting (80% train, 10% validation, 10% test) across all 7 classes.
+  - `prepare_dataset.py`: Automated archive unpacking and stratified data splitting (80% train, 10% validation, 10% test) across all 7 classes.
   - `data_generators.py`: Keras batch image generators with real-time augmentation.
   - `class_weights.py`: Balanced class weighting for minority diagnostic conditions.
   - `model_trainer.py`: Callbacks (`EarlyStopping`, `ReduceLROnPlateau`) and model fitting.
@@ -264,7 +286,7 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
 - **`export/`**:
   - `tflite.py`: Automated Dynamic Range Quantization to produce lightweight `.tflite` flatbuffers.
 - **`scripts/`**:
-  - `download_dataset.py`: Kaggle CLI download helper and dataset integrity verifier.
+  - `verify_dataset_readiness.py`: Safe environment and dataset readiness verifier (validates dependencies and all 10,015 images with 0% risk of starting training).
 - **`architectures/`**: Transfer-learning backbones fine-tuned for dermatoscopic feature extraction:
   - `resnet.py`: ResNet-101 architecture preserving low-level lesion texture and border asymmetry.
   - `densenet.py`: DenseNet-121 architecture with dense feature concatenation.
@@ -273,35 +295,92 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
   - `01_exploratory_data_analysis.ipynb`: Class distribution, demographic analysis, and visual lesion gallery.
   - `02_model_training_and_evaluation.ipynb`: Interactive training, ROC-AUC, confusion matrices, and direct `.tflite` quantization.
 
-#### Running the ML Pipeline Locally:
+---
 
+### 📦 HAM10000 Dataset Setup (2 Simple Steps — Zero API Tokens)
+
+To train or experiment with models locally, configure the HAM10000 dataset (10,015 images, ~2.6 GB) directly without setting up API tokens, keys, or credentials:
+
+1. **Download in Browser**:
+   Visit the [Kaggle HAM10000 Dataset Page](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000) and click **Download (2.6 GB)**.
+2. **Extract Files**:
+   Extract the downloaded files into:
+   ```text
+   ml_engine/data/raw/
+   ```
+3. **Run Automated Preparation**:
+   Run the automated preprocessor to unpack internal image archives, map lesion metadata, and partition images into balanced `train_dir` (80%), `val_dir` (10%), and `test_dir` (10%) across all 7 diagnostic classes:
+   ```bash
+   # Native Host (Recommended — Blazing fast 30s completion, no VM disk I/O overhead):
+   npm run ml:prepare
+   # Or using active python virtual environment:
+   python ml_engine/pipeline/prepare_dataset.py
+
+   # Or via Docker:
+   docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py
+   ```
+   > [!TIP]
+   > **Why Native is recommended for Dataset Preparation:**
+   > HAM10000 consists of 10,015 individual image files. Running file copying natively on your host OS finishes in ~30 seconds because it writes directly to disk without the WSL2/Docker volume bind-mount filesystem translation bridge.
+
+4. **Verify Readiness**:
+   ```bash
+   # Instant verification via root runner:
+   npm run ml:verify
+
+   # Or via Docker:
+   docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
+   ```
+
+---
+
+### 🚀 Running the ML Pipeline
+
+#### Option A: Containerized via Docker (Recommended — Zero Host Setup)
+Run model training and environment inspection directly inside an isolated Docker container without installing Python, TensorFlow, or CUDA drivers on your host machine:
+
+```bash
+# 1. Build the ML training container (skips backend/frontend to save bandwidth & time):
+docker compose build ml-engine
+# Or with live streaming progress logs:
+npm run docker:build
+
+# 2. Inspect ML libraries & verify dataset readiness (0% training, safe check):
+docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
+# Or using the root shortcut:
+npm run ml:verify
+
+# 3. Check Docker image sizes and build status:
+npm run docker:status
+
+# 4. Explicitly train a single architecture (e.g., ResNet-101):
+docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model resnet101 --epochs 20
+
+# 5. Explicitly train full 3-model stacking ensemble and auto-export quantized TFLite:
+docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model ensemble --epochs 15
+```
+*Note: Checkpoints (`.h5` and `.tflite`) are automatically saved to your host `trained_models/` directory via volume mounts.*
+
+#### Option B: Native Host Environment (via Python venv)
 ```bash
 cd ml_engine
 
-# 1. Create and activate a dedicated training virtual environment
+# 1. Create and activate virtual environment
 python -m venv venv_ml
 # Windows: .\venv_ml\Scripts\activate  |  Linux/macOS: source venv_ml/bin/activate
 
-# 2. Install ML & Data Science dependencies
+# 2. Install ML dependencies
 pip install -r requirements.txt
 
-# 3. (Optional) Stratify raw Kaggle HAM10000 dataset into train/val/test
-python pipeline/prepare_dataset.py --raw-dir path/to/raw_ham10000 --output-dir data/skin_disease_dataset/base_dir
+# 3. Inspect environment & dataset readiness
+python scripts/verify_dataset_readiness.py
 
-# 4. Option A: Interactive Research & Visualization via Jupyter Notebooks
-jupyter notebook notebooks/
-# Open 01_exploratory_data_analysis.ipynb or 02_model_training_and_evaluation.ipynb
-
-# 5. Option B: Automated Headless CLI Pipeline (with auto TFLite export)
-# Train single model:
+# 4. Run automated CLI pipeline
 python run_pipeline.py --model resnet101 --epochs 20
-
-# Train full ensemble:
 python run_pipeline.py --model ensemble --epochs 15
 ```
 
 > **TFLite Quantization**: Handled automatically in `run_pipeline.py` or via Section 5 in `02_model_training_and_evaluation.ipynb` using `ml_engine.export.tflite` to produce production flatbuffers (<120MB RAM footprint).
-
 
 ---
 
@@ -311,7 +390,7 @@ The platform enforces comprehensive full-stack testing across unit and integrati
 
 ### Quick Test Execution (Root)
 
-Run all 63 unit and integration tests across backend and frontend in a single command:
+Run all 71 unit and integration tests across backend, frontend, and ML engine:
 
 ```bash
 # Run all tests (Backend pytest + Frontend Jest)
@@ -343,6 +422,15 @@ npm run test:frontend
 
 # Run frontend tests with coverage report
 npm run test:frontend:cov
+```
+
+### ML Engine Test Suite (pytest)
+
+The ML pipeline includes 8 unit and integration tests verifying stratified dataset partitioning, generator tensor shapes, inverse frequency class weight calculations, and TFLite model quantization export:
+
+```bash
+# Run ML engine tests
+npm run test:ml
 ```
 
 ---

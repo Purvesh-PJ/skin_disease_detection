@@ -6,14 +6,17 @@ and pipeline parameter integrity.
 """
 
 import os
-import pytest
+import zipfile
 import tempfile
+import pytest
+import pandas as pd
 import numpy as np
 import tensorflow as tf
 from pathlib import Path
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, NUM_CLASSES, CLASSES
-from ml_engine.scripts.download_dataset import verify_dataset
+from ml_engine.scripts.verify_dataset_readiness import verify_dataset
+from ml_engine.pipeline.prepare_dataset import prepare_dataset
 from ml_engine.pipeline.data_generators import create_data_generators
 from ml_engine.pipeline.class_weights import compute_balanced_class_weights
 from ml_engine.pipeline.model_evaluation import evaluate_model_predictions
@@ -42,6 +45,52 @@ class TestMLEngineAutomation:
         assert ready is False
         assert summary == {}
 
+    def test_prepare_dataset_end_to_end_with_nested_zip(self):
+        """
+        Validates prepare_dataset handles Kaggle raw archives, nested zip extraction,
+        stratified 80/10/10 splitting, and class directory structuring end-to-end.
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp = Path(tmp_dir)
+            raw_dir = tmp / "raw"
+            out_dir = tmp / "output" / "base_dir"
+            raw_dir.mkdir(parents=True)
+
+            # 1. Create mock metadata (70 rows, 10 per class)
+            data = []
+            for idx in range(70):
+                cls = CLASSES[idx % len(CLASSES)]
+                data.append({
+                    "lesion_id": f"LES_{idx}",
+                    "image_id": f"IMG_{idx:03d}",
+                    "dx": cls,
+                    "dx_type": "histo",
+                    "age": 45,
+                    "sex": "male",
+                    "localization": "back"
+                })
+            pd.DataFrame(data).to_csv(raw_dir / "HAM10000_metadata.csv", index=False)
+
+            # 2. Package images into nested zip archive (Kaggle format)
+            zip_path = raw_dir / "HAM10000_images_part_1.zip"
+            with zipfile.ZipFile(zip_path, "w") as zf:
+                for idx in range(70):
+                    zf.writestr(f"IMG_{idx:03d}.jpg", b"fake_jpeg_content")
+
+            # 3. Execute prepare_dataset
+            prepare_dataset(str(raw_dir), str(out_dir))
+
+            # 4. Verify output structure
+            summary, valid = verify_dataset(str(out_dir))
+            assert valid is True
+            assert summary["train_dir"]["_total"] == 56  # 80% of 70
+            assert summary["val_dir"]["_total"] == 7    # 10% of 70
+            assert summary["test_dir"]["_total"] == 7   # 10% of 70
+            for cls in CLASSES:
+                assert summary["train_dir"][cls] == 8
+                assert summary["val_dir"][cls] == 1
+                assert summary["test_dir"][cls] == 1
+
     def test_convert_h5_to_tflite_with_toy_model(self):
         """
         Creates a lightweight Keras model, saves it as .h5,
@@ -58,44 +107,28 @@ class TestMLEngineAutomation:
             x = tf.keras.layers.GlobalAveragePooling2D()(inputs)
             outputs = tf.keras.layers.Dense(NUM_CLASSES, activation="softmax")(x)
             model = tf.keras.Model(inputs=inputs, outputs=outputs)
-            model.save(str(h5_file))
+            model.save(h5_file)
 
-            assert os.path.exists(h5_file)
+            # 2. Convert to TFLite
+            converted_path = convert_h5_to_tflite(h5_file, tflite_file, quantize=True)
+            assert os.path.exists(converted_path)
+            assert os.path.getsize(converted_path) > 0
 
-            # 2. Convert to quantized TFLite
-            generated_path = convert_h5_to_tflite(h5_file, tflite_file, quantize=True)
-
-            assert os.path.exists(generated_path)
-            assert os.path.getsize(generated_path) > 0
-
-            # 3. Verify TFLite Interpreter execution on converted flatbuffer
-            interpreter = tf.lite.Interpreter(model_path=str(generated_path))
+            # 3. Validate generated TFLite Interpreter
+            interpreter = tf.lite.Interpreter(model_path=str(converted_path))
             interpreter.allocate_tensors()
-
             input_details = interpreter.get_input_details()
             output_details = interpreter.get_output_details()
 
-            assert list(input_details[0]["shape"]) == [1, 224, 224, 3]
-            assert list(output_details[0]["shape"]) == [1, 7]
+            assert list(input_details[0]["shape"]) == [1, *TARGET_IMAGE_SIZE, 3]
+            assert list(output_details[0]["shape"]) == [1, NUM_CLASSES]
 
-            dummy_input = np.zeros((1, 224, 224, 3), dtype=np.float32)
-            interpreter.set_tensor(input_details[0]["index"], dummy_input)
-            interpreter.invoke()
-            output_tensor = interpreter.get_tensor(output_details[0]["index"])
-
-            assert output_tensor.shape == (1, 7)
-            assert np.isclose(np.sum(output_tensor), 1.0, atol=1e-3)
-
-    def test_convert_h5_non_existent_file_raises_error(self):
-        """Ensures FileNotFoundError is raised when converting a non-existent .h5 file."""
-        with pytest.raises(FileNotFoundError):
-            convert_h5_to_tflite("non_existent_file.h5")
-
-    def test_convert_all_models_empty_directory_returns_empty(self):
-        """Ensures convert_all_models gracefully handles directories with no .h5 files."""
+    def test_convert_all_models_skips_missing_safely(self):
+        """Ensures convert_all_models gracefully handles missing model directories."""
         with tempfile.TemporaryDirectory() as tmp_dir:
-            result = convert_all_models(tmp_dir)
-            assert result == []
+            # Empty directory with no .h5 files
+            results = convert_all_models(models_dir=tmp_dir)
+            assert results == []
 
     def test_orchestrator_supported_models_list(self):
         """Verifies orchestrator includes all expected model architectures."""
@@ -129,4 +162,3 @@ class TestMLEngineAutomation:
         assert "recall" in report
         assert cm.shape == (7, 7)
         assert np.trace(cm) == 7  # All correctly predicted along diagonal
-

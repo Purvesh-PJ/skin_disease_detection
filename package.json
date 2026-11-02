@@ -11,6 +11,11 @@
     "test:ml": "python scripts/run_backend_tests.py -s ml_engine/tests",
     "test:frontend": "npm --prefix frontend run test:ci",
     "test:frontend:cov": "npm --prefix frontend run test:cov",
-    "test:all": "npm test"
+    "test:all": "npm test",
+    "docker:build": "python scripts/docker_manager.py build",
+    "docker:status": "python scripts/docker_manager.py status",
+    "ml:prepare": "python scripts/run_ml_command.py prepare",
+    "ml:verify": "python scripts/run_ml_command.py verify",
+    "ml:setup": "npm run ml:prepare"
   }
 }
