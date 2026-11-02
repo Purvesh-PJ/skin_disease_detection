@@ -189,7 +189,7 @@ skin_disease_detection/
 │   ├── architectures/          # Model architecture definitions (ResNet, DenseNet, EfficientNet)
 │   ├── pipeline/               # Modular training workflow (generators, trainer, evaluation)
 │   ├── export/                 # Dynamic Range Quantization to .tflite flatbuffers
-│   ├── scripts/                # Data verification and setup inspector (setup_ml.py)
+│   ├── scripts/                # Dataset readiness verifier (verify_dataset_readiness.py)
 │   ├── data/                   # HAM10000 structured dataset directory
 │   ├── notebooks/              # Jupyter notebooks for EDA and research experiments
 │   └── run_pipeline.py         # Headless CLI entrypoint for model training & TFLite export
@@ -286,7 +286,7 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
 - **`export/`**:
   - `tflite.py`: Automated Dynamic Range Quantization to produce lightweight `.tflite` flatbuffers.
 - **`scripts/`**:
-  - `setup_ml.py`: Safe environment and dataset verifier (validates dependencies and all 10,015 images with 0% risk of starting training).
+  - `verify_dataset_readiness.py`: Safe environment and dataset readiness verifier (validates dependencies and all 10,015 images with 0% risk of starting training).
   - `download_dataset.py`: Dataset integrity verifier and setup guide.
 - **`architectures/`**: Transfer-learning backbones fine-tuned for dermatoscopic feature extraction:
   - `resnet.py`: ResNet-101 architecture preserving low-level lesion texture and border asymmetry.
@@ -320,9 +320,9 @@ To train or experiment with models locally, configure the HAM10000 dataset (10,0
    ```
 4. **Verify Readiness**:
    ```bash
-   docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py
+   docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
    # Or using shortcut:
-   npm run ml:setup
+   npm run ml:verify
    ```
 
 ---
@@ -339,9 +339,9 @@ docker compose build ml-engine
 npm run docker:build
 
 # 2. Inspect ML libraries & verify dataset readiness (0% training, safe check):
-docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py
+docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
 # Or using the root shortcut:
-npm run ml:setup
+npm run ml:verify
 
 # 3. Check Docker image sizes and build status:
 npm run docker:status
@@ -366,7 +366,7 @@ python -m venv venv_ml
 pip install -r requirements.txt
 
 # 3. Inspect environment & dataset readiness
-python scripts/setup_ml.py
+python scripts/verify_dataset_readiness.py
 
 # 4. Run automated CLI pipeline
 python run_pipeline.py --model resnet101 --epochs 20

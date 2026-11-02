@@ -91,7 +91,7 @@ def display_status_table():
     print("Workflow Shortcuts:")
     print("  * Start Web App (Frontend + Backend): docker compose up -d backend frontend")
     print("  * Start All Services:                docker compose up -d")
-    print("  * Inspect ML Setup & Dataset:        docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py")
+    print("  * Inspect Dataset Readiness:         docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py")
     print("  * Run Model Training:                docker compose run --rm ml-engine python ml_engine/run_pipeline.py --help")
     print("  * Stop All Containers:               docker compose down\n")
 
@@ -110,7 +110,7 @@ def build_services(target_service=None, plain_output=True):
         print(f"  -> Target: {meta['display_name']} ({meta['role']})")
 
     print("-" * 75)
-    print("ℹ️ Note: Live streaming output enabled. You will see real-time download & build progress.\n")
+    print("Note: Live streaming output enabled. You will see real-time download & build progress.\n")
 
     cmd = ["docker", "compose", "build"]
     if plain_output:

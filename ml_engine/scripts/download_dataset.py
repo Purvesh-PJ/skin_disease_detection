@@ -113,7 +113,7 @@ def print_kaggle_setup_instructions(target_dir=DEFAULT_DATASET_DIR):
     logger.info("   docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py")
     logger.info("   (or natively: python ml_engine/pipeline/prepare_dataset.py)\n")
     logger.info("Step 3: Verify readiness:")
-    logger.info("   docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py\n")
+    logger.info("   docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py\n")
     logger.info("--------------------------------------------------------------------")
     logger.info("Alternative (Optional Kaggle API CLI):")
     logger.info("   If you already have ~/.kaggle/kaggle.json configured, you can run:")

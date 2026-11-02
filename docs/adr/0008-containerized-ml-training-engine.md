@@ -46,7 +46,7 @@ Developers can inspect the environment, verify datasets, and train models withou
 docker compose build ml-engine
 
 # 2. Inspect ML framework and dataset readiness (0% training, safe check):
-docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py
+docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
 
 # 3. Enter interactive container shell (safe exploration):
 docker compose run --rm ml-engine bash

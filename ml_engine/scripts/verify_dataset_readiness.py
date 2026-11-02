@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 """
-ML Environment & Dataset Setup Verification Inspector
-------------------------------------------------------
+HAM10000 Dataset & ML Environment Readiness Verifier
+---------------------------------------------------
 Verifies the ML engine runtime, dataset readiness, and class distribution
 WITHOUT triggering heavy neural network training. 
 
 Provides clear, human-readable status confirmation so researchers and developers
-know exactly when the environment is ready for model training and what to do next.
+know exactly when the dataset and environment are ready for model training and what to do next.
 
 Usage:
     # Within Docker container:
-    python ml_engine/scripts/setup_ml.py
+    python ml_engine/scripts/verify_dataset_readiness.py
 
     # Via Docker Compose from host:
-    docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py
-    # or: npm run ml:setup
+    docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
+    # or shortcut: npm run ml:verify
 
     # Native Python environment:
-    python ml_engine/scripts/setup_ml.py --dataset-dir ml_engine/data/skin_disease_dataset/base_dir
+    python ml_engine/scripts/verify_dataset_readiness.py --dataset-dir ml_engine/data/skin_disease_dataset/base_dir
 """
 
 import sys
@@ -77,7 +77,7 @@ def check_runtime_libraries():
 
 
 def inspect_ml_setup(dataset_dir=DEFAULT_DATASET_DIR):
-    print_banner("[SETUP] Inspecting Machine Learning Environment & Dataset")
+    print_banner("[SETUP] Inspecting Machine Learning Environment & Dataset Readiness")
 
     # 1. Runtime Libraries Check
     print("Checking core ML framework dependencies...")
@@ -115,7 +115,7 @@ def inspect_ml_setup(dataset_dir=DEFAULT_DATASET_DIR):
         print("=" * 75)
         print("\n[SUCCESS] ML Environment and Dataset are 100% verified and ready for training!")
         print("\n" + "=" * 75)
-        print("🚀 Next Steps: What You Can Do Now")
+        print("[*] Next Steps: What You Can Do Now")
         print("=" * 75)
         print("Note: Heavy model training is NEVER started automatically.\n")
         print("1. Train a Single Architecture (e.g., ResNet-101):")
