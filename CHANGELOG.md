@@ -8,9 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Dedicated ml_engine/Dockerfile for containerized, zero-setup machine learning model training and research.
-- Integrated ml-engine service in root docker-compose.yml with host volume mounts for ml_engine/data/ and 	rained_models/.
+- Dedicated `ml_engine/Dockerfile` for containerized, zero-setup machine learning model training and research.
+- Integrated `ml-engine` service in root `docker-compose.yml` with host volume mounts for `ml_engine/` and `trained_models/`.
+- Safe dataset & environment inspector (`ml_engine/scripts/setup_ml.py`) to verify ML frameworks and HAM10000 dataset balance without initiating model training.
+- Docker inspection and build runner script (`scripts/docker_manager.py`) providing live `--progress=plain` streaming build logs and image status summary tables.
+- Root npm scripts: `npm run docker:build`, `npm run docker:status`, and `npm run ml:setup`.
 - Architecture Decision Record [0008](docs/adr/0008-containerized-ml-training-engine.md) documenting containerized ML training engine and decoupled serving vs. training architecture.
+
+### Changed
+- Upgraded `frontend/Dockerfile` base image from `node:18-alpine` to `node:20-alpine` to resolve Webpack `css-minimizer-webpack-plugin` build failure.
+- Updated `.dockerignore` to exclude local heavy dataset directories (`ml_engine/data/`, `ml_engine/notebooks/`) while allowing ML requirements and scripts into Docker context.
 
 ## [2.0.0] - 2026-11-01
 
@@ -21,10 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Direct 1-click access to the Diagnostic Studio (`/dashboard`) from the landing page with zero login friction.
 - Browser `localStorage` diagnostic scan history persistence for instant, offline-resilient saving.
 - Architecture Decision Record [0007](docs/adr/0007-automated-local-ml-training-and-quantization.md) documenting local ML training automation, dataset verification, and quantized TFLite export.
-- Automated ML training pipeline (
-un_pipeline.py), dataset integrity verifier (download_dataset.py), and TFLite model quantizer (pipeline/export_tflite.py).
-- Added automated ML engine testing suite (ml_engine/tests/) with root command 
-pm run test:ml.
+- Automated ML training pipeline (`run_pipeline.py`), dataset integrity verifier (`download_dataset.py`), and TFLite model quantizer (`pipeline/export_tflite.py`).
+- Added automated ML engine testing suite (`ml_engine/tests/`) with root command `npm run test:ml`.
 - Architecture Decision Record [0006](docs/adr/0006-testing-infrastructure-and-ci-cd.md) documenting testing frameworks selection (pytest, Jest) and CI/CD quality gates.
 - Architecture Decision Record [0005](docs/adr/0005-removed-mongodb.md) documenting decoupling of MongoDB.
 - Automated TFLite model pre-caching during Docker build via `download_models.py` from Hugging Face Hub.
