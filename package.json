@@ -13,6 +13,7 @@
     "test:frontend:cov": "npm --prefix frontend run test:cov",
     "test:all": "npm test",
     "docker:build": "python scripts/docker_manager.py build",
-    "docker:status": "python scripts/docker_manager.py status"
+    "docker:status": "python scripts/docker_manager.py status",
+    "ml:setup": "python ml_engine/scripts/setup_ml.py"
   }
 }
