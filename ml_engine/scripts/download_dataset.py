@@ -1,9 +1,9 @@
 """
-HAM10000 Dataset Verifier & Downloader
+HAM10000 Dataset Verifier & Setup Guide
 ---------------------------------------
 Verifies dataset integrity in ml_engine/data/skin_disease_dataset/base_dir/
-and provides automated retrieval guidance, Kaggle API integration,
-and automatic data preparation for the 7 diagnostic classes:
+and provides automated retrieval guidance, dataset preparation,
+and validation for the 7 diagnostic classes:
 akiec, bcc, bkl, df, mel, nv, vasc.
 """
 
@@ -74,7 +74,7 @@ def verify_dataset(base_dir=DEFAULT_DATASET_DIR):
     logger.info("--- HAM10000 Dataset Status Summary ---")
     for split, counts in summary.items():
         total = counts.get("_total", 0)
-        logger.info(f"📁 {split}: {total} images")
+        logger.info(f"[SPLIT] {split}: {total} images")
         for cls in CLASSES:
             logger.info(f"   - {cls:<8}: {counts.get(cls, 0)}")
 
@@ -100,28 +100,24 @@ def check_kaggle_credentials():
 
 
 def print_kaggle_setup_instructions(target_dir=DEFAULT_DATASET_DIR):
-    """Prints step-by-step instructions for Kaggle dataset retrieval."""
+    """Prints step-by-step instructions for HAM10000 dataset retrieval."""
     logger.info("\n" + "=" * 68)
-    logger.info("📥 HAM10000 Dataset Download & Preparation Guide")
+    logger.info("HAM10000 Dataset Setup Guide (2.6 GB, 10,015 images)")
     logger.info("=" * 68)
-    logger.info("The HAM10000 dataset is hosted on Kaggle (~2.6 GB, 10,015 images).")
-    logger.info("Choose one of the two options below to configure the dataset:\n")
-    logger.info("🔷 Option 1: Automated Download via Kaggle API / CLI (Recommended)")
-    logger.info("   1. Log in to Kaggle: https://www.kaggle.com")
-    logger.info("   2. Go to Account Settings -> API -> click 'Create New Token'")
-    logger.info("      (This downloads 'kaggle.json')")
-    logger.info("   3. Place 'kaggle.json' in: ~/.kaggle/kaggle.json")
-    logger.info("      On Windows: %USERPROFILE%\\.kaggle\\kaggle.json")
-    logger.info("   4. Run the automated downloader & preprocessor:")
-    logger.info("      python ml_engine/scripts/download_dataset.py --download --prepare")
-    logger.info("      (or inside Docker: docker compose run --rm ml-engine python ml_engine/scripts/download_dataset.py --download --prepare)\n")
+    logger.info("To configure the dataset in 2 simple steps (No API tokens needed):\n")
+    logger.info("Step 1: Download dataset archive in your browser:")
+    logger.info("   -> https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000")
+    logger.info("   Click 'Download' and extract the archive into:")
+    logger.info("   ml_engine/data/raw/\n")
+    logger.info("Step 2: Run the automated dataset preparation script:")
+    logger.info("   docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py")
+    logger.info("   (or natively: python ml_engine/pipeline/prepare_dataset.py)\n")
+    logger.info("Step 3: Verify readiness:")
+    logger.info("   docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py\n")
     logger.info("--------------------------------------------------------------------")
-    logger.info("🔷 Option 2: Direct Browser Download (No CLI setup needed)")
-    logger.info("   1. Visit: https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000")
-    logger.info("   2. Click 'Download (2.6 GB)' and extract the archive into:")
-    logger.info("      ml_engine/data/raw/")
-    logger.info("   3. Run the automated split & stratify script:")
-    logger.info("      python ml_engine/pipeline/prepare_dataset.py --raw-dir ml_engine/data/raw")
+    logger.info("Alternative (Optional Kaggle API CLI):")
+    logger.info("   If you already have ~/.kaggle/kaggle.json configured, you can run:")
+    logger.info("   python ml_engine/scripts/download_dataset.py --download --prepare")
     logger.info("=" * 68 + "\n")
 
 
@@ -131,13 +127,12 @@ def download_from_kaggle(raw_dir=DEFAULT_RAW_DIR):
     raw_path.mkdir(parents=True, exist_ok=True)
 
     if not check_kaggle_credentials():
-        logger.error("❌ Kaggle credentials not found!")
+        logger.error("[ERROR] Kaggle credentials not found!")
         print_kaggle_setup_instructions()
         return False
 
-    logger.info(f"⏳ Initiating automated Kaggle download to {raw_path}...")
+    logger.info(f"Initiating automated Kaggle download to {raw_path}...")
     try:
-        # Try Kaggle Python API first
         import kaggle
         kaggle.api.authenticate()
         kaggle.api.dataset_download_files(
@@ -146,15 +141,14 @@ def download_from_kaggle(raw_dir=DEFAULT_RAW_DIR):
             unzip=True,
             quiet=False
         )
-        logger.info("✅ Kaggle dataset downloaded and extracted successfully.")
+        logger.info("[SUCCESS] Kaggle dataset downloaded and extracted successfully.")
         return True
     except ImportError:
-        # Fallback to kaggle CLI subprocess
         try:
             logger.info("Kaggle Python module not found, invoking 'kaggle' CLI command...")
             cmd = ["kaggle", "datasets", "download", "-d", "kmader/skin-cancer-mnist-ham10000", "-p", str(raw_path), "--unzip"]
             subprocess.run(cmd, check=True)
-            logger.info("✅ Kaggle CLI download complete.")
+            logger.info("[SUCCESS] Kaggle CLI download complete.")
             return True
         except Exception as e:
             logger.error(f"Failed to execute Kaggle CLI download: {e}")
@@ -193,18 +187,18 @@ if __name__ == "__main__":
     summary, ready = verify_dataset(args.dataset_dir)
 
     if ready:
-        logger.info("✅ Dataset is already verified, complete, and ready for model training!")
+        logger.info("[SUCCESS] Dataset is already verified, complete, and ready for model training!")
         sys.exit(0)
 
     if args.download:
         success = download_from_kaggle(args.raw_dir)
         if success and args.prepare:
             from ml_engine.pipeline.prepare_dataset import prepare_dataset
-            logger.info("🔄 Running automated stratified data preparation...")
+            logger.info("Running automated stratified data preparation...")
             prepare_dataset(args.raw_dir, args.dataset_dir)
             _, ready_after = verify_dataset(args.dataset_dir)
             if ready_after:
-                logger.info("🎉 Dataset successfully downloaded, prepared, and verified!")
+                logger.info("[SUCCESS] Dataset successfully downloaded, prepared, and verified!")
                 sys.exit(0)
         sys.exit(0 if success else 1)
 

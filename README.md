@@ -189,7 +189,7 @@ skin_disease_detection/
 │   ├── architectures/          # Model architecture definitions (ResNet, DenseNet, EfficientNet)
 │   ├── pipeline/               # Modular training workflow (generators, trainer, evaluation)
 │   ├── export/                 # Dynamic Range Quantization to .tflite flatbuffers
-│   ├── scripts/                # Data download helper, dataset integrity & environment verifier (setup_ml.py)
+│   ├── scripts/                # Data verification and setup inspector (setup_ml.py)
 │   ├── data/                   # HAM10000 structured dataset directory
 │   ├── notebooks/              # Jupyter notebooks for EDA and research experiments
 │   └── run_pipeline.py         # Headless CLI entrypoint for model training & TFLite export
@@ -276,7 +276,7 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
 
 #### Core Modules:
 - **`pipeline/`**: Modular, single-responsibility training workflow:
-  - `prepare_dataset.py`: Stratified data splitting (80% train, 10% validation, 10% test) across all 7 classes.
+  - `prepare_dataset.py`: Automated archive unpacking and stratified data splitting (80% train, 10% validation, 10% test) across all 7 classes.
   - `data_generators.py`: Keras batch image generators with real-time augmentation.
   - `class_weights.py`: Balanced class weighting for minority diagnostic conditions.
   - `model_trainer.py`: Callbacks (`EarlyStopping`, `ReduceLROnPlateau`) and model fitting.
@@ -287,7 +287,7 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
   - `tflite.py`: Automated Dynamic Range Quantization to produce lightweight `.tflite` flatbuffers.
 - **`scripts/`**:
   - `setup_ml.py`: Safe environment and dataset verifier (validates dependencies and all 10,015 images with 0% risk of starting training).
-  - `download_dataset.py`: Kaggle CLI download helper and dataset integrity verifier.
+  - `download_dataset.py`: Dataset integrity verifier and setup guide.
 - **`architectures/`**: Transfer-learning backbones fine-tuned for dermatoscopic feature extraction:
   - `resnet.py`: ResNet-101 architecture preserving low-level lesion texture and border asymmetry.
   - `densenet.py`: DenseNet-121 architecture with dense feature concatenation.
@@ -296,9 +296,40 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
   - `01_exploratory_data_analysis.ipynb`: Class distribution, demographic analysis, and visual lesion gallery.
   - `02_model_training_and_evaluation.ipynb`: Interactive training, ROC-AUC, confusion matrices, and direct `.tflite` quantization.
 
-#### Running the ML Pipeline:
+---
 
-##### Option A: Containerized via Docker (Recommended — Zero Host Setup)
+### 📦 HAM10000 Dataset Setup (2 Simple Steps — Zero API Tokens)
+
+To train or experiment with models locally, configure the HAM10000 dataset (10,015 images, ~2.6 GB) directly without setting up API tokens, keys, or credentials:
+
+1. **Download in Browser**:
+   Visit the [Kaggle HAM10000 Dataset Page](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000) and click **Download (2.6 GB)**.
+2. **Extract Files**:
+   Extract the downloaded files into:
+   ```text
+   ml_engine/data/raw/
+   ```
+3. **Run Automated Preparation**:
+   Run the automated preprocessor to automatically unpack internal image archives, map lesion metadata, and partition images into balanced `train_dir` (80%), `val_dir` (10%), and `test_dir` (10%) across all 7 diagnostic classes:
+   ```bash
+   # Via Docker (Recommended):
+   docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py
+
+   # Or native host:
+   python ml_engine/pipeline/prepare_dataset.py
+   ```
+4. **Verify Readiness**:
+   ```bash
+   docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py
+   # Or using shortcut:
+   npm run ml:setup
+   ```
+
+---
+
+### 🚀 Running the ML Pipeline
+
+#### Option A: Containerized via Docker (Recommended — Zero Host Setup)
 Run model training and environment inspection directly inside an isolated Docker container without installing Python, TensorFlow, or CUDA drivers on your host machine:
 
 ```bash
@@ -315,18 +346,15 @@ npm run ml:setup
 # 3. Check Docker image sizes and build status:
 npm run docker:status
 
-# 4. (Optional) Stratify raw Kaggle dataset into train/val/test:
-docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py --raw-dir ml_engine/data/raw --output-dir ml_engine/data/skin_disease_dataset/base_dir
-
-# 5. Explicitly train a single architecture (e.g., ResNet-101):
+# 4. Explicitly train a single architecture (e.g., ResNet-101):
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model resnet101 --epochs 20
 
-# 6. Explicitly train full 3-model stacking ensemble and auto-export quantized TFLite:
+# 5. Explicitly train full 3-model stacking ensemble and auto-export quantized TFLite:
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model ensemble --epochs 15
 ```
 *Note: Checkpoints (`.h5` and `.tflite`) are automatically saved to your host `trained_models/` directory via volume mounts.*
 
-##### Option B: Native Host Environment (via Python venv)
+#### Option B: Native Host Environment (via Python venv)
 ```bash
 cd ml_engine
 
