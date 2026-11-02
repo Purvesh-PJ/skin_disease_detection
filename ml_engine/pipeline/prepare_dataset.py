@@ -51,13 +51,13 @@ def auto_extract_archives(raw_dir: str):
 
     for item in raw_path.rglob("*.zip"):
         extract_target = item.parent
-        print(f"📦 Found archive: {item.name}. Extracting into {extract_target}...")
+        print(f"[ARCHIVE] Found archive: {item.name}. Extracting into {extract_target}...")
         try:
             with zipfile.ZipFile(item, "r") as zf:
                 zf.extractall(extract_target)
-            print(f"✅ Extracted: {item.name}")
+            print(f"[OK] Extracted: {item.name}")
         except Exception as e:
-            print(f"⚠️ Warning: Could not extract {item.name}: {e}")
+            print(f"[WARNING] Could not extract {item.name}: {e}")
 
 
 def prepare_dataset(raw_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ratio=0.1, random_state=42):
@@ -68,12 +68,12 @@ def prepare_dataset(raw_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ra
     raw_path = Path(raw_dir)
     output_path = Path(output_dir)
 
-    print(f"📦 Starting HAM10000 Dataset Preparation...")
+    print(f"[START] Starting HAM10000 Dataset Preparation...")
     print(f"   Raw Input Directory: {raw_path}")
     print(f"   Output Base Directory: {output_path}\n")
 
     if not raw_path.exists():
-        raise FileNotFoundError(f"❌ Raw dataset directory does not exist: {raw_path}")
+        raise FileNotFoundError(f"[ERROR] Raw dataset directory does not exist: {raw_path}")
 
     # Check for and unpack any nested zip files
     auto_extract_archives(str(raw_path))
@@ -88,11 +88,11 @@ def prepare_dataset(raw_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ra
             raw_path = metadata_path.parent
         else:
             raise FileNotFoundError(
-                f"❌ HAM10000_metadata.csv not found in {raw_dir}.\n"
+                f"[ERROR] HAM10000_metadata.csv not found in {raw_dir}.\n"
                 f"Please ensure raw dataset is downloaded and extracted into {raw_dir}."
             )
 
-    print(f"📄 Found metadata at: {metadata_path}")
+    print(f"[METADATA] Found metadata at: {metadata_path}")
     metadata = pd.read_csv(metadata_path)
 
     # Locate image files
@@ -101,15 +101,15 @@ def prepare_dataset(raw_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ra
         for img_file in raw_path.rglob(ext):
             image_paths[img_file.stem] = str(img_file)
 
-    print(f"🖼️ Found {len(image_paths)} image files.")
+    print(f"[IMAGES] Found {len(image_paths)} image files.")
     if len(image_paths) == 0:
-        raise FileNotFoundError(f"❌ No image files found in {raw_path}")
+        raise FileNotFoundError(f"[ERROR] No image files found in {raw_path}")
 
     # Map image paths to metadata
     metadata['image_path'] = metadata['image_id'].map(image_paths)
     missing_images = metadata['image_path'].isnull().sum()
     if missing_images > 0:
-        print(f"⚠️ Warning: {missing_images} metadata entries do not have corresponding image files.")
+        print(f"[WARNING] {missing_images} metadata entries do not have corresponding image files.")
         metadata = metadata.dropna(subset=['image_path'])
 
     # Stratified Split: Train (80%), Temp (20%)
@@ -141,7 +141,7 @@ def prepare_dataset(raw_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ra
             (output_path / split_name / cls).mkdir(parents=True, exist_ok=True)
 
     # Copy files
-    print("\n📂 Copying images to structured directories...")
+    print("\n[COPYING] Copying images to structured directories...")
     for split_name, df in splits.items():
         print(f"   Processing {split_name} ({len(df)} images)...")
         for _, row in df.iterrows():
@@ -151,12 +151,12 @@ def prepare_dataset(raw_dir, output_dir, train_ratio=0.8, val_ratio=0.1, test_ra
             dest_path = output_path / split_name / cls / filename
             shutil.copy2(src_path, dest_path)
 
-    print("\n✅ Dataset Preparation Complete! Summary:")
+    print("\n[COMPLETE] Dataset Preparation Complete! Summary:")
     print("-" * 50)
     for split_name in splits.keys():
         split_path = output_path / split_name
         total_images = 0
-        print(f"📁 {split_name}:")
+        print(f"Split: {split_name}:")
         for cls in sorted(CLASSES):
             cls_folder = split_path / cls
             count = len(list(cls_folder.iterdir())) if cls_folder.exists() else 0
