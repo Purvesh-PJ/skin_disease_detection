@@ -11,3 +11,4 @@ Key architectural decisions made during development based on real project constr
 | [0005](0005-removed-mongodb.md) | Decouple MongoDB & Use Browser Storage | Remove MongoDB/auth, localStorage history, Hugging Face caching | Accepted |
 | [0006](0006-testing-infrastructure-and-ci-cd.md) | Testing Infrastructure & CI/CD Gate | pytest + Jest, unified `npm test`, GitHub Actions CI pipeline | Accepted |
 | [0007](0007-automated-local-ml-training-and-quantization.md) | Automated Local ML Training & TFLite Export | Dual-track notebook/CLI, dynamic quantization, automated verifier | Accepted |
+| [0008](0008-containerized-ml-training-engine.md) | Containerized ML Training Engine via Docker | Dedicated ml_engine/Dockerfile & compose service for zero-setup training | Accepted |

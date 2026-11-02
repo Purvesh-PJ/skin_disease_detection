@@ -185,10 +185,14 @@ skin_disease_detection/
 │   │   └── index.css           # Tailwind CSS directives and global theme tokens
 │   └── package.json            # Frontend dependencies and npm scripts
 ├── ml_engine/
+│   ├── Dockerfile              # Dedicated ML engine container image for local training
 │   ├── architectures/          # Model architecture definitions (ResNet, DenseNet, EfficientNet)
-│   ├── data/                   # HAM10000 dataset loading, cleaning & augmentation pipeline
-│   ├── notebooks/              # Jupyter notebooks for EDA and model training experiments
-│   └── train.py                # Standalone training script for ensemble models
+│   ├── pipeline/               # Modular training workflow (generators, trainer, evaluation)
+│   ├── export/                 # Dynamic Range Quantization to .tflite flatbuffers
+│   ├── scripts/                # Data download helper and dataset integrity verifier
+│   ├── data/                   # HAM10000 structured dataset directory
+│   ├── notebooks/              # Jupyter notebooks for EDA and research experiments
+│   └── run_pipeline.py         # Headless CLI entrypoint for model training & TFLite export
 ├── scripts/
 │   └── run_backend_tests.py    # Smart cross-platform test runner
 ├── docs/
@@ -273,30 +277,39 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
   - `01_exploratory_data_analysis.ipynb`: Class distribution, demographic analysis, and visual lesion gallery.
   - `02_model_training_and_evaluation.ipynb`: Interactive training, ROC-AUC, confusion matrices, and direct `.tflite` quantization.
 
-#### Running the ML Pipeline Locally:
+#### Running the ML Pipeline:
 
+##### Option A: Containerized via Docker (Recommended — Zero Host Setup)
+Run model training directly inside an isolated Docker container without installing Python, TensorFlow, or CUDA drivers on your host machine:
+
+```bash
+# 1. Build the ML training container
+docker compose build ml-engine
+
+# 2. (Optional) Stratify raw Kaggle dataset into train/val/test
+docker compose run --rm ml-engine python ml_engine/pipeline/prepare_dataset.py --raw-dir ml_engine/data/raw --output-dir ml_engine/data/skin_disease_dataset/base_dir
+
+# 3. Train a single architecture (e.g., ResNet-101):
+docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model resnet101 --epochs 20
+
+# 4. Train the full 3-model stacking ensemble and auto-export quantized TFLite:
+docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model ensemble --epochs 15
+```
+*Note: Checkpoints (`.h5` and `.tflite`) are automatically saved to your host `trained_models/` directory via volume mounts.*
+
+##### Option B: Native Host Environment (via Python venv)
 ```bash
 cd ml_engine
 
-# 1. Create and activate a dedicated training virtual environment
+# 1. Create and activate virtual environment
 python -m venv venv_ml
 # Windows: .\venv_ml\Scripts\activate  |  Linux/macOS: source venv_ml/bin/activate
 
-# 2. Install ML & Data Science dependencies
+# 2. Install ML dependencies
 pip install -r requirements.txt
 
-# 3. (Optional) Stratify raw Kaggle HAM10000 dataset into train/val/test
-python pipeline/prepare_dataset.py --raw-dir path/to/raw_ham10000 --output-dir data/skin_disease_dataset/base_dir
-
-# 4. Option A: Interactive Research & Visualization via Jupyter Notebooks
-jupyter notebook notebooks/
-# Open 01_exploratory_data_analysis.ipynb or 02_model_training_and_evaluation.ipynb
-
-# 5. Option B: Automated Headless CLI Pipeline (with auto TFLite export)
-# Train single model:
+# 3. Run automated CLI pipeline
 python run_pipeline.py --model resnet101 --epochs 20
-
-# Train full ensemble:
 python run_pipeline.py --model ensemble --epochs 15
 ```
 

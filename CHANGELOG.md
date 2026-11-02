@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Dedicated ml_engine/Dockerfile for containerized, zero-setup machine learning model training and research.
+- Integrated ml-engine service in root docker-compose.yml with host volume mounts for ml_engine/data/ and 	rained_models/.
+- Architecture Decision Record [0008](docs/adr/0008-containerized-ml-training-engine.md) documenting containerized ML training engine and decoupled serving vs. training architecture.
+
 ## [2.0.0] - 2026-11-01
 
 ### Added
