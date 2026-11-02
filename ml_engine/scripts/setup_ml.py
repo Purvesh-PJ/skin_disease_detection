@@ -6,7 +6,7 @@ Verifies the ML engine runtime, dataset readiness, and class distribution
 WITHOUT triggering heavy neural network training. 
 
 Provides clear, human-readable status confirmation so researchers and developers
-know exactly when the environment is ready for model training.
+know exactly when the environment is ready for model training and what to do next.
 
 Usage:
     # Within Docker container:
@@ -14,6 +14,7 @@ Usage:
 
     # Via Docker Compose from host:
     docker compose run --rm ml-engine python ml_engine/scripts/setup_ml.py
+    # or: npm run ml:setup
 
     # Native Python environment:
     python ml_engine/scripts/setup_ml.py --dataset-dir ml_engine/data/skin_disease_dataset/base_dir
@@ -113,11 +114,22 @@ def inspect_ml_setup(dataset_dir=DEFAULT_DATASET_DIR):
         print(f"Target Image Dimensions:       {TARGET_IMAGE_SIZE} (RGB 3-channel)")
         print("=" * 75)
         print("\n[SUCCESS] ML Environment and Dataset are 100% verified and ready for training!")
-        print("\nNext Steps (Model Training is NEVER started automatically):")
-        print("  1. Train a single architecture (e.g. ResNet-101):")
-        print("     python ml_engine/run_pipeline.py --model resnet101 --epochs 20\n")
-        print("  2. Train full 3-model stacking ensemble with auto-quantized TFLite export:")
-        print("     python ml_engine/run_pipeline.py --model ensemble --epochs 15\n")
+        print("\n" + "=" * 75)
+        print("🚀 Next Steps: What You Can Do Now")
+        print("=" * 75)
+        print("Note: Heavy model training is NEVER started automatically.\n")
+        print("1. Train a Single Architecture (e.g., ResNet-101):")
+        print("   Docker: docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model resnet101 --epochs 20")
+        print("   Native: python ml_engine/run_pipeline.py --model resnet101 --epochs 20\n")
+        print("2. Train Full 3-Model Stacking Ensemble (ResNet + DenseNet + EfficientNet):")
+        print("   Docker: docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model ensemble --epochs 15")
+        print("   Native: python ml_engine/run_pipeline.py --model ensemble --epochs 15\n")
+        print("3. Enter Interactive Container Shell (Explore scripts or notebooks):")
+        print("   Docker: docker compose run --rm ml-engine bash\n")
+        print("4. View All Pipeline Command-Line Options:")
+        print("   Docker: docker compose run --rm ml-engine python ml_engine/run_pipeline.py --help\n")
+        print("Checkpoints (.h5 and .tflite) are automatically saved to your host 'trained_models/' folder.")
+        print("=" * 75 + "\n")
         return 0
     else:
         print("\n[NOTICE] HAM10000 Dataset is not yet configured or incomplete.")
