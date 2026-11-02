@@ -14,14 +14,13 @@ __pycache__/
 .pytest_cache/
 app.log
 
-# Node & Frontend (exclude completely from backend Docker image)
-frontend/
+# Node & Frontend build artifacts
 node_modules/
 build/
 
-# Machine Learning Training Data & Notebooks (exclude from backend inference image)
-ml_engine/
-notebooks/
+# Machine Learning Heavy Data & Notebooks (prevent sending multi-GB training images into build context)
+ml_engine/data/
+ml_engine/notebooks/
 *.ipynb
 
 # Local model weights cache (prevent copying local heavy binary weights directly into image context)
