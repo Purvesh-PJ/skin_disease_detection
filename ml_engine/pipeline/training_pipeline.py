@@ -11,7 +11,8 @@ import logging
 from pathlib import Path
 
 from ml_engine.constants import DEFAULT_BATCH_SIZE
-from ml_engine.scripts.download_dataset import verify_dataset, DEFAULT_DATASET_DIR
+from ml_engine.constants import DEFAULT_DATASET_DIR
+from ml_engine.scripts.verify_dataset_readiness import verify_dataset
 from ml_engine.pipeline.data_generators import create_data_generators
 from ml_engine.pipeline.class_weights import compute_balanced_class_weights
 from ml_engine.pipeline.model_trainer import ModelTrainer
@@ -50,7 +51,7 @@ def run_training_pipeline(model_name, epochs=20, batch_size=DEFAULT_BATCH_SIZE, 
     # 1. Verify Dataset
     _, ready = verify_dataset(dataset_dir)
     if not ready:
-        raise RuntimeError("Dataset verification failed! Please run 'python ml_engine/scripts/download_dataset.py' to configure data.")
+        raise RuntimeError("Dataset verification failed! Please run 'npm run ml:prepare' (or 'python ml_engine/pipeline/prepare_dataset.py') to prepare the dataset.")
 
     # 2. Setup Generators & Class Weights (Distinct Single-Responsibility Modules)
     train_gen, val_gen, test_gen = create_data_generators(dataset_dir, batch_size)

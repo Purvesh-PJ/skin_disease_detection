@@ -287,7 +287,6 @@ The `ml_engine/` directory houses the complete end-to-end machine learning engin
   - `tflite.py`: Automated Dynamic Range Quantization to produce lightweight `.tflite` flatbuffers.
 - **`scripts/`**:
   - `verify_dataset_readiness.py`: Safe environment and dataset readiness verifier (validates dependencies and all 10,015 images with 0% risk of starting training).
-  - `download_dataset.py`: Dataset integrity verifier and setup guide.
 - **`architectures/`**: Transfer-learning backbones fine-tuned for dermatoscopic feature extraction:
   - `resnet.py`: ResNet-101 architecture preserving low-level lesion texture and border asymmetry.
   - `densenet.py`: DenseNet-121 architecture with dense feature concatenation.

@@ -15,7 +15,7 @@ import tensorflow as tf
 from pathlib import Path
 
 from ml_engine.constants import TARGET_IMAGE_SIZE, NUM_CLASSES, CLASSES
-from ml_engine.scripts.download_dataset import verify_dataset
+from ml_engine.scripts.verify_dataset_readiness import verify_dataset
 from ml_engine.pipeline.prepare_dataset import prepare_dataset
 from ml_engine.pipeline.data_generators import create_data_generators
 from ml_engine.pipeline.class_weights import compute_balanced_class_weights

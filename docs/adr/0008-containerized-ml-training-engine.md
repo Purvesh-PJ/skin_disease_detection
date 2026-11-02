@@ -6,68 +6,42 @@
 
 ## Context & Problem Statement
 
-Following the modularization of the training pipeline (ADR 0007), the machine learning research engine (`ml_engine/`) could run headlessly via `python ml_engine/run_pipeline.py`. However, the repository lacked a containerized environment for ML training.
-
-While the web tier (Flask backend and React frontend) was fully dockerized in `docker-compose.yml`, contributors and researchers attempting to train models locally had to manually install Python, compile C-extensions, and manage heavy machine learning dependencies (TensorFlow, OpenCV, Scikit-learn, Albumentations) directly on their host machines. This introduced OS-specific setup friction across Windows, macOS, and Linux.
-
-Furthermore, a containerized ML environment must guard against **accidental automated model training** — heavy GPU/CPU training workloads must never execute automatically upon container startup or during general `docker compose up` commands.
+The machine learning research engine (`ml_engine/`) required contributors to manually install heavy dependencies (TensorFlow, OpenCV, Scikit-learn) directly on host systems, introducing cross-platform setup friction. Additionally, running ML in Docker requires strict safeguards against **accidental automated model training** during container boot or `docker compose up`.
 
 ## Decision
 
-We containerized the ML training engine alongside the existing application services using a dedicated, decoupled, and safe architecture:
+We containerized the ML training engine with a decoupled, safe, and performance-optimized architecture:
 
-### 1. Dedicated `ml_engine/Dockerfile`
-We created a separate `Dockerfile` based on `python:3.12-slim`:
-- Pre-installs system libraries required for OpenCV (`libgl1`, `libglib2.0-0`, `curl`, `ca-certificates`).
-- Pre-installs `ml_engine/requirements.txt` with layer caching.
-- Sets `PYTHONPATH=/app`, `TF_CPP_MIN_LOG_LEVEL=2`, and `TF_ENABLE_ONEDNN_OPTS=0`.
-- Sets working directory strictly to `/app` to ensure relative repository paths (`/app/ml_engine/data`, `/app/trained_models`) resolve identically inside the container as they do on the host machine.
-- Sets the default `CMD` to an interactive shell (`bash`), explicitly preventing unintended model training.
+1. **Dedicated `ml_engine/Dockerfile`**:
+   - Python 3.12-slim base with system OpenCV libraries (`libgl1`, `libglib2.0-0`) and cached ML dependencies.
+   - Decoupled from lightweight backend image to keep production serving footprint small (~300MB vs ~3GB).
+   - Default `CMD` set to interactive `bash`, explicitly preventing unintended training loops.
 
-### 2. Architecture Decoupling (Serving vs. Training)
-We deliberately maintain two distinct Docker environments rather than a single monolithic container:
-- **`backend/Dockerfile`**: Optimized for low-memory, high-concurrency production inference (~300MB image, Flask, LiteRT/TFLite runtime, Gunicorn).
-- **`ml_engine/Dockerfile`**: Optimized for deep learning model training and feature extraction (~3GB image, full TensorFlow, Scikit-learn, ImageDataGenerators).
+2. **Compose Service with Safety Safeguards (`ml-engine`)**:
+   - Volume mounts for `./ml_engine` and `./trained_models` for host persistence.
+   - `restart: "no"` and idle standby command (`tail -f /dev/null`) so the service only trains when explicitly commanded.
 
-This separation prevents backend image bloat and ensures the live microservice can deploy to free-tier cloud environments (e.g. Render 512MB RAM limit) without incurring the multi-gigabyte memory and storage penalties of a training runtime.
+3. **I/O & Compute Workload Separation**:
+   - **Dataset Preparation (10,015 files)**: Executed on the native host (`npm run ml:prepare`) in ~30s to avoid WSL2/Docker 9p cross-filesystem bind-mount I/O latency.
+   - **Model Training**: Executed containerized (`docker compose run --rm ml-engine ...`) for dependency isolation.
 
-### 3. Unified Docker Compose Service (`ml-engine`) with Training Safeguards
-Integrated the `ml-engine` service into root `docker-compose.yml`:
-- **Volume Bind Mounts**: Maps host `./ml_engine` to container `/app/ml_engine` and `./trained_models` to container `/app/trained_models`.
-- **Training Safeguard (`restart: "no"`)**: Ensures the container never auto-restarts into a training loop.
-- **Idle Readiness Command**: Container stays in an idle standby state (`tail -f /dev/null`) when running with `docker compose up`, only executing training when explicitly commanded by the developer.
-
-### 4. File-I/O Separation (Dataset Preparation vs. Model Training)
-- **Dataset Preparation (10,015 files)**: Involves intensive file system traversal, unzipping, and directory copying. Running this natively (`npm run ml:prepare`) is recommended on Windows hosts to avoid WSL2 9p cross-filesystem translation latency, completing in ~30 seconds.
-- **Model Training & Quantization**: Compute and memory-intensive; executed inside the containerized `ml-engine` environment where TensorFlow, CUDA drivers, and layer caching are fully isolated without host pollution.
-
-## Developer Workflows
-
-Developers can inspect the environment, verify datasets, and train models without installing Python or TensorFlow on their host OS:
+## Essential Commands
 
 ```bash
-# 1. Build the ML engine image (targeted, skips web services):
-docker compose build ml-engine
+# Verify environment & dataset readiness (0% training, safe check):
+npm run ml:verify
+# Or via Docker: docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
 
-# 2. Inspect ML framework and dataset readiness (0% training, safe check):
-docker compose run --rm ml-engine python ml_engine/scripts/verify_dataset_readiness.py
-
-# 3. Enter interactive container shell (safe exploration):
-docker compose run --rm ml-engine bash
-
-# 4. View pipeline CLI help:
-docker compose run --rm ml-engine python ml_engine/run_pipeline.py --help
-
-# 5. Explicitly trigger training for a specific architecture (e.g., ResNet-101):
+# Train single model (ResNet-101):
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model resnet101 --epochs 20
 
-# 6. Explicitly trigger full 3-model stacking ensemble and auto-export quantized TFLite:
+# Train full 3-model stacking ensemble & export quantized TFLite:
 docker compose run --rm ml-engine python ml_engine/run_pipeline.py --model ensemble --epochs 15
 ```
 
 ## Consequences
 
-- **Positive**: Zero-friction contributor onboarding — no local Python or CUDA driver setup required.
-- **Positive**: Accidental training protection — container start never initiates heavy model fitting automatically.
-- **Positive**: Complete path consistency — `/app` workspace ensures all relative paths (`REPO_ROOT / 'ml_engine' / 'data'`) function seamlessly.
-- **Positive**: Host volume persistence guarantees training checkpoints (`.tflite`, `.h5`) are retained across container lifecycles.
+- **Positive**: Zero local Python/CUDA driver setup needed for model training.
+- **Positive**: Strict protection against accidental heavy training on container startup.
+- **Positive**: Host volume persistence guarantees `.h5` and `.tflite` model checkpoints are retained.
+
