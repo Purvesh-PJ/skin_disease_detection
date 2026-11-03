@@ -1,3 +1,5 @@
+import packageJson from '../../package.json';
+
 // Application configuration following 12-Factor / React environment standards
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -10,7 +12,7 @@ export const config = {
   },
   app: {
     name: 'Skin Disease Predictor',
-    version: '2.1.0',
+    version: process.env.REACT_APP_VERSION || packageJson.version || '2.1.0',
     environment: process.env.NODE_ENV || 'development',
   },
 };

@@ -12,6 +12,8 @@
     "test:frontend": "npm --prefix frontend run test:ci",
     "test:frontend:cov": "npm --prefix frontend run test:cov",
     "test:all": "npm test",
+    "version:check": "python scripts/bump_version.py --check",
+    "version:bump": "python scripts/bump_version.py",
     "docker:build": "python scripts/docker_manager.py build",
     "docker:status": "python scripts/docker_manager.py status",
     "ml:prepare": "python scripts/run_ml_command.py prepare",

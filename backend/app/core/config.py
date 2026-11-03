@@ -17,8 +17,40 @@ else:
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 REPO_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
 
+
+def _resolve_app_version() -> str:
+    """Resolve application version from env, VERSION file, or package.json (SSOT)."""
+    env_version = os.getenv("APP_VERSION")
+    if env_version:
+        return env_version.strip()
+
+    candidate_paths = (
+        os.path.join(REPO_ROOT, "VERSION"),
+        os.path.join(BASE_DIR, "VERSION"),
+        os.path.join(REPO_ROOT, "package.json"),
+        os.path.join(BASE_DIR, "package.json"),
+    )
+    for path in candidate_paths:
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    if path.endswith(".json"):
+                        import json
+                        val = json.load(f).get("version")
+                        if val:
+                            return str(val).strip()
+                    else:
+                        val = f.read().strip()
+                        if val:
+                            return val
+            except Exception:
+                pass
+    return "2.1.0"
+
+
 class AppConfig:
     """Lightweight application configuration container."""
+    VERSION = _resolve_app_version()
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev_default_secret_key_123")
     CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "*").split(",")]
 
@@ -41,5 +73,6 @@ class AppConfig:
         "densenet": os.getenv("MODEL_URL_DENSENET", f"{HUGGINGFACE_REPO_BASE}/densenet121.tflite"),
         "efficientnet": os.getenv("MODEL_URL_EFFICIENTNET", f"{HUGGINGFACE_REPO_BASE}/efficientnetb3.tflite")
     }
+
 
 config = AppConfig()

@@ -4,6 +4,8 @@ Integration Tests: Health & Base Routing
 Tests root status, uptime, health checks, and global error handling.
 """
 
+from app.core.config import config
+
 
 class TestHealthAndSystemRoutes:
     """Tests system endpoints and HTTP error handlers."""
@@ -17,7 +19,7 @@ class TestHealthAndSystemRoutes:
         assert data is not None
         assert data["status"] == "online"
         assert "Skin Disease Detection" in data["service"]
-        assert data["version"] == "2.1.0"
+        assert data["version"] == config.VERSION
 
     def test_non_existent_route_returns_404(self, client):
         """Requesting an undefined endpoint should return a structured 404 response."""
@@ -36,4 +38,3 @@ class TestHealthAndSystemRoutes:
         data = response.get_json()
         assert data is not None
         assert data["status"] == "error"
-

@@ -5,6 +5,7 @@ Base endpoint for application health and status checks.
 """
 
 from flask import Blueprint, jsonify
+from app.core.config import config
 
 health_router = Blueprint('health', __name__)
 
@@ -13,5 +14,5 @@ def health_check():
     return jsonify({
         "status": "online",
         "service": "Skin Disease Detection API",
-        "version": "2.1.0"
+        "version": config.VERSION
     }), 200
