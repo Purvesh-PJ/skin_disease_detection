@@ -10,6 +10,10 @@ __pycache__/
 .env.*
 *.env
 env.*
+!.env.example
+!*/.env.example
+!frontend/.env.development
+!frontend/.env.production
 
 # Test & Coverage artifacts
 .coverage
