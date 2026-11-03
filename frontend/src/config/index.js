@@ -10,7 +10,7 @@ export const config = {
   },
   app: {
     name: 'Skin Disease Predictor',
-    version: '1.0.0',
+    version: '2.1.0',
     environment: process.env.NODE_ENV || 'development',
   },
 };
