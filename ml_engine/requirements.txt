@@ -9,7 +9,7 @@ joblib>=1.4.0
 pandas>=2.2.2
 opencv-python-headless>=4.10.0.84
 albumentations>=1.4.0
-kaggle>=1.6.17
+kaggle>=2.2.5
 
 # Exploratory Data Analysis & Visualization
 matplotlib>=3.8.4
